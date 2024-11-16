@@ -174,10 +174,20 @@ def cerrar_sesion(request):
 
 def buscar_cursos(request):
     query = request.GET.get('q', '')
+    departamento = request.GET.get('departamento', '')
+    sector_laboral = request.GET.get('sector_laboral', '')
     resultados = []
     if query:
         resultados = Curso.objects.filter(nombre__icontains=query)
-    return render(request, 'cursos/buscar_cursos.html', {'query': query, 'resultados': resultados})
+
+    if departamento:
+        resultados = resultados.filter(departamento=departamento)
+
+    if sector_laboral:
+        resultados = resultados.filter(sector_laboral=sector_laboral)
+    return render(request, 'cursos/buscar_cursos.html', {'query': query, 'resultados': resultados, 'departamento_choices': Curso.DEPARTAMENTO_CHOICES,
+        'sector_laboral_choices': Curso.SECTOR_LABORAL_CHOICES,})
+
 
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'cursos/password_reset.html'  # Tu plantilla HTML para la vista
