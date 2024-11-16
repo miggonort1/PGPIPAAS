@@ -5,32 +5,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Usuario</title>
-    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+    <link rel="stylesheet" href="{% static 'css/registro.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div>
-        <h1>Regístrate</h1>
-        
-        <!-- Mostrar mensajes de éxito o error -->
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="message {% if message.tags == 'error' %}error{% else %}success{% endif %}">
-                        {{ message }}
+    <div class="background">
+        <!-- Sección de la izquierda -->
+        <div class="left-section">
+            <a href="{% url 'home' %}" class="home-link">
+                OPOSITA CONMIGO
+            </a>
+        </div>
+
+        <!-- Formulario de Registro -->
+        <div class="right-section">
+            <div class="login-container">
+                <h1>Crear una cuenta</h1>
+                <p class="subtitle">Regístrate para comenzar</p>
+
+                <!-- Mensajes de error o éxito -->
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <div class="message {% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
+                {% endif %}
+
+                <!-- Formulario de Registro -->
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- Renderizado automático del formulario -->
+                    <div class="form-group">
+                        {{ form.as_p }}
+                    </div>
+
+                    <button type="submit" class="btn-login">Registrarme</button>
+                </form>
+
+                <!-- Links adicionales -->
+                <div class="extra-links">
+                    <p>¿Ya tienes una cuenta? <a href="{% url 'inicioSesion' %}">Inicia sesión aquí</a></p>
+                </div>
             </div>
-        {% endif %}
-
-        <!-- Formulario de registro -->
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}  <!-- Mostrar el formulario en formato de párrafos -->
-
-            <button type="submit">Registrar</button>
-        </form>
-        
-        <p>¿Ya tienes una cuenta? <a href="{% url 'perfil' %}">Inicia sesión aquí</a></p>
+        </div>
     </div>
 </body>
 </html>
