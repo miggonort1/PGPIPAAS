@@ -6,6 +6,13 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistroUsuarioForm
 from cursos.models import Usuario
+from .forms import PerfilForm
+from django.contrib.auth import logout
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetDoneView
+
 
 def home(request):
     # Obtener todos los cursos de la base de datos
@@ -18,7 +25,8 @@ def home(request):
     
     return render(request, 'cursos/home.html', context)
 
-def perfil(request):
+def inicioSesion(request):
+    messages.get_messages(request).used = True
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -46,7 +54,7 @@ def perfil(request):
             messages.success(request, f"¡Bienvenido, {user.nombre_usuario}!")
             return redirect('home')  # Redirigir al inicio después de iniciar sesión
     
-    return render(request, 'cursos/perfil.html')
+    return render(request, 'cursos/inicio_sesion.html')
 
 def registro(request):
     if request.method == 'POST':
@@ -58,10 +66,45 @@ def registro(request):
             usuario.save()
 
             messages.success(request, "¡Registro exitoso! Ahora puedes iniciar sesión.")
-            return redirect('perfil')  # Redirigir a la vista de inicio de sesión o al home
+            return redirect('home')  # Redirigir a la vista de inicio de sesión o al home
         else:
             messages.error(request, "Por favor corrige los errores en el formulario.")
     else:
         form = RegistroUsuarioForm()
 
     return render(request, 'cursos/registro.html', {'form': form})
+
+
+
+def editar_perfil(request):
+    if request.user.is_authenticated:
+        user = request.user  # Obtén el usuario autenticado
+        if request.method == 'POST':
+            # Si el formulario se envía (POST), procesar la actualización
+            form = PerfilForm(request.POST, instance=user)
+            if form.is_valid():
+                form.save()  # Guardar los cambios
+                messages.success(request, "Tu perfil ha sido actualizado correctamente.")
+                return redirect('perfil')  # Redirige al perfil después de actualizar
+        else:
+            # Si la solicitud es GET, mostrar el formulario con los datos actuales del usuario
+            form = PerfilForm(instance=user)
+
+        return render(request, 'cursos/perfil.html', {'form': form})
+
+    else:
+        # Si no está autenticado, redirigir al login
+        messages.error(request, "Debes iniciar sesión para acceder a tu perfil.")
+        return redirect('perfil')  # Redirige a la página de inicio de sesión (ajusta la URL según corresponda)
+    
+
+def cerrar_sesion(request):
+    logout(request)  # Cierra la sesión del usuario
+    return redirect('home')  # Redirige a la página de inicio después de cerrar sesión
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'cursos/password_reset.html'  # Tu plantilla HTML para la vista
+    success_url = reverse_lazy('password_reset_done')
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'cursos/password_reset_done.html'

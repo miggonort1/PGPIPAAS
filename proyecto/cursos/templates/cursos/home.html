@@ -17,9 +17,9 @@
         <nav class="navbar-icons">
             <div class="icon profile">
                 {% if request.user.is_authenticated %}
-                    <span>{{ request.user.nombre_usuario }}</span> <!-- Mostrar el nombre de usuario -->
+                <a href="{% url 'perfil' %}">{{ request.user.nombre_usuario }}</a> <!-- Mostrar el nombre de usuario -->
                 {% else %}
-                    <a href="{% url 'perfil' %}">Perfil</a> <!-- Mostrar enlace de perfil si no está logueado -->
+                    <a href="{% url 'inicioSesion' %}">Perfil</a> <!-- Mostrar enlace de perfil si no está logueado -->
                 {% endif %}
             </div>
             <div class="icon cart"><i class="fas fa-shopping-cart"></i> Carrito</div>

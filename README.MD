@@ -40,7 +40,17 @@ SEEDS
 
 PARA ARRANCAR EL SERVER LOCAL
 - Te metes en el entorno virtual
- source env/Scripts activate
+ source env/Scripts/activate
 
  - Desde la carpeta proyecto 
  python manage.py runserver
+
+
+
+
+
+
+ USUARIO            CONTRASEÑA
+ pgpipaas1          1234
+ pgpipaas2          1234
+ admin1             1234
