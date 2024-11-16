@@ -14,10 +14,16 @@
     <header class="navbar">
         <div class="logo">OpositaConmigo</div>
         <input type="text" class="search-bar" placeholder="Buscar curso...">
-        <div class="navbar-icons">
-            <div class="icon profile"><i class="fas fa-user"></i> Perfil</div>
+        <nav class="navbar-icons">
+            <div class="icon profile">
+                {% if request.user.is_authenticated %}
+                    <span>{{ request.user.nombre_usuario }}</span> <!-- Mostrar el nombre de usuario -->
+                {% else %}
+                    <a href="{% url 'perfil' %}">Perfil</a> <!-- Mostrar enlace de perfil si no está logueado -->
+                {% endif %}
+            </div>
             <div class="icon cart"><i class="fas fa-shopping-cart"></i> Carrito</div>
-        </div>
+        </nav>
     </header>
 
     <!-- Secciones de cursos -->

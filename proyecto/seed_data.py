@@ -189,33 +189,35 @@ cursos_iniciales = [
 for curso_data in cursos_iniciales:
     Curso.objects.create(**curso_data)
 
-
-# Crear usuarios
 usuario1 = Usuario.objects.create(
     correo="usuario1@example.com",
-    nombre_usuario="usuario1",
-    clave="clave1234",
+    nombre_usuario="pgpipaas1",
     nombre="Juan",
     apellido="Pérez",
     direccion_entrega="Calle Falsa 123",
     ciudad="Madrid",
     provincia="Madrid",
     codigo_postal="28001",
-    telefono="123456789"
+    telefono="123456789",
+    is_active=True 
 )
+usuario1.set_password("1234")  # Cifra la contraseña
+usuario1.save()  # Guarda los cambios
 
 usuario2 = Usuario.objects.create(
     correo="usuario2@example.com",
-    nombre_usuario="usuario2",
-    clave="clave5678",
+    nombre_usuario="pgpipaas2",
     nombre="Ana",
     apellido="López",
     direccion_entrega="Avenida Siempre Viva 742",
     ciudad="Barcelona",
     provincia="Barcelona",
     codigo_postal="08001",
-    telefono="987654321"
+    telefono="987654321",
+    is_active=True 
 )
+usuario2.set_password("1234")  # Cifra la contraseña
+usuario2.save()  # Guarda los cambios
 
 print("Usuarios añadidos a la base de datos.")
 
