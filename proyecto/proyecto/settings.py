@@ -68,6 +68,13 @@ TEMPLATES = [
     },
 ]
 
+AUTH_USER_MODEL = 'cursos.Usuario'  # Apunta a tu modelo personalizado de usuario
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Permite el uso del modelo de usuario personalizado
+]
+
 WSGI_APPLICATION = 'proyecto.wsgi.application'
 
 

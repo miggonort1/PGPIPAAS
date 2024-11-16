@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class Curso(models.Model):
     nombre = models.CharField(max_length=200)
@@ -42,22 +43,45 @@ class Curso(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+class UsuarioManager(BaseUserManager):
+    def create_user(self, correo, nombre_usuario, password=None, **extra_fields):
+        if not correo:
+            raise ValueError("El correo es obligatorio")
+        correo = self.normalize_email(correo)
+        user = self.model(correo=correo, nombre_usuario=nombre_usuario, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-class Usuario(models.Model):
-    correo = models.EmailField(unique=True, max_length=255, verbose_name="Correo Electrónico")
-    nombre_usuario = models.CharField(max_length=150, unique=True, verbose_name="Nombre de Usuario")
-    clave = models.CharField(max_length=128, verbose_name="Clave")
-    nombre = models.CharField(max_length=50, verbose_name="Nombre")
-    apellido = models.CharField(max_length=50, verbose_name="Apellido")
-    direccion_entrega = models.CharField(max_length=255, verbose_name="Dirección de Entrega")
-    ciudad = models.CharField(max_length=100, verbose_name="Ciudad")
-    provincia = models.CharField(max_length=100, verbose_name="Provincia")
-    codigo_postal = models.CharField(max_length=10, verbose_name="Código Postal")
-    telefono = models.CharField(max_length=15, verbose_name="Teléfono", blank=True, null=True)
-    fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Registro")
+    def create_superuser(self, correo, nombre_usuario, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        return self.create_user(correo, nombre_usuario, password, **extra_fields)
+
+
+class Usuario(AbstractBaseUser):
+    correo = models.EmailField(unique=True)
+    nombre_usuario = models.CharField(max_length=150, unique=True)
+    nombre = models.CharField(max_length=50)
+    apellido = models.CharField(max_length=50)
+    direccion_entrega = models.CharField(max_length=255)
+    ciudad = models.CharField(max_length=100)
+    provincia = models.CharField(max_length=100)
+    codigo_postal = models.CharField(max_length=10)
+    telefono = models.CharField(max_length=15, blank=True, null=True)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UsuarioManager()
+
+    USERNAME_FIELD = "nombre_usuario"
+    REQUIRED_FIELDS = ["correo"]
 
     def __str__(self):
-        return f"{self.nombre_usuario} ({self.correo})"
+        return self.nombre_usuario
 
 class Carrito(models.Model):
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name="carrito")

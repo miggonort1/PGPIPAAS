@@ -4,19 +4,13 @@ para instalar el entorno virtual:
 
 - pip install django
 
-Para iniciar el proyecto ESTAR DENTRO DE LA CARPETA PROYECTO:
--   python manage.py runserver
-
-
-
-
 PASOS PARA CONFIGURAR LA BASE DE DATOS
-
+ 
 -Escribir en cmd "mariadb --version" para comprobar si ya teneis mariadb instalado y no teneis que seguir con los demas pasos, si es asi pasar a seeds
-- Descargar mariadb desde la pagina web
+- Descargar mariadb desde la pagina web VERSION 11.5
 - Abrir el instalador y seguir los pasos poniendo
     - Contraseña "root"
-- Abrir las variables de entorno y poner en variables del sistema "C:\Program Files\MariaDB 11.5\bin"
+- Abrir las variables de entorno y poner en dentro del path variables del sistema "C:\Program Files\MariaDB 11.5\bin"
 - Escribir en el cmd "mariabd --version"
 - Si no os da una version reiniciar el ordenador
 
@@ -29,9 +23,11 @@ Ahora dentro del entorno virtual
     FLUSH PRIVILEGES;
 
 
+CERRAMOS EL MARIADB
+
 MIGRATION
-python manage.py makemigrations
-python manage.py migrate
+- python manage.py makemigrations;
+- python manage.py migrate;
 
 
 
@@ -40,3 +36,11 @@ SEEDS
 - Escribir el codigo para introducir en los seeds
 - Para hacer el seed "python seed_data.py"
 
+
+
+PARA ARRANCAR EL SERVER LOCAL
+- Te metes en el entorno virtual
+ source env/Scripts activate
+
+ - Desde la carpeta proyecto 
+ python manage.py runserver
