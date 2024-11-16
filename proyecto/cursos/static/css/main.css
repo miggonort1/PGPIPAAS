@@ -159,3 +159,32 @@ body {
 .cart-link:hover i {
     color: #f67103; /* Naranja más vivo */
 }
+
+.paginacion {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.paginacion a {
+    text-decoration: none;
+    color: #49777b;
+    border: 1px solid #49777b;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.paginacion a:hover {
+    background-color: #49777b;
+    color: #fff;
+}
+
+.paginacion .pagina-actual {
+    font-weight: bold;
+    color: #fff;
+    background-color: #49777b;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
