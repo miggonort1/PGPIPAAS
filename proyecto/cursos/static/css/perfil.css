@@ -3,29 +3,27 @@ body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f9;
     margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    padding: 20px; /* Añadido un poco de espacio alrededor */
     color: #333;
 }
 
+/* Título */
 h1 {
     font-size: 24px;
-    text-align: center;
     color: #333;
     margin-bottom: 20px;
 }
 
 /* Contenedor principal */
 div {
-    max-width: 400px;
+    max-width: 450px;
     width: 100%;
-    padding: 20px;
+    padding: 30px;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    margin-top: 30px; /* Espacio superior */
 }
 
 /* Formulario */
@@ -50,6 +48,7 @@ input[type="text"], input[type="password"] {
     font-size: 16px;
     width: 100%;
     box-sizing: border-box;
+    transition: border-color 0.3s ease;
 }
 
 input[type="text"]:focus, input[type="password"]:focus {
@@ -67,6 +66,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     width: 100%;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -78,6 +78,7 @@ p {
     text-align: center;
     font-size: 14px;
     color: #555;
+    margin-top: 15px;
 }
 
 a {
@@ -120,4 +121,33 @@ a:hover {
 /* Estilo para el formulario cuando se completa */
 form {
     padding: 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Media query para dispositivos móviles */
+@media screen and (max-width: 768px) {
+    div {
+        padding: 20px;
+        box-shadow: none;
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    input[type="text"], input[type="password"] {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    p {
+        font-size: 12px;
+    }
 }

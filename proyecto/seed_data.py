@@ -10,6 +10,7 @@ django.setup()
 from cursos.models import Curso, Usuario, Carrito, CarritoCurso, Pedido, PedidoCurso
 
 # Limpieza de datos previos (opcional)
+
 Curso.objects.all().delete()
 Usuario.objects.all().delete()
 Carrito.objects.all().delete()
@@ -190,7 +191,7 @@ for curso_data in cursos_iniciales:
     Curso.objects.create(**curso_data)
 
 usuario1 = Usuario.objects.create(
-    correo="usuario1@example.com",
+    email="usuario1@example.com",
     nombre_usuario="pgpipaas1",
     nombre="Juan",
     apellido="Pérez",
@@ -205,7 +206,7 @@ usuario1.set_password("1234")  # Cifra la contraseña
 usuario1.save()  # Guarda los cambios
 
 usuario2 = Usuario.objects.create(
-    correo="usuario2@example.com",
+    email="usuario2@example.com",
     nombre_usuario="pgpipaas2",
     nombre="Ana",
     apellido="López",

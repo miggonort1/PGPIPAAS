@@ -4,14 +4,29 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
-    <!-- Enlace al archivo CSS -->
-    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+    <title>Editar Perfil</title>
+    <link rel="stylesheet" href="{% static 'css/editar_perfil.css' %}">
 </head>
 <body>
-    <div>
-        <h1>Inicia Sesión</h1>
-        
+    <header class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">OpositaConmigo</a>
+        </div>
+        <nav>
+            <!-- Si el usuario está autenticado, mostrar el nombre de usuario y el enlace de cerrar sesión -->
+            {% if request.user.is_authenticated %}
+                <div>
+                    <a href="{% url 'cerrar_sesion' %}">Cerrar sesión</a>
+                </div>
+            {% else %}
+                <a href="{% url 'inicio_sesion' %}">Iniciar sesión</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="profile-container">
+        <h1>Editar Perfil</h1>
+
         <!-- Mostrar mensajes de éxito o error -->
         {% if messages %}
             <div class="messages">
@@ -22,21 +37,16 @@
                 {% endfor %}
             </div>
         {% endif %}
-        
-        <!-- Formulario de inicio de sesión -->
+
+        <!-- Formulario de edición de perfil -->
         <form method="post">
             {% csrf_token %}
-            <label for="username">Nombre de Usuario:</label>
-            <input type="text" id="username" name="username" required>
+            {{ form.as_p }}  <!-- Mostrar el formulario en formato de párrafos -->
 
-            <label for="password">Contraseña:</label>
-            <input type="password" id="password" name="password" required>
-
-            <button type="submit">Iniciar Sesión</button>
+            <button type="submit">Actualizar</button>
         </form>
-        
-        <!-- Enlace para el registro de usuarios -->
-        <p>¿No tienes una cuenta? <a href="{% url 'registro' %}">Regístrate aquí</a></p>
+
+        <p><a href="{% url 'home' %}">Volver al inicio</a></p>
     </div>
 </body>
 </html>

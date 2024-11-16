@@ -7,7 +7,7 @@ class RegistroUsuarioForm(forms.ModelForm):
 
     class Meta:
         model = Usuario
-        fields = ['correo', 'nombre_usuario', 'nombre', 'apellido', 'direccion_entrega', 
+        fields = ['email', 'nombre_usuario', 'nombre', 'apellido', 'direccion_entrega', 
                   'ciudad', 'provincia', 'codigo_postal', 'telefono']
 
     def clean(self):
@@ -19,3 +19,8 @@ class RegistroUsuarioForm(forms.ModelForm):
         if password != confirm_password:
             raise forms.ValidationError("Las contraseñas no coinciden")
         return cleaned_data
+
+class PerfilForm(forms.ModelForm):
+    class Meta:
+        model = Usuario
+        fields = ['nombre', 'apellido', 'direccion_entrega', 'ciudad', 'provincia', 'codigo_postal', 'telefono']
