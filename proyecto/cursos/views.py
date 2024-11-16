@@ -13,22 +13,79 @@ from django.contrib.auth.views import PasswordResetView
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetDoneView
 from datetime import date
+from django.core.paginator import Paginator
+from django.db.models import F
 
 def home(request):
     # Obtener todos los cursos
     cursos = Curso.objects.all()
 
-    # Filtrar cursos
+    # Filtros de cursos
     hoy = date.today()
-    cursos_pronto = cursos.filter(fecha_inicio__gte=hoy).order_by('fecha_inicio')[:6]
+    cursos_pronto = cursos.filter(fecha_inicio__gte=hoy).order_by('fecha_inicio')
     cursos_pocas_plazas = cursos.filter(plazas_disponibles__lt=20).order_by('plazas_disponibles')
     cursos_baratos = cursos.filter(precio__lt=220).order_by('precio')
 
+    # Obtener el orden y dirección (ascendente/descendente)
+    orden = request.GET.get('orden', '')  # Obtener el campo de ordenamiento
+    direccion = request.GET.get('direccion', 'asc')  # Obtener la dirección de orden (ascendente por defecto)
+
+    if orden == 'fecha':
+        if direccion == 'asc':
+            cursos_pronto = cursos_pronto.order_by('fecha_inicio')
+            cursos_pocas_plazas = cursos_pocas_plazas.order_by('fecha_inicio')
+            cursos_baratos = cursos_baratos.order_by('fecha_inicio')
+        elif direccion == 'desc':
+            cursos_pronto = cursos_pronto.order_by('-fecha_inicio')
+            cursos_pocas_plazas = cursos_pocas_plazas.order_by('-fecha_inicio')
+            cursos_baratos = cursos_baratos.order_by('-fecha_inicio')
+    elif orden == 'precio':
+        if direccion == 'asc':
+            cursos_pronto = cursos_pronto.order_by('precio')
+            cursos_pocas_plazas = cursos_pocas_plazas.order_by('precio')
+            cursos_baratos = cursos_baratos.order_by('precio')
+        elif direccion == 'desc':
+            cursos_pronto = cursos_pronto.order_by('-precio')
+            cursos_pocas_plazas = cursos_pocas_plazas.order_by('-precio')
+            cursos_baratos = cursos_baratos.order_by('-precio')
+    elif orden == 'plazas':
+        if direccion == 'asc':
+            cursos_pronto = cursos_pronto.order_by('plazas_disponibles')
+            cursos_pocas_plazas = cursos_pocas_plazas.order_by('plazas_disponibles')
+            cursos_baratos = cursos_baratos.order_by('plazas_disponibles')
+        elif direccion == 'desc':
+            cursos_pronto = cursos_pronto.order_by('-plazas_disponibles')
+            cursos_pocas_plazas = cursos_pocas_plazas.order_by('-plazas_disponibles')
+            cursos_baratos = cursos_baratos.order_by('-plazas_disponibles')
+
+    # Paginación de los cursos
+    pagina = request.GET.get('page', 1)  # Obtener la página actual (por defecto la 1)
+    paginator_pronto = Paginator(cursos_pronto, 6)  # 6 cursos por página
+    paginator_pocas_plazas = Paginator(cursos_pocas_plazas, 6)
+    paginator_baratos = Paginator(cursos_baratos, 6)
+
+    try:
+        cursos_pronto_pag = paginator_pronto.page(pagina)
+    except:
+        cursos_pronto_pag = paginator_pronto.page(1)
+
+    try:
+        cursos_pocas_plazas_pag = paginator_pocas_plazas.page(pagina)
+    except:
+        cursos_pocas_plazas_pag = paginator_pocas_plazas.page(1)
+
+    try:
+        cursos_baratos_pag = paginator_baratos.page(pagina)
+    except:
+        cursos_baratos_pag = paginator_baratos.page(1)
+
     # Pasar los cursos al contexto de la plantilla
     context = {
-        'cursos_pronto': cursos_pronto,
-        'cursos_pocas_plazas': cursos_pocas_plazas,
-        'cursos_baratos': cursos_baratos,
+        'cursos_pronto': cursos_pronto_pag,
+        'cursos_pocas_plazas': cursos_pocas_plazas_pag,
+        'cursos_baratos': cursos_baratos_pag,
+        'orden': orden,  # Pasar el filtro de orden
+        'direccion': direccion,  # Pasar la dirección de orden
     }
 
     return render(request, 'cursos/home.html', context)
