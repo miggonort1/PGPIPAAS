@@ -110,6 +110,13 @@ def cerrar_sesion(request):
     logout(request)  # Cierra la sesión del usuario
     return redirect('home')  # Redirige a la página de inicio después de cerrar sesión
 
+def buscar_cursos(request):
+    query = request.GET.get('q', '')
+    resultados = []
+    if query:
+        resultados = Curso.objects.filter(nombre__icontains=query)
+    return render(request, 'cursos/buscar_cursos.html', {'query': query, 'resultados': resultados})
+
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'cursos/password_reset.html'  # Tu plantilla HTML para la vista
     success_url = reverse_lazy('password_reset_done')

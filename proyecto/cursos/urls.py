@@ -13,4 +13,5 @@ urlpatterns = [
     path('cerrar_sesion/', views.cerrar_sesion, name='cerrar_sesion'),
     path('password_reset/', CustomPasswordResetView.as_view(), name='recuperar_contrasena'),
     path('password_reset_done/', CustomPasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('buscar_cursos/', views.buscar_cursos, name='buscar_cursos'),
 ]

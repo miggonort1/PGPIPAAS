@@ -1,0 +1,196 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fuente general y colores */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f7f4ef;
+    color: #333;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #49777b;
+    padding: 15px 20px;
+    color: #fff;
+}
+
+.navbar .logo {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.navbar .search-bar {
+    border: 2px solid #d2c8aa;
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+.navbar-icons .icon {
+    font-size: 18px;
+    color: #fff;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+/* Secciones */
+.course-section {
+    padding: 40px;
+    margin: 20px auto;
+    max-width: 1200px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.course-section h2 {
+    color: #f67103;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Cards */
+.course-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-around;
+}
+
+.course-card {
+    background-color: #d2c8aa;
+    width: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.course-card:hover {
+    transform: translateY(-10px);
+}
+
+.course-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.course-card h3 {
+    font-size: 18px;
+    margin: 10px;
+    color: #49777b;
+}
+
+.course-card p {
+    font-size: 14px;
+    margin: 10px;
+    color: #333;
+}
+
+.profile-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none; /* Sin subrayado */
+    color: #333; /* Color neutro */
+    font-size: 16px;
+    font-weight: 500;
+    gap: 8px; /* Espacio entre el ícono y el texto */
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.profile-link i {
+    font-size: 22px; /* Tamaño del ícono */
+    color: #d4800c; /* Naranja oscuro */
+}
+
+.profile-link span {
+    color: #333; /* Color del texto */
+}
+
+/* Hover para realzar el elemento */
+.profile-link:hover {
+    background-color: #f2ebe1; /* Fondo claro al pasar el ratón */
+    color: #d4800c; /* Naranja oscuro */
+}
+
+.profile-link:hover i {
+    color: #f67103; /* Naranja más vivo */
+}
+/* Enlace carrito estilizado */
+.cart-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none; /* Sin subrayado */
+    color: #333; /* Color neutro */
+    font-size: 16px;
+    font-weight: 500;
+    gap: 8px; /* Espacio entre el ícono y el texto */
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.cart-link i {
+    font-size: 22px; /* Tamaño del ícono */
+    color: #d4800c; /* Naranja oscuro */
+}
+
+.cart-link span {
+    color: #333; /* Color del texto */
+}
+
+/* Hover para realzar el elemento */
+.cart-link:hover {
+    background-color: #f2ebe1; /* Fondo claro al pasar el ratón */
+    color: #d4800c; /* Naranja oscuro */
+}
+
+.cart-link:hover i {
+    color: #f67103; /* Naranja más vivo */
+}
+
+.search-bar-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-bar-form input {
+    border: 2px solid #d2c8aa;
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-size: 14px;
+    flex: 1;
+}
+
+.search-bar-form button {
+    background-color: #49777b;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.search-bar-form button i {
+    font-size: 16px;
+}
+
+.resultados-titulo {
+    text-align: center;
+    font-size: 16px; 
+    font-weight: 400;
+    margin: 20px 0; 
+
+}
