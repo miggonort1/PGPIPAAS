@@ -38,7 +38,7 @@
         </nav>
     </header>
 
-    <!-- Secciones de cursos -->
+
     <main class="courses-container">
         <section id="soon-courses" class="course-section">
             <h2>Cursos que empiezan pronto</h2>
@@ -46,7 +46,7 @@
                 {% for curso in cursos_pronto %}
                     <div class="course-card">
                         <img src="{{ curso.imagen }}" alt="Imagen del curso">
-                        <h3>{{ curso.nombre }}</h3>
+                        <h3><a href="/curso/{{ curso.id }}">{{ curso.nombre }}</a></h3>
                         <p>Fecha de inicio: {{ curso.fecha_inicio }}</p>
                         <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
                         <p>Precio: {{ curso.precio }}€</p>
@@ -63,7 +63,7 @@
                 {% for curso in cursos_pocas_plazas %}
                     <div class="course-card">
                         <img src="{{ curso.imagen }}" alt="Imagen del curso">
-                        <h3>{{ curso.nombre }}</h3>
+                        <h3><a href="/curso/{{ curso.id }}">{{ curso.nombre }}</a></h3>
                         <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
                         <p>Precio: {{ curso.precio }}€</p>
                     </div>
@@ -79,7 +79,7 @@
                 {% for curso in cursos_baratos %}
                     <div class="course-card">
                         <img src="{{ curso.imagen }}" alt="Imagen del curso">
-                        <h3>{{ curso.nombre }}</h3>
+                        <h3><a href="/curso/{{ curso.id }}">{{ curso.nombre }}</a></h3>
                         <p>Precio: {{ curso.precio }}€</p>
                         <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
                     </div>

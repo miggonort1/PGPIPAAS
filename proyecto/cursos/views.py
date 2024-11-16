@@ -1,6 +1,6 @@
 # views.py
 from .models import Curso
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
@@ -105,6 +105,11 @@ def editar_perfil(request):
         messages.error(request, "Debes iniciar sesión para acceder a tu perfil.")
         return redirect('perfil')  # Redirige a la página de inicio de sesión (ajusta la URL según corresponda)
     
+
+def detalle_curso(request, id):
+    # Obtener el curso o devolver un 404 si no existe
+    curso = get_object_or_404(Curso, id=id)
+    return render(request, 'cursos/detalle_curso.html', {'curso': curso})
 
 def cerrar_sesion(request):
     logout(request)  # Cierra la sesión del usuario
