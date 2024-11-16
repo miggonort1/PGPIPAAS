@@ -32,7 +32,7 @@
         <div class="course-list">
             {% for curso in cursos %}
                 <div class="course-card">
-                    <h3>{{ curso.nombre }}</h3>
+                    <h3><a href="/curso/{{ curso.id }}">{{ curso.nombre }}</a></h3>
                     <p>Fecha de inicio: {{ curso.fecha_inicio }}</p>
                     <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
                 </div>

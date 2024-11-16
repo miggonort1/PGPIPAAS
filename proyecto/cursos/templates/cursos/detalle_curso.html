@@ -1,0 +1,27 @@
+<!-- templates/cursos/detalle_curso.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ curso.nombre }}</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+    <header>
+        <h1>{{ curso.nombre }}</h1>
+    </header>
+    <section class="course-details">
+        <img src="{{ curso.imagen }}" alt="Imagen de {{ curso.nombre }}">
+        <p><strong>Descripción:</strong> {{ curso.descripcion }}</p>
+        <p><strong>Fecha de inicio:</strong> {{ curso.fecha_inicio }}</p>
+        <p><strong>Duración:</strong> {{ curso.duracion_semanas }} semanas</p>
+        <p><strong>Plazas disponibles:</strong> {{ curso.plazas_disponibles }}</p>
+        <p><strong>Precio:</strong> {{ curso.precio }} €</p>
+        <p><strong>Departamento:</strong> {{ curso.get_departamento_display }}</p>
+        <p><strong>Sector laboral:</strong> {{ curso.get_sector_laboral_display }}</p>
+    </section>
+    <a href="/">Volver al inicio</a>
+</body>
+</html>
