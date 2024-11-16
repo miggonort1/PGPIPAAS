@@ -12,19 +12,27 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetDoneView
-
+from datetime import date
 
 def home(request):
-    # Obtener todos los cursos de la base de datos
-    cursos = Curso.objects.all()  # Esto obtiene todos los cursos
+    # Obtener todos los cursos
+    cursos = Curso.objects.all()
+
+    # Filtrar cursos
+    hoy = date.today()
+    cursos_pronto = cursos.filter(fecha_inicio__gte=hoy).order_by('fecha_inicio')[:6]
+    cursos_pocas_plazas = cursos.filter(plazas_disponibles__lt=20).order_by('plazas_disponibles')
+    cursos_baratos = cursos.filter(precio__lt=220).order_by('precio')
 
     # Pasar los cursos al contexto de la plantilla
     context = {
-        'cursos': cursos,
+        'cursos_pronto': cursos_pronto,
+        'cursos_pocas_plazas': cursos_pocas_plazas,
+        'cursos_baratos': cursos_baratos,
     }
-    
-    return render(request, 'cursos/home.html', context)
 
+    return render(request, 'cursos/home.html', context)
+    
 def inicioSesion(request):
     messages.get_messages(request).used = True
     if request.method == 'POST':

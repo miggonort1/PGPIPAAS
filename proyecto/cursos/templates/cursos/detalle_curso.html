@@ -1,4 +1,3 @@
-<!-- templates/cursos/detalle_curso.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,21 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ curso.nombre }}</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <header>
-        <h1>{{ curso.nombre }}</h1>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo">OpositaConmigo</div>
+        <input type="text" class="search-bar" placeholder="Buscar curso...">
+        <nav class="navbar-icons">
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'perfil' %}" class="profile-link">
+                    <i class="fas fa-user"></i><span>{{ request.user.nombre_usuario }}</span>
+                </a>
+            {% else %}
+                <a href="{% url 'inicioSesion' %}" class="profile-link">
+                    <i class="fas fa-user"></i><span>Iniciar Sesión</span>
+                </a>
+            {% endif %}
+            <a href="#" class="cart-link">
+                <i class="fas fa-shopping-cart"></i><span>Carrito</span>
+            </a>
+        </nav>
     </header>
-    <section class="course-details">
-        <img src="{{ curso.imagen }}" alt="Imagen de {{ curso.nombre }}">
-        <p><strong>Descripción:</strong> {{ curso.descripcion }}</p>
-        <p><strong>Fecha de inicio:</strong> {{ curso.fecha_inicio }}</p>
-        <p><strong>Duración:</strong> {{ curso.duracion_semanas }} semanas</p>
-        <p><strong>Plazas disponibles:</strong> {{ curso.plazas_disponibles }}</p>
-        <p><strong>Precio:</strong> {{ curso.precio }} €</p>
-        <p><strong>Departamento:</strong> {{ curso.get_departamento_display }}</p>
-        <p><strong>Sector laboral:</strong> {{ curso.get_sector_laboral_display }}</p>
+
+    <!-- Sección de detalles del curso -->
+    <section class="course-section">
+        <h2>{{ curso.nombre }}</h2>
+        <div class="course-details">
+            <img src="{{ curso.imagen }}" alt="Imagen de {{ curso.nombre }}">
+            <p><strong>Descripción:</strong> {{ curso.descripcion }}</p>
+            <p><strong>Fecha de inicio:</strong> {{ curso.fecha_inicio }}</p>
+            <p><strong>Duración:</strong> {{ curso.duracion_semanas }} semanas</p>
+            <p><strong>Plazas disponibles:</strong> {{ curso.plazas_disponibles }}</p>
+            <p><strong>Precio:</strong> {{ curso.precio }} €</p>
+            <p><strong>Departamento:</strong> {{ curso.get_departamento_display }}</p>
+            <p><strong>Sector laboral:</strong> {{ curso.get_sector_laboral_display }}</p>
+        </div>
+        <a href="/" class="back-link">Volver al inicio</a>
     </section>
-    <a href="/">Volver al inicio</a>
 </body>
 </html>
