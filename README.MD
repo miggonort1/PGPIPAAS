@@ -47,7 +47,10 @@ PARA ARRANCAR EL SERVER LOCAL
 
 
 
-
+CORREO:
+- Email: pgpipaas@gmail.com
+- Contraseña: pgpipaas1234
+- Contraseña(aplicacion): jqbb eueg fwfq gpaw
 
 
  USUARIO            CONTRASEÑA

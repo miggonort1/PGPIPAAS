@@ -13,6 +13,7 @@ from django.contrib.auth.views import PasswordResetView
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetDoneView
 from datetime import date
+from django.contrib.auth import views as auth_views
 from django.core.paginator import Paginator
 from django.db.models import F
 
@@ -188,10 +189,16 @@ def buscar_cursos(request):
     return render(request, 'cursos/buscar_cursos.html', {'query': query, 'resultados': resultados, 'departamento_choices': Curso.DEPARTAMENTO_CHOICES,
         'sector_laboral_choices': Curso.SECTOR_LABORAL_CHOICES,})
 
-
-class CustomPasswordResetView(PasswordResetView):
-    template_name = 'cursos/password_reset.html'  # Tu plantilla HTML para la vista
+class PasswordResetView(auth_views.PasswordResetView):
+    template_name = 'cursos/password_reset.html'
     success_url = reverse_lazy('password_reset_done')
 
-class CustomPasswordResetDoneView(PasswordResetDoneView):
+class PasswordResetDoneView(auth_views.PasswordResetDoneView):
     template_name = 'cursos/password_reset_done.html'
+
+class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = 'cursos/password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+
+class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = 'cursos/password_reset_complete.html'
