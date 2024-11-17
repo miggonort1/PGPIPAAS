@@ -208,3 +208,59 @@ body {
     margin: 20px 0; 
 
 }
+
+.search-filters-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Espaciado entre los elementos */
+    align-items: center; /* Alinear verticalmente */
+    margin: 20px 0; /* Separación del resto de la página */
+}
+
+/* Campo de búsqueda */
+.search-bar {
+    flex: 1; /* Ocupará todo el espacio disponible */
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-width: 200px;
+}
+
+/* Filtros */
+.filter-select {
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+/* Botón de búsqueda */
+.search-button {
+    padding: 8px 16px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #ffffff28;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: #49777b;
+}
+
+.logo-link {
+    color: #ffffff; /* Texto blanco */
+    text-decoration: none; /* Elimina el subrayado */
+    font-size: 24px; /* Tamaño de fuente ajustable */
+    font-weight: 600; /* Grosor de la fuente ajustable */
+    transition: color 0.3s ease; /* Transición suave para el efecto hover */
+}
+
+/* Efecto al pasar el cursor sobre el enlace */
+.logo-link:hover {
+    color: #dddddd; /* Color al hacer hover (opcional) */
+}

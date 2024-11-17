@@ -10,34 +10,38 @@ class Curso(models.Model):
     precio = models.IntegerField()
     imagen = models.CharField(max_length=200, default="https://via.placeholder.com/150")
 
+    DEPARTAMENTO_CHOICES = [
+        ('MD', 'Madrid'),
+        ('BCN', 'Barcelona'),
+        ('VAL', 'Valencia'),
+        ('SEV', 'Sevilla'),
+        ('ZGZ', 'Zaragoza'),
+        ('MAL', 'Málaga'),
+        ('BIL', 'Bilbao'),
+        ('VLL', 'Valladolid'),
+    ]
+
+    SECTOR_LABORAL_CHOICES = [
+        ('ADM', 'Administración Pública'),
+        ('JUS', 'Justicia'),
+        ('SAL', 'Sanidad'),
+        ('EDU', 'Educación'),
+        ('POL', 'Policía Nacional'),
+        ('GUA', 'Guardia Civil'),
+        ('BOM', 'Bomberos'),
+        ('FIS', 'Fiscalía'),
+        ('PRI', 'Prisiones'),
+        ('TRA', 'Tráfico'),
+    ]
+
     departamento = models.CharField(
         max_length=3,
-        choices=[
-            ('MD', 'Madrid'),
-            ('BCN', 'Barcelona'),
-            ('VAL', 'Valencia'),
-            ('SEV', 'Sevilla'),
-            ('ZGZ', 'Zaragoza'),
-            ('MAL', 'Málaga'),
-            ('BIL', 'Bilbao'),
-            ('VLL', 'Valladolid'),
-        ],
+        choices=DEPARTAMENTO_CHOICES,
         default='MD'
     )
     sector_laboral = models.CharField(
         max_length=3,
-        choices=[
-            ('ADM', 'Administración Pública'),
-            ('JUS', 'Justicia'),
-            ('SAL', 'Sanidad'),
-            ('EDU', 'Educación'),
-            ('POL', 'Policía Nacional'),
-            ('GUA', 'Guardia Civil'),
-            ('BOM', 'Bomberos'),
-            ('FIS', 'Fiscalía'),
-            ('PRI', 'Prisiones'),
-            ('TRA', 'Tráfico'),
-        ],
+        choices=SECTOR_LABORAL_CHOICES,
         default='ADM'
     )
 

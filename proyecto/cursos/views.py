@@ -13,6 +13,7 @@ from django.contrib.auth.views import PasswordResetView
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetDoneView
 from datetime import date
+from django.contrib.auth import views as auth_views
 from django.core.paginator import Paginator
 from django.db.models import F
 
@@ -174,14 +175,33 @@ def cerrar_sesion(request):
 
 def buscar_cursos(request):
     query = request.GET.get('q', '')
-    resultados = []
+    departamento = request.GET.get('departamento', '')
+    sector_laboral = request.GET.get('sector_laboral', '')
+    
+    # Si no se proporciona una búsqueda (query vacío), obtener todos los cursos
+    resultados = Curso.objects.all()
+
     if query:
         resultados = Curso.objects.filter(nombre__icontains=query)
-    return render(request, 'cursos/buscar_cursos.html', {'query': query, 'resultados': resultados})
 
-class CustomPasswordResetView(PasswordResetView):
-    template_name = 'cursos/password_reset.html'  # Tu plantilla HTML para la vista
+    if departamento:
+        resultados = resultados.filter(departamento=departamento)
+
+    if sector_laboral:
+        resultados = resultados.filter(sector_laboral=sector_laboral)
+    return render(request, 'cursos/buscar_cursos.html', {'query': query, 'resultados': resultados, 'departamento_choices': Curso.DEPARTAMENTO_CHOICES,
+        'sector_laboral_choices': Curso.SECTOR_LABORAL_CHOICES,})
+
+class PasswordResetView(auth_views.PasswordResetView):
+    template_name = 'cursos/password_reset.html'
     success_url = reverse_lazy('password_reset_done')
 
-class CustomPasswordResetDoneView(PasswordResetDoneView):
+class PasswordResetDoneView(auth_views.PasswordResetDoneView):
     template_name = 'cursos/password_reset_done.html'
+
+class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = 'cursos/password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+
+class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = 'cursos/password_reset_complete.html'
