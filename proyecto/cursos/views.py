@@ -177,7 +177,10 @@ def buscar_cursos(request):
     query = request.GET.get('q', '')
     departamento = request.GET.get('departamento', '')
     sector_laboral = request.GET.get('sector_laboral', '')
-    resultados = []
+    
+    # Si no se proporciona una búsqueda (query vacío), obtener todos los cursos
+    resultados = Curso.objects.all()
+
     if query:
         resultados = Curso.objects.filter(nombre__icontains=query)
 
