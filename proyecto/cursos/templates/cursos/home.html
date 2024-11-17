@@ -31,15 +31,33 @@
                 {% endif %}
             </div>
             <div class="icon cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Carrito</span>
-                </a>
+                <i class="fas fa-shopping-cart"></i>
+                <span>Carrito</span>
             </div>
         </nav>
     </header>
 
-
     <main class="courses-container">
+        <!-- Filtros de ordenamiento -->
+        <section id="sorting" class="sorting-section">
+            <form method="GET">
+                <label for="orden">Ordenar por:</label>
+                <select name="orden" id="orden" onchange="this.form.submit()">
+                    <option value="">Seleccione...</option>
+                    <option value="fecha" {% if orden == 'fecha' %} selected {% endif %}>Fecha de inicio</option>
+                    <option value="precio" {% if orden == 'precio' %} selected {% endif %}>Precio</option>
+                    <option value="plazas" {% if orden == 'plazas' %} selected {% endif %}>Plazas disponibles</option>
+                </select>
+                
+                <label for="direccion">Dirección:</label>
+                <select name="direccion" id="direccion" onchange="this.form.submit()">
+                    <option value="asc" {% if direccion == 'asc' %} selected {% endif %}>Ascendente</option>
+                    <option value="desc" {% if direccion == 'desc' %} selected {% endif %}>Descendente</option>
+                </select>
+            </form>
+        </section>
+
+        <!-- Cursos próximos -->
         <section id="soon-courses" class="course-section">
             <h2>Cursos que empiezan pronto</h2>
             <div class="course-list">
@@ -54,6 +72,25 @@
                 {% empty %}
                     <p>No hay cursos próximos disponibles.</p>
                 {% endfor %}
+            </div>
+
+            <!-- Paginación -->
+            <div class="pagination">
+                <span class="step-links">
+                    {% if cursos_pronto.has_previous %}
+                        <a href="?page=1&orden={{ orden }}&direccion={{ direccion }}">Primera</a>
+                        <a href="?page={{ cursos_pronto.previous_page_number }}&orden={{ orden }}&direccion={{ direccion }}">Anterior</a>
+                    {% endif %}
+                    
+                    <span class="current">
+                        Página {{ cursos_pronto.number }} de {{ cursos_pronto.paginator.num_pages }}.
+                    </span>
+
+                    {% if cursos_pronto.has_next %}
+                        <a href="?page={{ cursos_pronto.next_page_number }}&orden={{ orden }}&direccion={{ direccion }}">Siguiente</a>
+                        <a href="?page={{ cursos_pronto.paginator.num_pages }}&orden={{ orden }}&direccion={{ direccion }}">Última</a>
+                    {% endif %}
+                </span>
             </div>
         </section>
 
