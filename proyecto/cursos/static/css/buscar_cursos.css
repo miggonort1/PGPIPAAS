@@ -12,6 +12,20 @@ body {
     color: #333;
 }
 
+.home-link {
+    font-size: 30px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    transition: transform 0.3s ease, color 0.3s ease;
+    font-family: 'Lobster', cursive; /* Usa la fuente importada */
+}
+
+.home-link:hover {
+    color: #fddc00;
+    transform: scale(1.05);
+}
 /* Navbar */
 .navbar {
     display: flex;

@@ -3,7 +3,7 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 .background {
@@ -62,6 +62,7 @@ h1 {
     font-size: 28px;
     color: #49777b;
     margin-bottom: 10px;
+    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 .subtitle {
@@ -132,6 +133,7 @@ input[type="text"]:focus, input[type="password"]:focus {
     color: #49777b;
     font-weight: 600;
     text-decoration: none;
+    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 .extra-links a:hover {

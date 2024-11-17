@@ -11,8 +11,23 @@
 </head>
 <body>
     <header class="navbar">
-        <div class="logo">
-            <a href="{% url 'home' %}" class="logo-link">OpositaConmigo</a>
+        <div class="logo"><a href="{% url 'home' %}" class="home-link">OpositaConmigo</a></div> 
+        <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
+        <input type="text" class="search-bar" name="q" placeholder="Buscar curso..." value="{{ query }}">
+    </form>
+    <nav class="navbar-icons">
+        <div class="icon profile">
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'perfil' %}" class="profile-link">
+                    <i class="fas fa-user"></i>
+                    <span>{{ request.user.nombre_usuario }}</span>
+                </a>
+            {% else %}
+                <a href="{% url 'inicioSesion' %}" class="profile-link">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Perfil</span>
+                </a>
+            {% endif %}
         </div>
         <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
             <!-- Campo de búsqueda -->    
