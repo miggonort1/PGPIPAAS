@@ -3,6 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 /* Estilo de la cabecera */

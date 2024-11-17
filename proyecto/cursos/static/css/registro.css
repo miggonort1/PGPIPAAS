@@ -1,8 +1,8 @@
 /* Estilos globales */
 body {
-    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
+    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 /* Fondo de la página */
@@ -137,7 +137,7 @@ h1 {
 
 button.btn-login {
     width: 100%;
-    padding: 14px;
+    padding: 10px;
     font-size: 16px;
     background-color: #007bff;
     color: white;
@@ -154,7 +154,7 @@ button.btn-login:hover {
 .extra-links p {
     font-size: 14px;
     color: #49777b;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .extra-links a {
