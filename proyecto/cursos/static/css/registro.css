@@ -2,7 +2,7 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
+    font-family: 'Arial Nova', sans-serif;
 }
 
 /* Fondo de la página */
@@ -32,7 +32,6 @@ body {
     font-weight: 600;
     text-align: center;
     transition: transform 0.3s ease, color 0.3s ease;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 .home-link:hover {
@@ -63,13 +62,13 @@ body {
 
 h1 {
     font-size: 32px;
-    color: #49777b;
+    color: #3669ac;
 }
 
 .subtitle {
     font-size: 16px;
     margin-bottom: 1px;
-    color: #49777b;
+    color: #3669ac;
 }
 
 /* Mensajes de error y éxito */
@@ -103,7 +102,7 @@ h1 {
 
 .form-group label {
     font-size: 14px;
-    color: #49777b;
+    color: #3669ac;
     width: 100%;
 }
 
@@ -153,7 +152,7 @@ button.btn-login:hover {
 
 .extra-links p {
     font-size: 14px;
-    color: #49777b;
+    color: #3669ac;
     margin-top: 10px;
 }
 

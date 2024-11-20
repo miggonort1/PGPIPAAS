@@ -7,7 +7,7 @@
 
 /* Fuente general y colores */
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Arial Nova', sans-serif;
     background-color: #f7f4ef;
     color: #333;
 }
@@ -19,7 +19,6 @@ body {
     font-weight: 600;
     text-align: center;
     transition: transform 0.3s ease, color 0.3s ease;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 .home-link:hover {
@@ -31,7 +30,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #49777b;
+    background-color: #3669ac;
     padding: 15px 20px;
     color: #fff;
 }
@@ -101,7 +100,7 @@ body {
 .course-card h3 {
     font-size: 18px;
     margin: 10px;
-    color: #49777b;
+    color: #3669ac;
 }
 
 .course-card p {
@@ -189,7 +188,7 @@ body {
 }
 
 .search-bar-form button {
-    background-color: #49777b;
+    background-color: #3669ac;
     color: #fff;
     border: none;
     padding: 8px 15px;
@@ -249,7 +248,7 @@ body {
 }
 
 .search-button:hover {
-    background-color: #49777b;
+    background-color: #3669ac;
 }
 
 .logo-link {
