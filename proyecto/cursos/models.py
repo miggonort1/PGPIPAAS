@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.templatetags.static import static
 
 class Curso(models.Model):
     nombre = models.CharField(max_length=200)
@@ -8,7 +9,7 @@ class Curso(models.Model):
     duracion_semanas = models.IntegerField()
     plazas_disponibles = models.IntegerField()
     precio = models.IntegerField()
-    imagen = models.CharField(max_length=200, default="https://via.placeholder.com/150")
+    imagen = models.CharField(max_length=200, default=static('images/bomberos.jpg'))
 
     DEPARTAMENTO_CHOICES = [
         ('MD', 'Madrid'),

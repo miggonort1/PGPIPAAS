@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="background-blur"></div> 
     <!-- Navbar -->
     <header class="navbar">
         <div class="home-link">OpositaConmigo</div>
@@ -63,12 +64,14 @@
             <div class="course-list">
                 {% for curso in cursos_pronto %}
                     <div class="course-card">
+                        <a href="/curso/{{ curso.id }}">
                         <img src="{{ curso.imagen }}" alt="Imagen del curso">
-                        <h3><a href="/curso/{{ curso.id }}">{{ curso.nombre }}</a></h3>
+                        <h3>{{ curso.nombre }}</h3>
                         <p>Fecha de inicio: {{ curso.fecha_inicio }}</p>
                         <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
                         <p>Precio: {{ curso.precio }}€</p>
                     </div>
+                </a>
                 {% empty %}
                     <p>No hay cursos próximos disponibles.</p>
                 {% endfor %}

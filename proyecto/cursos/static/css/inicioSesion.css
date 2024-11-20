@@ -3,7 +3,7 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
+    font-family: 'Arial Nova', sans-serif;
 }
 
 .background {
@@ -29,7 +29,6 @@ body, html {
     font-weight: 600;
     text-align: center;
     transition: transform 0.3s ease, color 0.3s ease;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 .home-link:hover {
@@ -60,14 +59,13 @@ body, html {
 
 h1 {
     font-size: 28px;
-    color: #49777b;
+    color: #3669ac;
     margin-bottom: 10px;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 .subtitle {
     font-size: 16px;
-    color: #49777b;
+    color: #3669ac;
     margin-bottom: 30px;
 }
 
@@ -84,7 +82,7 @@ form {
 
 label {
     font-size: 14px;
-    color: #49777b;
+    color: #3669ac;
     margin-bottom: 8px;
     display: block;
 }
@@ -100,7 +98,7 @@ input[type="text"], input[type="password"] {
 }
 
 input[type="text"]:focus, input[type="password"]:focus {
-    border-color: #49777b;
+    border-color: #3669ac;
     box-shadow: 0px 0px 8px rgba(73, 119, 123, 0.2);
     outline: none;
 }
@@ -130,10 +128,9 @@ input[type="text"]:focus, input[type="password"]:focus {
 }
 
 .extra-links a {
-    color: #49777b;
+    color: #3669ac;
     font-weight: 600;
     text-decoration: none;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 .extra-links a:hover {
