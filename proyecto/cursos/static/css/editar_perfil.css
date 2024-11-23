@@ -1,119 +1,217 @@
-/* Reset global */
+/* Reset básico */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+/* Fuente general y colores */
+body {
     font-family: 'Arial Nova', sans-serif;
+    background-color: #ebebeb;
+    color: #333;
+    padding-top: 60px; /* Para evitar que el contenido quede tapado por la navbar */
 }
 
-/* Estilo de la cabecera */
-header.navbar {
-    background-color: #007bff;
-    padding: 15px 30px;
-    text-align: left;
-    position: sticky;
+.background-blur {
+    position: fixed;
     top: 0;
-    z-index: 10;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url("../images/fondo2.jpg");
+    background-size: cover;
+    background-position: center;
+    filter: blur(1px);
+    opacity: 0.45;
 }
 
-header .logo {
-    font-size: 1.8rem;
-    color: white;
-    font-weight: bold;
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2C3E50;
+    padding: 15px 20px;
+    color: #fff;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 11%;
 }
 
-header .logo a {
+.navbar .logo {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.navbar a {
     text-decoration: none;
-    color: white;
+    color: #fff;
+    font-size: 24px;
 }
 
-/* Contenedor principal de perfil */
+.navbar a:hover {
+    color: #27AE60;
+}
+
+/* Contenedor de perfil */
 .profile-container {
-    width: 60%;
-    margin: 40px auto;
-    background-color: #f9f9f9;
+    max-width: 800px;
+    margin: 60px auto 40px;
+    background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
 }
 
-/* Estilo de los títulos */
+/* Títulos */
 h1 {
-    font-size: 2rem;
+    color: #2C3E50;
+    font-size: 28px;
     margin-bottom: 20px;
-    color: #333;
+    text-align: center;
 }
 
-/* Estilos para los mensajes */
+/* Mensajes de éxito o error */
 .messages {
     margin-bottom: 20px;
 }
 
 .message {
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 8px;
     margin-bottom: 10px;
+    font-size: 16px;
 }
 
 .message.success {
     background-color: #28a745;
-    color: white;
+    color: #fff;
 }
 
 .message.error {
-    background-color: #dc3545;
-    color: white;
+    background-color: #f44336;
+    color: #fff;
 }
 
-/* Estilo del formulario */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+/* Formulario de edición */
+.form-container {
+    margin-bottom: 20px;
 }
 
-form input,
-form select,
-form textarea {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    transition: border 0.3s;
-}
-
-form input:focus,
-form select:focus,
-form textarea:focus {
-    border: 1px solid #007bff;
-    outline: none;
+form p {
+    font-size: 16px;
+    margin-bottom: 10px;
 }
 
 button {
-    padding: 12px 18px;
-    background-color: #007bff;
-    color: white;
+    background-color: #27AE60;
+    color: #fff;
+    padding: 12px 20px;
+    font-size: 16px;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 1.2rem;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+    width: 100%;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #27AE60;;
 }
 
-/* Enlace de volver */
-p a {
-    color: #007bff;
-    font-size: 1rem;
+/* Enlaces */
+.home-link {
+    font-size: 18px;
+    color: #2C3E50;
     text-decoration: none;
+    display: inline-block;
     margin-top: 20px;
+    text-align: center;
+    transition: color 0.3s ease;
 }
 
-p a:hover {
-    text-decoration: underline;
+.home-link:hover {
+    color: #27AE60;
+}/* Estilos compactos para los campos de texto */
+/* Estilos compactos para los campos de texto */
+input, textarea {
+    font-size: 14px;           /* Tamaño de fuente más pequeño */
+    padding: 8px 14px;         /* Menos espacio interno */
+    margin: 6px 0;             /* Espaciado reducido entre campos */
+    width: 100%;               /* Ocupa todo el espacio disponible */
+    background-color: #f8f8f8; /* Fondo gris claro */
+    border: 1px solid #ccc;    /* Borde gris suave */
+    border-radius: 6px;        /* Bordes redondeados suaves */
+    box-sizing: border-box;    /* Asegura que el padding se incluya en el tamaño total */
+    transition: all 0.2s ease; /* Transición más rápida */
+    color: #333;               /* Color del texto */
+}
+
+/* Efectos al hacer foco en los campos de texto */
+input:focus, textarea:focus {
+    border-color: #27AE60;     /* Borde azul claro al enfocar */
+    outline: none;             /* Quitar el borde por defecto del foco */
+    box-shadow: 0 0 3px rgba(100, 181, 246, 0.5); /* Sombra suave azul */
+}
+
+/* Estilo para los campos deshabilitados o en lectura */
+input[disabled], textarea[disabled] {
+    background-color: #f2f2f2; /* Fondo gris claro */
+    border-color: #ddd;        /* Borde gris claro */
+    color: #aaa;               /* Texto gris */
+}
+
+/* Estilo para los campos con texto de ejemplo (placeholder) */
+input::placeholder, textarea::placeholder {
+    color: #BDC3C7;            /* Color del texto del placeholder */
+    font-style: italic;        /* Cursiva para el placeholder */
+}
+
+/* Ajustes a las áreas de texto */
+textarea {
+    resize: vertical;           /* Permite redimensionar verticalmente */
+    min-height: 120px;          /* Altura mínima más pequeña */
+}
+
+/* Estilo para los botones de acción cerca de los campos de texto */
+input[type="submit"], button {
+    font-size: 14px;            /* Tamaño de texto reducido */
+    padding: 8px 14px;          /* Menos espacio en los botones */
+    border: none;
+    border-radius: 6px;         /* Bordes suaves */
+    cursor: pointer;
+    background-color: #27AE60;  /* Color azul claro para los botones */
+    color: #fff;
+    transition: background-color 0.2s ease; /* Transición rápida */
+}
+
+input[type="submit"]:hover, button:hover {
+    background-color: #1c8347;  /* Cambio de color al pasar el ratón */
+}
+
+/* Ajustes para los inputs con iconos dentro */
+.input-with-icon {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 6px;
+    position: relative;
+}
+
+.input-with-icon input {
+    flex: 1;
+    padding-left: 25px; /* Espacio para el icono */
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 8px;
+    color: #BDC3C7;
+    font-size: 16px;
 }
