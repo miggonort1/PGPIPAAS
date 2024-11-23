@@ -63,11 +63,13 @@
                 {% if resultados %}
                     {% for curso in resultados %}
                         <div class="course-card">
+                            <a href="/curso/{{ curso.id }}">
                             <img src="{{ curso.imagen }}" alt="Imagen del curso">
                             <h3>{{ curso.nombre }}</h3>
                             <p>Fecha de inicio: {{ curso.fecha_inicio }}</p>
                             <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
                             <p>Precio: {{ curso.precio }}€</p>
+                            </a>
                         </div>
                     {% endfor %}
                 {% else %}
