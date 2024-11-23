@@ -2,10 +2,10 @@
 FROM python:3.12-slim
 
 # Establecer el directorio de trabajo
-WORKDIR /app
+WORKDIR /proyecto
 
 # Copiar el contenido del directorio actual al contenedor
-COPY . /app
+COPY . /proyecto
 
 # Instalar las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
