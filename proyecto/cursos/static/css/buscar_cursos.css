@@ -263,3 +263,28 @@ body {
 .logo-link:hover {
     color: #dddddd; /* Color al hacer hover (opcional) */
 }
+
+
+.add-to-cart-btn {
+    background-color: #3669ac;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 10px auto;
+    display: block;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #2b5385;
+    transform: scale(1.05);
+}
+
+.add-to-cart-btn:active {
+    background-color: #244469;
+    transform: scale(0.95);
+}
