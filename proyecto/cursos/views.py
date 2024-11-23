@@ -177,6 +177,7 @@ def buscar_cursos(request):
     query = request.GET.get('q', '')
     departamento = request.GET.get('departamento', '')
     sector_laboral = request.GET.get('sector_laboral', '')
+    fabricante = request.GET.get('fabricante', '')
     
     # Si no se proporciona una búsqueda (query vacío), obtener todos los cursos
     resultados = Curso.objects.all()
@@ -189,8 +190,11 @@ def buscar_cursos(request):
 
     if sector_laboral:
         resultados = resultados.filter(sector_laboral=sector_laboral)
+    
+    if fabricante:
+        resultados = resultados.filter(fabricante=fabricante)
     return render(request, 'cursos/buscar_cursos.html', {'query': query, 'resultados': resultados, 'departamento_choices': Curso.DEPARTAMENTO_CHOICES,
-        'sector_laboral_choices': Curso.SECTOR_LABORAL_CHOICES,})
+        'sector_laboral_choices': Curso.SECTOR_LABORAL_CHOICES, 'fabricante_choices': Curso.FABRICANTE_CHOICES,})
 
 class PasswordResetView(auth_views.PasswordResetView):
     template_name = 'cursos/password_reset.html'
