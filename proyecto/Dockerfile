@@ -1,0 +1,17 @@
+# Usar una imagen oficial de Python 3.12
+FROM python:3.12-slim
+
+# Establecer el directorio de trabajo
+WORKDIR /app
+
+# Copiar el contenido del directorio actual al contenedor
+COPY . /app
+
+# Instalar las dependencias
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Exponer el puerto 8000
+EXPOSE 8000
+
+# Comando para ejecutar el servidor Django
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
