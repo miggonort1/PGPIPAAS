@@ -10,12 +10,14 @@ body {
     font-family: 'Arial Nova', sans-serif;
     background-color: #ebebeb;
     color: #333;
+
 }
 
 .background-blur {
     position: fixed;
     top: 0;
     left: 0;
+    
     width: 100%;
     height: 100%;
     z-index: -1; /* Mantener el fondo detrás del contenido */
@@ -36,7 +38,7 @@ body {
 }
 
 .home-link:hover {
-    color: #fddc00;
+    color: #27AE60;
     transform: scale(1.05);
 }
 /* Navbar */
@@ -44,9 +46,14 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #3669ac;
+    background-color: #2C3E50;
     padding: 15px 20px;
     color: #fff;
+    
+    position: fixed;      /* Fija la barra en su posición */
+    top: 0;               /* Posición en la parte superior de la ventana */
+    width: 100%;          /* Asegura que la barra ocupe todo el ancho de la ventana */
+    z-index: 1000; 
 }
 
 .navbar .logo {
@@ -55,7 +62,7 @@ body {
 }
 
 .navbar .search-bar {
-    border: 2px solid #d2c8aa;
+    border: 2px solid #2C3E50;
     border-radius: 20px;
     padding: 8px 15px;
     font-size: 14px;
@@ -67,21 +74,29 @@ body {
     margin-left: 20px;
     cursor: pointer;
 }
-
+.navbar-icons :hover span{
+    color: #2C3E50;
+}
 /* Secciones */
 .course-section {
     padding: 40px;
     margin: 20px auto;
     max-width: 1200px;
-    background-color: #ffffffb8;
+    background-color: #ecf0f1cf;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: auto;
 }
 
 .course-section h2 {
-    color: #3669ac;
+    color: #2C3E50;
     font-size: 24px;
     margin-bottom: 20px;
+}
+.course-section img {
+    width: 50%;
+    display: block;       /* Convierte la imagen en un bloque */
+    margin: 0 auto;       /* Centro horizontal */
 }
 
 /* Cards */
@@ -91,10 +106,16 @@ body {
     gap: 20px;
     justify-content: space-around;
 }
-
+.courses-container{
+    margin-top: 6.5%;
+}
+.courses-container-detail{
+    margin-top: 7%;
+}
 .course-card {
-    background-color: #bcbfc5;
+    background-color: #F5F5F5;
     width: 300px;
+    margin:auto;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -104,23 +125,42 @@ body {
 .course-card:hover {
     transform: translateY(-10px);
 }
-
 .course-card img {
     width: 100%;
     height: 150px;
     object-fit: cover;
 }
+.course-details {
+    display: flex;               /* Activa el modo Flexbox */
+    flex-direction: row;         /* Configura en fila */
+    gap: 20px;                   /* Espacio entre los elementos */
+    align-items: center;         /* Centra los elementos verticalmente */
+    justify-content: flex-start; /* Alineación horizontal, ajustable según sea necesario */
+}
+.course-info {
+    background-color: #F5F5F5;    /* Fondo claro */
+    color: #2C3E50;               /* Color del texto */
+    padding: 20px;                /* Espaciado interno */
+    border-radius: 15px;          /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Sombra detrás del div */
+    display: flex;                /* Usa flexbox para centrar contenido */
+    flex-direction: column;       /* Asegura que el contenido esté en columnas */
+    justify-content: center;      /* Centra el contenido verticalmente dentro de .course-info */
+    width: 45%;                   /* Ajusta el ancho de .course-info */
+    min-height: 150px;            /* Asegura que tenga una altura mínima */
+}
+
 
 .course-card a {
     font-size: 18px;
     margin: 10px;
-    color:  #4486db;
+    color:  #2C3E50;
     text-decoration: none;
 }
 .course-card h3 {
     font-size: 18px;
     margin: 10px;
-    color: #3669ac;
+    color: #2C3E50;
 }
 .course-card p {
     font-size: 14px;
@@ -143,7 +183,7 @@ body {
 
 .profile-link i {
     font-size: 22px; /* Tamaño del ícono */
-    color: #d4800c; /* Naranja oscuro */
+    color: #27AE60; /* Naranja oscuro */
 }
 
 .profile-link span {
@@ -153,11 +193,11 @@ body {
 /* Hover para realzar el elemento */
 .profile-link:hover {
     background-color: #f2ebe1; /* Fondo claro al pasar el ratón */
-    color: #d4800c; /* Naranja oscuro */
+    color: #27AE60; /* Naranja oscuro */
 }
 
 .profile-link:hover i {
-    color: #3669ac; /* Naranja más vivo */
+    color: #27AE60; /* Naranja más vivo */
 }
 /* Enlace carrito estilizado */
 .cart-link {
@@ -189,34 +229,35 @@ body {
 }
 
 .cart-link:hover i {
-    color: #3669ac; /* Naranja más vivo */
+    color: #27AE60; /* Naranja más vivo */
 }
 
 .paginacion {
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin-top: 20px;
+    margin-top: 30px;
+    height: 10px;
 }
 
 .step-links a {
     text-decoration: none;
-    color: #3669ac;
-    border: 1px solid #3669ac;
+    color: #2C3E50;
+    border: 1px solid #2C3E50;
     padding: 5px 10px;
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .step-links a:hover {
-    background-color: #3669ac;
+    background-color: #2C3E50;
     color: #fff;
 }
 
 .step-links .pagina-actual {
     font-weight: bold;
     color: #fff;
-    background-color: #3669ac;
+    background-color: #2C3E50;
     padding: 5px 10px;
     border-radius: 5px;
 }
