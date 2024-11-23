@@ -65,6 +65,7 @@
                 {% for curso in cursos_pronto %}
                     <div class="course-card">
                         <a href="/curso/{{ curso.id }}">
+                        <div class="div-images-help"></div>
                         <img src="{{ curso.imagen }}" alt="Imagen del curso">
                         <h3>{{ curso.nombre }}</h3>
                         <p>Fecha de inicio: {{ curso.fecha_inicio }}</p>
@@ -103,6 +104,7 @@
             <div class="course-list">
                 {% for curso in cursos_pocas_plazas %}
                     <div class="course-card">
+                        <div class="div-images-help"></div>
                         <img src="{{ curso.imagen }}" alt="Imagen del curso">
                         <h3><a href="/curso/{{ curso.id }}">{{ curso.nombre }}</a></h3>
                         <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
@@ -119,6 +121,7 @@
             <div class="course-list">
                 {% for curso in cursos_baratos %}
                     <div class="course-card">
+                        <div class="div-images-help"></div>
                         <img src="{{ curso.imagen }}" alt="Imagen del curso">
                         <h3><a href="/curso/{{ curso.id }}">{{ curso.nombre }}</a></h3>
                         <p>Precio: {{ curso.precio }}€</p>
