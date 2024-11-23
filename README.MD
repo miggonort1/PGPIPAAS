@@ -22,6 +22,16 @@ Ahora dentro del entorno virtual
     GRANT ALL PRIVILEGES ON dbpgpipaas.* TO 'pgpipaas_user'@'localhost';
     FLUSH PRIVILEGES;
 
+Si base de datos peta hacer esto:
+
+- DROP DATABASE IF EXISTS dbpgpipaas;
+  DROP USER IF EXISTS 'pgpipaas_user'@'localhost';
+
+  CREATE DATABASE dbpgpipaas;
+  CREATE USER 'pgpipaas_user'@'localhost' IDENTIFIED BY 'pgpipaas_password';
+  GRANT ALL PRIVILEGES ON dbpgpipaas.* TO 'pgpipaas_user'@'localhost';
+  FLUSH PRIVILEGES;
+  EXIT;
 
 CERRAMOS EL MARIADB
 
@@ -57,3 +67,6 @@ CORREO:
  pgpipaas1          1234
  pgpipaas2          1234
  admin1             1234
+
+ Crear un admin:
+ - python manage.py createsuperuser;
