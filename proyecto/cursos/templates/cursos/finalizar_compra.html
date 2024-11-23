@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra</title>
+    <link rel="stylesheet" href="{% static 'css/finalizar_compra.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Finalizar Compra</h2>
+
+        <!-- Aquí se añadirán los cursos del carrito -->
+        <div id="cart-courses"></div>
+
+        <!-- Formulario para completar la compra -->
+        <form id="checkout-form" class="checkout-form">
+            <h3>Detalles del Pedido</h3>
+
+            <div id="course-form-container"></div>
+
+            <div>
+                <label for="payment-method">Forma de Pago:</label>
+                <select id="payment-method" name="payment-method" required>
+                    <option value="credit-card">Tarjeta de Crédito</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="bank-transfer">Transferencia Bancaria</option>
+                    <option value="cash-on-delivery">Contrarreembolso</option>
+                </select>
+            </div>
+
+            <button type="submit">Confirmar Compra</button>
+            <button type="button" class="cancel-button" id="cancel-button">Cancelar</button>
+        </form>
+
+        <div class="cart-total">
+            <p>Total: <span id="total-price">0€</span></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cartCoursesContainer = document.getElementById("cart-courses");
+            const checkoutForm = document.getElementById("checkout-form");
+            const totalPriceElement = document.getElementById("total-price");
+            const cancelButton = document.getElementById("cancel-button");
+            const courseFormContainer = document.getElementById("course-form-container");
+
+            // Obtener el carrito desde el servidor
+            fetch("/api/carrito/")
+                .then(response => response.json())
+                .then(data => {
+                    let totalPrice = 0;
+
+                    // Mostrar cada curso en el carrito
+                    data.cursos.forEach((curso, index) => {
+                        // Mostrar los cursos en el carrito
+                        const courseDiv = document.createElement("div");
+                        courseDiv.classList.add("cart-course");
+                        courseDiv.innerHTML = `
+                            <h3>${curso.nombre}</h3>
+                            <p class="cantidad">Cantidad: ${curso.cantidad}</p>
+                            <p  class="precio-total">Total: ${curso.precio_total}€</p>
+                            <button class="remove-course" data-course-id="${curso.id}">Eliminar</button>
+                            <input type="hidden" name="curso_id[]" value="${curso.id}">
+                            <input type="hidden" name="cantidad[]" value="${curso.cantidad}">
+                        `;
+                        cartCoursesContainer.appendChild(courseDiv);
+
+                        // Añadir evento de eliminación
+                        courseDiv.querySelector(".remove-course").addEventListener("click", async (e) => {
+                            const courseId = e.target.getAttribute("data-course-id");
+
+                            // Enviar solicitud para eliminar el curso
+                            const response = await fetch(`../api/carrito/eliminar/`, {
+                                method: "DELETE",
+                                headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRFToken': getCookie('csrftoken') // Necesitas configurar el token CSRF
+                                        },
+                                        
+                                body: JSON.stringify({ curso_id: curso.id })
+                            });
+
+                            const result = await response.json();
+                            if (result.success) {
+                                location.reload(); 
+                              
+                            } else {
+                                alert("Hubo un error al eliminar el curso.");
+                            }
+                        });
+
+                        // Crear un formulario para cada unidad del curso
+                        for (let i = 0; i < curso.cantidad; i++) {
+                            const courseForm = document.createElement("div");
+                            courseForm.classList.add("course-form");
+                            courseForm.innerHTML = `
+                                <h4>${curso.nombre} - Persona ${i + 1}</h4>
+                                <p>Precio total: ${curso.precio_total}€</p>
+                                <div>
+                                    <label for="name-${index}-${i}">Nombre:</label>
+                                    <input type="text" id="name-${index}-${i}" name="name-${index}-${i}" required>
+                                </div>
+                                <div>
+                                    <label for="email-${index}-${i}">Correo Electrónico:</label>
+                                    <input type="email" id="email-${index}-${i}" name="email-${index}-${i}" required>
+                                </div>
+                                <input type="hidden" name="course_id-${index}-${i}" value="${curso.id}">
+                                <input type="hidden" name="course_quantity-${index}-${i}" value="1">
+                            `;
+                            courseFormContainer.appendChild(courseForm);
+                        }
+
+                        // Actualizar el total
+                        totalPrice += curso.precio_total;
+                    });
+
+                    // Mostrar el total en el formulario
+                    totalPriceElement.textContent = `${totalPrice}€`;
+                });
+
+            // Enviar el formulario de compra
+            checkoutForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(checkoutForm);
+                const paymentMethod = formData.get("payment-method");
+
+                // Realizar la compra a través de un POST
+                const response = await fetch("/api/confirmar-compra/", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert("Compra realizada con éxito!");
+                    window.location.href = "/gracias";  // Redirigir a una página de agradecimiento
+                } else {
+                    alert("Hubo un error al procesar tu compra.");
+                }
+            });
+
+            // Cancelar la compra
+            cancelButton.addEventListener("click", () => {
+                window.location.href = "/home";  // Redirigir al carrito para editarlo si es necesario
+            });
+            // Función para obtener el token CSRF de las cookies
+            function getCookie(name) {
+                const cookieValue = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith(name + '='));
+                return cookieValue ? cookieValue.split('=')[1] : null;
+            }
+        });
+    </script>
+
+</body>
+
+</html>

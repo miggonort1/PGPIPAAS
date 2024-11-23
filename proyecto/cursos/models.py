@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.templatetags.static import static
+import uuid
 
 class Curso(models.Model):
     nombre = models.CharField(max_length=200)
@@ -35,6 +36,14 @@ class Curso(models.Model):
         ('TRA', 'Tráfico'),
     ]
 
+    FABRICANTE_CHOICES = [
+        ('OP', 'OpositaConmigo'),
+        ('EDX', 'edX'),
+        ('US', 'Universidad de Sevilla'),
+        ('BU', 'Bomberos Unidos'),
+        ('JCE', 'Justicia Con Experiencia'),
+    ]
+
     departamento = models.CharField(
         max_length=3,
         choices=DEPARTAMENTO_CHOICES,
@@ -44,6 +53,11 @@ class Curso(models.Model):
         max_length=3,
         choices=SECTOR_LABORAL_CHOICES,
         default='ADM'
+    )
+    fabricante = models.CharField(
+        max_length=3,
+        choices=FABRICANTE_CHOICES,
+        default='OP'
     )
 
     def __str__(self):
@@ -90,7 +104,12 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         return self.nombre_usuario
 
 class Carrito(models.Model):
-    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name="carrito")
+    usuario = models.OneToOneField(
+        Usuario, on_delete=models.CASCADE, related_name="carrito", null=True, blank=True
+    )
+    session_id = models.UUIDField(
+        default=uuid.uuid4, editable=False, unique=True, verbose_name="ID de Sesión", null=True
+    )
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
 
     def __str__(self):

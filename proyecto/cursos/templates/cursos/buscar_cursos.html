@@ -35,6 +35,14 @@
                 <option value="{{ key }}" {% if request.GET.sector_laboral == key %}selected{% endif %}>{{ value }}</option>
             {% endfor %}
         </select>
+
+        <!-- Filtro de Fabricante -->
+        <select name="fabricante" id="fabricante" class="filter-select" onchange="this.form.submit()">
+            <option value="" {% if not request.GET.fabricante %}selected{% endif %}>Todos los fabricantes</option>
+            {% for key, value in fabricante_choices %}
+                <option value="{{ key }}" {% if request.GET.fabricante == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
     </form>   
     <nav class="navbar-icons">
         <div class="icon profile">
@@ -50,16 +58,42 @@
                 </a>
             {% endif %}
         </div>
-        <div class="icon cart">
+        <div class="icon cart" id="cart-button">
             <i class="fas fa-shopping-cart"></i>
             <span>Carrito</span>
+            <div id="cart-dropdown" class="dropdown hidden">
+                <div id="cart-items"></div>
+                <div id="cart-total"></div>
+                <a href="{% url 'finalizar_compra' %}" id="checkout-button">Finalizar Compra</a>
+            </div>
         </div>
         
     </header>
     
     <main class="courses-container">
         <section id="soon-courses" class="course-section">
-            <h2>Resultados de búsqueda para "{{ query }}"</h2>
+            <h2>
+                Resultados de búsqueda para 
+                {% if query %}"{{ query }}"{% else %}"todos los cursos"{% endif %}
+                {% if request.GET.departamento %}
+                    del departamento de 
+                    {% for key, value in departamento_choices %}
+                        {% if key == request.GET.departamento %}{{ value }}{% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% if request.GET.sector_laboral %}
+                    en el sector de 
+                    {% for key, value in sector_laboral_choices %}
+                        {% if key == request.GET.sector_laboral %}{{ value }}{% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% if request.GET.fabricante %}
+                    por el fabricante 
+                    {% for key, value in fabricante_choices %}
+                        {% if key == request.GET.fabricante %}{{ value }}{% endif %}
+                    {% endfor %}
+                {% endif %}
+            </h2>
             <div class="course-list">
                 {% if resultados %}
                     {% for curso in resultados %}
@@ -73,6 +107,7 @@
                             <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
                             <p>Precio: {{ curso.precio }}€</p>
                             </a>
+                        
                         </div>
                     {% endfor %}
                 {% else %}
