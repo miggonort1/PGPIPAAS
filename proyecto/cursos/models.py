@@ -35,6 +35,14 @@ class Curso(models.Model):
         ('TRA', 'Tráfico'),
     ]
 
+    FABRICANTE_CHOICES = [
+        ('OP', 'OpositaConmigo'),
+        ('EDX', 'edX'),
+        ('US', 'Universidad de Sevilla'),
+        ('BU', 'Bomberos Unidos'),
+        ('JCE', 'Justicia Con Experiencia'),
+    ]
+
     departamento = models.CharField(
         max_length=3,
         choices=DEPARTAMENTO_CHOICES,
@@ -44,6 +52,11 @@ class Curso(models.Model):
         max_length=3,
         choices=SECTOR_LABORAL_CHOICES,
         default='ADM'
+    )
+    fabricante = models.CharField(
+        max_length=3,
+        choices=FABRICANTE_CHOICES,
+        default='OP'
     )
 
     def __str__(self):
