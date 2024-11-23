@@ -109,15 +109,19 @@ body {
     width: 100%;
     height: 150px;
     object-fit: cover;
-    display: block; /* Asegura que no se vea espacio extra */
 }
 
 .course-card a {
     font-size: 18px;
     margin: 10px;
     color:  #4486db;
+    text-decoration: none;
 }
-
+.course-card h3 {
+    font-size: 18px;
+    margin: 10px;
+    color: #3669ac;
+}
 .course-card p {
     font-size: 14px;
     margin: 10px;
