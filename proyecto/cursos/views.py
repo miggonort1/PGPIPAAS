@@ -100,17 +100,18 @@ def home(request):
 def inicioSesion(request):
     messages.get_messages(request).used = True
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
-        print(f'Usuario: {username}, Contraseña: {password}')  # Depuración
+        print(f'Email: {email}, Contraseña: {password}')  # Depuración
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
         print(user)
         if user is None:
             # Si 'authenticate' devuelve None, significa que las credenciales no son correctas
             try:
                 # Intentamos obtener al usuario de la base de datos para dar mensajes más específicos
-                usuario = Usuario.objects.get(nombre_usuario=username)
+                usuario = Usuario.objects.get(email=email)
+                print(usuario)
                 if not usuario.is_active:
                     # Si el usuario está inactivo, agregamos un mensaje
                     messages.error(request, "Tu cuenta está inactiva. No puedes iniciar sesión.")
@@ -119,7 +120,7 @@ def inicioSesion(request):
                     messages.error(request, "Contraseña incorrecta.")
             except Usuario.DoesNotExist:
                 # Si el usuario no existe, agregamos un mensaje
-                messages.error(request, "El nombre de usuario no existe.")
+                messages.error(request, "El email no existe.")
         else:
             # Si la autenticación fue exitosa
             login(request, user)
@@ -183,6 +184,7 @@ def buscar_cursos(request):
     query = request.GET.get('q', '')
     departamento = request.GET.get('departamento', '')
     sector_laboral = request.GET.get('sector_laboral', '')
+    fabricante = request.GET.get('fabricante', '')
     
     # Si no se proporciona una búsqueda (query vacío), obtener todos los cursos
     resultados = Curso.objects.all()
@@ -195,8 +197,11 @@ def buscar_cursos(request):
 
     if sector_laboral:
         resultados = resultados.filter(sector_laboral=sector_laboral)
+    
+    if fabricante:
+        resultados = resultados.filter(fabricante=fabricante)
     return render(request, 'cursos/buscar_cursos.html', {'query': query, 'resultados': resultados, 'departamento_choices': Curso.DEPARTAMENTO_CHOICES,
-        'sector_laboral_choices': Curso.SECTOR_LABORAL_CHOICES,})
+        'sector_laboral_choices': Curso.SECTOR_LABORAL_CHOICES, 'fabricante_choices': Curso.FABRICANTE_CHOICES,})
 
 class PasswordResetView(auth_views.PasswordResetView):
     template_name = 'cursos/password_reset.html'
