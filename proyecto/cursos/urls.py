@@ -20,4 +20,6 @@ urlpatterns = [
     path('api/carrito/agregar/', views.agregar_al_carrito, name='agregar_al_carrito'),
     path('api/carrito/eliminar/', views.eliminar_del_carrito, name='eliminar_del_carrito'),
     path('finalizar_compra/', views.finalizar_compra, name='finalizar_compra'),
+    path('api/confirmar_compra/', views.confirmar_compra, name='confirmar_compra'),
+    path('api/usuario/', views.obtener_datos_usuario, name='obtener_datos_usuario'),
 ]
