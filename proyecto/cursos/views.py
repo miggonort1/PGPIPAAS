@@ -22,6 +22,9 @@ from .models import Carrito, CarritoCurso
 from django.http import JsonResponse
 import json
 import uuid
+from django.utils import timezone
+from decimal import Decimal
+
 
 def home(request):
     # Obtener todos los cursos
@@ -102,16 +105,13 @@ def inicioSesion(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        print(f'Email: {email}, Contraseña: {password}')  # Depuración
 
         user = authenticate(request, email=email, password=password)
-        print(user)
         if user is None:
             # Si 'authenticate' devuelve None, significa que las credenciales no son correctas
             try:
                 # Intentamos obtener al usuario de la base de datos para dar mensajes más específicos
                 usuario = Usuario.objects.get(email=email)
-                print(usuario)
                 if not usuario.is_active:
                     # Si el usuario está inactivo, agregamos un mensaje
                     messages.error(request, "Tu cuenta está inactiva. No puedes iniciar sesión.")
@@ -302,7 +302,6 @@ def eliminar_del_carrito(request):
 
         # Obtener los detalles del curso
         curso = Curso.objects.get(id=curso_id)
-        print(carrito[curso_id]['cantidad'])
         
         # Verificar si hay más de una unidad del curso
         if carrito[curso_id]['cantidad'] > 1:
@@ -356,5 +355,82 @@ def finalizar_compra(request):
         "cursos": cursos,
         "total_precio": total_precio,
     }
-
+    
     return render(request, "cursos/finalizar_compra.html", context)
+
+def confirmar_compra(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body) # Verifica si los datos se reciben correctamente
+
+            # Extraer los datos necesarios
+            nombre_comprador = data.get("nombre_comprador")
+            email_comprador = data.get("email_comprador")
+            direccion_envio = data.get("direccion_envio")
+            ciudad_envio = data.get("ciudad_envio")
+            provincia_envio = data.get("provincia_envio")
+            codigo_postal_envio = data.get("codigo_postal_envio")
+            payment_method = data.get("payment-method")
+
+            
+            # Calcula el total (sumar precios de cursos)
+            total = 0
+            cursos = []
+            for i in range(len(data)):  # Iteramos sobre los índices de los cursos
+                if f"course_id-{i}-0" in data:
+                    course_id = int(data[f"course_id-{i}-0"])
+                    course_quantity = int(data[f"course_quantity-{i}-0"])
+                    
+                    email = data.get(f"email-{i}-0")  # email para este curso
+                    nombre = data.get(f"name-{i}-0") 
+                    course = Curso.objects.get(id=course_id)
+                    total += course.precio * course_quantity  # Calculamos el total
+
+                    cursos.append({
+                        'course': course,
+                        'quantity': course_quantity,
+                        'precio_unitario': course.precio,
+                        'nombre': nombre,
+                        'email': email,
+                    })
+
+            # Crear el pedido principal
+            pedido = Pedido.objects.create(
+                usuario=request.user if request.user.is_authenticated else None, # No asociamos un usuario
+                direccion_envio=direccion_envio,  # Dejar vacío si no es obligatorio
+                ciudad_envio=ciudad_envio,
+                provincia_envio=provincia_envio,
+                codigo_postal_envio=codigo_postal_envio,
+                total=total, # Total vacío
+                estado= 'PEN' if payment_method == "cash-on-delivery" else 'PAG',
+                fecha_creacion=timezone.now()  # Fecha de creación actual
+            )
+            for curso in cursos:
+                PedidoCurso.objects.create(
+                    pedido=pedido,
+                    curso=curso['course'],  # Curso asociado al pedido
+                    cantidad=curso['quantity'],
+                    precio_unitario=curso['precio_unitario'],
+                    email=curso['email'],
+                    nombre=curso['nombre']
+                )
+            if 'carrito' in request.session:
+                del request.session['carrito']  # Eliminar carrito de la sesión
+            return JsonResponse({"success": True, "message": "Pedido creado con éxito."})
+
+        except Exception as e:
+            # Capturar cualquier error y devolverlo como respuesta
+            return JsonResponse({"success": False, "message": str(e)}, status=400)
+
+    # Si no es un método POST, devolver error 405 (Método no permitido)
+    return JsonResponse({"success": False, "message": "Método no permitido."}, status=405)
+def obtener_datos_usuario(request):
+    user = request.user
+    return JsonResponse({
+        "nombre": user.nombre,
+        "email": user.email,
+        "direccion_entrega": user.direccion_entrega,
+        "ciudad": user.ciudad,
+        "provincia": user.provincia,
+        "codigo_postal": user.codigo_postal,
+    })

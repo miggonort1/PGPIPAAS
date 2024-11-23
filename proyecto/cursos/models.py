@@ -135,23 +135,25 @@ class Pedido(models.Model):
         ('ENT', 'Entregado'),
     ]
 
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="pedidos")
-    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
-    estado = models.CharField(max_length=3, choices=ESTADO_PEDIDO, default='PEN', verbose_name="Estado del Pedido")
-    direccion_envio = models.CharField(max_length=255, verbose_name="Dirección de Envío")
-    ciudad_envio = models.CharField(max_length=100, verbose_name="Ciudad de Envío")
-    provincia_envio = models.CharField(max_length=100, verbose_name="Provincia de Envío")
-    codigo_postal_envio = models.CharField(max_length=10, verbose_name="Código Postal de Envío")
-    total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total del Pedido")
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="pedidos", null=True, blank=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación", null=True, blank=True)
+    estado = models.CharField(max_length=3, choices=ESTADO_PEDIDO, default='PEN', verbose_name="Estado del Pedido", null=True, blank=True)
+    direccion_envio = models.CharField(max_length=255, verbose_name="Dirección de Envío", null=True, blank=True)
+    ciudad_envio = models.CharField(max_length=100, verbose_name="Ciudad de Envío", null=True, blank=True)
+    provincia_envio = models.CharField(max_length=100, verbose_name="Provincia de Envío", null=True, blank=True)
+    codigo_postal_envio = models.CharField(max_length=10, verbose_name="Código Postal de Envío", null=True, blank=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total del Pedido", null=True, blank=True)
 
     def __str__(self):
-        return f"Pedido {self.id} - {self.usuario.nombre_usuario} ({self.estado})"
+        return f"Pedido {self.id} ({self.estado})"
 
 class PedidoCurso(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="cursos")
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name="en_pedidos")
     cantidad = models.PositiveIntegerField(default=1, verbose_name="Cantidad")
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio Unitario")
+    email = models.EmailField(unique=False, null=False)
+    nombre = models.CharField(max_length=50, null=False)
 
     def __str__(self):
         return f"{self.cantidad}x {self.curso.nombre} en Pedido {self.pedido.id}"

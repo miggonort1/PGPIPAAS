@@ -24,14 +24,72 @@
 
             <div id="course-form-container"></div>
 
-            <div>
-                <label for="payment-method">Forma de Pago:</label>
-                <select id="payment-method" name="payment-method" required>
-                    <option value="credit-card">Tarjeta de Crédito</option>
-                    <option value="paypal">PayPal</option>
-                    <option value="bank-transfer">Transferencia Bancaria</option>
-                    <option value="cash-on-delivery">Contrarreembolso</option>
-                </select>
+            <div id="checkout-form">
+                <h3>Detalles del Comprador</h3>
+
+                <div>
+                    <label for="nombre-comprador">Nombre:</label>
+                    <input 
+                        type="text" 
+                        id="nombre-comprador" 
+                        name="nombre_comprador" 
+                        value="{{ user_data.nombre }}" 
+                        required>
+                </div>
+                <div>
+                    <label for="email-comprador">Correo Electrónico:</label>
+                    <input 
+                        type="email" 
+                        id="email-comprador" 
+                        name="email_comprador" 
+                        value="{{ user_data.email }}" 
+                        required>
+                </div>
+                <div>
+                    <label for="direccion-envio">Dirección:</label>
+                    <input 
+                        type="text" 
+                        id="direccion-envio" 
+                        name="direccion_envio" 
+                        value="{{ user_data.direccion_entrega }}" 
+                        required>
+                </div>
+                <div>
+                    <label for="ciudad-envio">Ciudad:</label>
+                    <input 
+                        type="text" 
+                        id="ciudad-envio" 
+                        name="ciudad_envio" 
+                        value="{{ user_data.ciudad }}" 
+                        required>
+                </div>
+                <div>
+                    <label for="provincia-envio">Provincia:</label>
+                    <input 
+                        type="text" 
+                        id="provincia-envio" 
+                        name="provincia_envio" 
+                        value="{{ user_data.provincia }}" 
+                        required>
+                </div>
+                <div>
+                    <label for="codigo-postal-envio">Código Postal:</label>
+                    <input 
+                        type="text" 
+                        id="codigo-postal-envio" 
+                        name="codigo_postal_envio" 
+                        value="{{ user_data.codigo_postal }}" 
+                        required>
+                </div>
+                <div>
+                    <label for="payment-method">Forma de Pago:</label>
+                    <select id="payment-method" name="payment-method" required>
+                        <option value="credit-card">Tarjeta de Crédito</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="bank-transfer">Transferencia Bancaria</option>
+                        <option value="cash-on-delivery">Contrarreembolso</option>
+                    </select>
+                </div>
             </div>
 
             <button type="submit">Confirmar Compra</button>
@@ -75,7 +133,7 @@
                         // Añadir evento de eliminación
                         courseDiv.querySelector(".remove-course").addEventListener("click", async (e) => {
                             const courseId = e.target.getAttribute("data-course-id");
-
+                            
                             // Enviar solicitud para eliminar el curso
                             const response = await fetch(`../api/carrito/eliminar/`, {
                                 method: "DELETE",
@@ -102,10 +160,9 @@
                             courseForm.classList.add("course-form");
                             courseForm.innerHTML = `
                                 <h4>${curso.nombre} - Persona ${i + 1}</h4>
-                                <p>Precio total: ${curso.precio_total}€</p>
                                 <div>
-                                    <label for="name-${index}-${i}">Nombre:</label>
-                                    <input type="text" id="name-${index}-${i}" name="name-${index}-${i}" required>
+                                    <label for="nombre-${index}-${i}">Nombre:</label>
+                                    <input type="text" id="nombre-${index}-${i}" name="name-${index}-${i}" required>
                                 </div>
                                 <div>
                                     <label for="email-${index}-${i}">Correo Electrónico:</label>
@@ -131,17 +188,27 @@
 
                 const formData = new FormData(checkoutForm);
                 const paymentMethod = formData.get("payment-method");
+                const data = {};
 
-                // Realizar la compra a través de un POST
-                const response = await fetch("/api/confirmar-compra/", {
-                    method: "POST",
-                    body: formData
+                // Convertir FormData a un objeto JSON
+                formData.forEach((value, key) => {
+                    data[key] = value;
                 });
+                // Realizar la compra a través de un POST
+                const response = await fetch("../api/confirmar_compra/", {
+                    method: "POST",
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // Necesitas configurar el token CSRF
+                    },
+                    body: JSON.stringify(data),
+                });
+                
 
                 const result = await response.json();
                 if (result.success) {
                     alert("Compra realizada con éxito!");
-                    window.location.href = "/gracias";  // Redirigir a una página de agradecimiento
+                    window.location.href = "/";  // Redirigir a una página de agradecimiento
                 } else {
                     alert("Hubo un error al procesar tu compra.");
                 }
@@ -149,7 +216,7 @@
 
             // Cancelar la compra
             cancelButton.addEventListener("click", () => {
-                window.location.href = "/home";  // Redirigir al carrito para editarlo si es necesario
+                window.location.href = "/";  // Redirigir al carrito para editarlo si es necesario
             });
             // Función para obtener el token CSRF de las cookies
             function getCookie(name) {
@@ -158,6 +225,26 @@
                     .find(row => row.startsWith(name + '='));
                 return cookieValue ? cookieValue.split('=')[1] : null;
             }
+
+            fetch("/api/usuario/")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Usuario no autenticado");
+                }
+                return response.json();
+            })
+            .then(user => {
+                // Rellenar los campos del formulario con los datos del usuario
+                document.getElementById("nombre-comprador").value = user.nombre || "";
+                document.getElementById("email-comprador").value = user.email || "";
+                document.getElementById("direccion-envio").value = user.direccion_entrega || "";
+                document.getElementById("ciudad-envio").value = user.ciudad || "";
+                document.getElementById("provincia-envio").value = user.provincia || "";
+                document.getElementById("codigo-postal-envio").value = user.codigo_postal || "";
+            })
+            .catch(error => {
+                console.error("Error al obtener los datos del usuario:", error);
+            });
         });
     </script>
 
