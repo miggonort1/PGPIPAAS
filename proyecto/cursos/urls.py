@@ -16,4 +16,8 @@ urlpatterns = [
     path('reset/done/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('buscar_cursos/', views.buscar_cursos, name='buscar_cursos'),
     path('curso/<int:id>/', views.detalle_curso, name='detalle_curso'),
+    path('api/carrito/', views.obtener_carrito, name='obtener_carrito'),
+    path('api/carrito/agregar/', views.agregar_al_carrito, name='agregar_al_carrito'),
+    path('api/carrito/eliminar/', views.eliminar_del_carrito, name='eliminar_del_carrito'),
+    path('finalizar_compra/', views.finalizar_compra, name='finalizar_compra'),
 ]

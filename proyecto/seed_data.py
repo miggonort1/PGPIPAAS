@@ -2,6 +2,7 @@ import os
 import django
 from decimal import Decimal
 from datetime import datetime
+import uuid
 from django.templatetags.static import static
 
 # Configura Django para acceder a los modelos
@@ -237,29 +238,4 @@ usuario2.save()  # Guarda los cambios
 
 print("Usuarios añadidos a la base de datos.")
 
-# Crear carrito para usuario1 y añadir dos cursos
-carrito_usuario1 = Carrito.objects.create(usuario=usuario1)
 
-# Asumiendo que los cursos ya existen y tomando los dos primeros
-curso1 = Curso.objects.get(nombre="Curso de Policía Nacional")
-curso2 = Curso.objects.get(nombre="Curso de Bombero")
-
-CarritoCurso.objects.create(carrito=carrito_usuario1, curso=curso1, cantidad=1)
-CarritoCurso.objects.create(carrito=carrito_usuario1, curso=curso2, cantidad=1)
-
-
-# Crear un pedido para usuario1
-pedido_usuario1 = Pedido.objects.create(
-    usuario=usuario1,
-    fecha_creacion=datetime.now(),
-    estado="PAG",  # Pedido marcado como "Pagado"
-    direccion_envio=usuario1.direccion_entrega,
-    ciudad_envio=usuario1.ciudad,
-    provincia_envio=usuario1.provincia,
-    codigo_postal_envio=usuario1.codigo_postal,
-    total=Decimal("580.00")  # Total calculado manualmente como suma de curso1 y curso2
-)
-
-# Añadir los mismos cursos del carrito al pedido
-PedidoCurso.objects.create(pedido=pedido_usuario1, curso=curso1, cantidad=1, precio_unitario=curso1.precio)
-PedidoCurso.objects.create(pedido=pedido_usuario1, curso=curso2, cantidad=1, precio_unitario=curso2.precio)

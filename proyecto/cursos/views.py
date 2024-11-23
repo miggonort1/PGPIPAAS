@@ -1,5 +1,5 @@
 # views.py
-from .models import Curso
+from .models import *
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -16,6 +16,12 @@ from datetime import date
 from django.contrib.auth import views as auth_views
 from django.core.paginator import Paginator
 from django.db.models import F
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import Carrito, CarritoCurso
+from django.http import JsonResponse
+import json
+import uuid
 
 def home(request):
     # Obtener todos los cursos
@@ -210,3 +216,145 @@ class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
 
 class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     template_name = 'cursos/password_reset_complete.html'
+
+
+
+
+
+
+def obtener_carrito(request):
+    # Obtener el carrito desde la sesión
+    carrito = request.session.get("carrito", {})
+    
+    # Calcular los totales y estructurar los datos
+    cursos = []
+    total_precio = 0
+    for curso_id, detalles in carrito.items():
+        try:
+            curso = Curso.objects.get(id=curso_id)
+            precio_total = curso.precio * detalles["cantidad"]
+            cursos.append({
+                "id": curso_id,
+                "nombre": curso.nombre,
+                "cantidad": detalles["cantidad"],
+                "precio_unitario": curso.precio,
+                "precio_total": precio_total,
+            })
+            total_precio += precio_total
+        except Curso.DoesNotExist:
+            continue
+
+    data = {
+        "cursos": cursos,
+        "total_precio": total_precio,
+    }
+    return JsonResponse(data)
+
+def agregar_al_carrito(request):
+    if request.method == 'POST':
+        # Parsear datos de la solicitud
+        data = json.loads(request.body)
+        curso_id = data.get('curso_id')
+
+        # Obtener el carrito desde la sesión
+        carrito = request.session.get('carrito', {})
+
+        # Si el carrito no existe, crear uno vacío
+        if not carrito:
+            carrito = {}
+
+        # Obtener el curso y añadirlo al carrito
+        try:
+            curso = Curso.objects.get(id=curso_id)
+            
+            # Si el curso ya está en el carrito, incrementar la cantidad
+            if curso_id in carrito:
+                carrito[curso_id]['cantidad'] += 1
+            else:
+                # Si el curso no está en el carrito, agregarlo con cantidad 1
+                carrito[curso_id] = {
+                    'nombre': curso.nombre,
+                    'precio': str(curso.precio),  # Convertir el precio a string por seguridad en JSON
+                    'cantidad': 1
+                }
+
+            # Guardar el carrito en la sesión
+            request.session['carrito'] = carrito
+
+            return JsonResponse({'success': True, 'message': 'Curso añadido al carrito.'})
+        except Curso.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Curso no encontrado.'}, status=404)
+
+    return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)
+
+def eliminar_del_carrito(request):
+    if request.method == "DELETE":
+        # Obtener el carrito desde la sesión
+        carrito = request.session.get('carrito', {})
+
+        # Cargar los datos enviados en el cuerpo de la solicitud (DELETE)
+        data = json.loads(request.body)
+        curso_id = data.get('curso_id')
+
+        # Verificar si el carrito existe y si el curso_id está presente en el carrito
+        if not carrito or curso_id not in carrito:
+            return JsonResponse({"success": False, "message": "Curso no encontrado en el carrito."}, status=404)
+
+        # Obtener los detalles del curso
+        curso = Curso.objects.get(id=curso_id)
+        print(carrito[curso_id]['cantidad'])
+        
+        # Verificar si hay más de una unidad del curso
+        if carrito[curso_id]['cantidad'] > 1:
+            # Reducir la cantidad en 1
+            carrito[curso_id]['cantidad'] -= 1
+        else:
+            # Si la cantidad es 1, eliminar el curso del carrito
+            del carrito[curso_id]
+
+        # Guardar el carrito actualizado en la sesión
+        request.session['carrito'] = carrito
+
+        return JsonResponse({"success": True, "message": "Curso eliminado del carrito."})
+
+    return JsonResponse({"success": False, "message": "Método no permitido."}, status=405)
+def obtener_o_crear_carrito(request):
+    if request.user.is_authenticated:
+        carrito, creado = Carrito.objects.get_or_create(usuario=request.user)
+    else:
+        session_id = request.session.get("session_id")
+        if not session_id:
+            session_id = str(uuid.uuid4())
+            request.session["session_id"] = session_id
+        carrito, creado = Carrito.objects.get_or_create(session_id=session_id)
+    return JsonResponse({"carrito_id": carrito.id, "creado": creado})
+
+def finalizar_compra(request):
+    # Obtener el carrito desde la sesión
+    carrito = request.session.get("carrito", {})
+
+    # Calcular los totales y estructurar los datos
+    cursos = []
+    total_precio = 0
+
+    for curso_id, detalles in carrito.items():
+        try:
+            curso = Curso.objects.get(id=curso_id)
+            precio_total = curso.precio * detalles["cantidad"]
+            cursos.append({
+                "id": curso_id,
+                "nombre": curso.nombre,
+                "cantidad": detalles["cantidad"],
+                "precio_unitario": curso.precio,
+                "precio_total": precio_total,
+            })
+            total_precio += precio_total
+        except Curso.DoesNotExist:
+            continue
+
+    context = {
+        "cursos": cursos,
+        "total_precio": total_precio,
+    }
+
+    return render(request, "cursos/finalizar_compra.html", context)

@@ -43,6 +43,9 @@
             <p><strong>Precio:</strong> {{ curso.precio }} €</p>
             <p><strong>Departamento:</strong> {{ curso.get_departamento_display }}</p>
             <p><strong>Sector laboral:</strong> {{ curso.get_sector_laboral_display }}</p>
+            <button class="add-to-cart-btn" data-curso-id="{{ curso.id }}" data-curso-nombre="{{ curso.nombre }}">
+                Añadir al carrito
+            </button>
         </div>
 
         <div class="course-buttons">
@@ -58,5 +61,6 @@
 
         <a href="/" class="back-link">Volver al inicio</a>
     </section>
+    <script src="{% static 'js/buscar_cursos.js' %}"></script>
 </body>
 </html>

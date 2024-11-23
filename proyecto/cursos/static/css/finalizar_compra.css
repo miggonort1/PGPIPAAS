@@ -1,0 +1,101 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fuente general y colores */
+body {
+    font-family: 'Arial Nova', sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+    padding: 20px;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+h2 {
+    text-align: center;
+    color: #3669ac;
+}
+
+/* Estilo de la lista de cursos */
+.cart-course {
+    background-color: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cart-course h3 {
+    color: #3669ac;
+}
+
+.cart-course p {
+    color: #555;
+}
+
+/* Estilos de formulario */
+.checkout-form {
+    background-color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-form div {
+    margin-bottom: 15px;
+}
+
+.checkout-form input,
+.checkout-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.checkout-form button {
+    width: 100%;
+    padding: 15px;
+    background-color: #3669ac;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.checkout-form button:hover {
+    background-color: #244b8c;
+}
+
+/* Botón de cancelar */
+.cancel-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.cancel-button:hover {
+    background-color: #d32f2f;
+}
+
+/* Estilos para el total */
+.cart-total {
+    font-weight: bold;
+    text-align: right;
+    font-size: 18px;
+    margin-top: 20px;
+}

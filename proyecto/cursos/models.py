@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.templatetags.static import static
+import uuid
 
 class Curso(models.Model):
     nombre = models.CharField(max_length=200)
@@ -103,7 +104,12 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         return self.nombre_usuario
 
 class Carrito(models.Model):
-    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name="carrito")
+    usuario = models.OneToOneField(
+        Usuario, on_delete=models.CASCADE, related_name="carrito", null=True, blank=True
+    )
+    session_id = models.UUIDField(
+        default=uuid.uuid4, editable=False, unique=True, verbose_name="ID de Sesión", null=True
+    )
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
 
     def __str__(self):
