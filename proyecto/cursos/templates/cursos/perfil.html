@@ -8,12 +8,13 @@
     <link rel="stylesheet" href="{% static 'css/editar_perfil.css' %}">
 </head>
 <body>
+    <div class="background-blur"></div>
+
     <header class="navbar">
         <div class="logo">
             <a href="{% url 'home' %}">OpositaConmigo</a>
         </div>
         <nav>
-            <!-- Si el usuario está autenticado, mostrar el nombre de usuario y el enlace de cerrar sesión -->
             {% if request.user.is_authenticated %}
                 <div>
                     <a href="{% url 'cerrar_sesion' %}">Cerrar sesión</a>
@@ -27,7 +28,6 @@
     <div class="profile-container">
         <h1>Editar Perfil</h1>
 
-        <!-- Mostrar mensajes de éxito o error -->
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
@@ -38,15 +38,15 @@
             </div>
         {% endif %}
 
-        <!-- Formulario de edición de perfil -->
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}  <!-- Mostrar el formulario en formato de párrafos -->
-
-            <button type="submit">Actualizar</button>
+            <div class="form-container">
+                {{ form.as_p }}
+                <button type="submit" class="btn">Actualizar</button>
+            </div>
         </form>
 
-        <p><a href="{% url 'home' %}">Volver al inicio</a></p>
+        <p><a href="{% url 'home' %}" class="home-link">Volver al inicio</a></p>
     </div>
 </body>
 </html>
