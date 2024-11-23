@@ -220,3 +220,39 @@ body {
     padding: 5px 10px;
     border-radius: 5px;
 }
+
+/* Centrar y estilizar los botones de acción */
+.course-buttons {
+    display: flex;
+    justify-content: center; /* Centrar horizontalmente */
+    gap: 15px; /* Espacio entre los botones */
+    margin-top: 20px; /* Espacio superior */
+}
+
+.course-buttons .btn {
+    display: inline-block;
+    font-size: 18px; /* Incrementa el tamaño de la fuente */
+    padding: 12px 20px; /* Aumenta el tamaño general del botón */
+    border: none;
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Suaviza las transiciones */
+    color: #fff; /* Texto en blanco */
+    font-weight: bold;
+}
+
+.course-buttons .add-to-cart {
+    background-color: #28a745; /* Verde para el botón de añadir al carrito */
+}
+
+.course-buttons .add-to-cart:hover {
+    background-color: #218838; /* Verde más oscuro al pasar el ratón */
+}
+
+.course-buttons .share-course {
+    background-color: #007bff; /* Azul para el botón de compartir */
+}
+
+.course-buttons .share-course:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+}
