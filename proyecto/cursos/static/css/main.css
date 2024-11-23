@@ -87,7 +87,6 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     height: auto;
 }
-
 .course-section h2 {
     color: #2C3E50;
     font-size: 24px;
@@ -377,4 +376,49 @@ body {
 
 .custom-alert button:hover {
     opacity: 0.7;
+}
+
+/* Estilo global para los select */
+.filter-select {
+    width: 24%;
+    padding: 8px 15px; /* Reducido padding */
+    font-size: 15px; /* Reducido tamaño de fuente */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #333;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+/* Cambios al hacer hover sobre el select */
+.filter-select:hover {
+    border-color: #27AE60; /* Color verde */
+    background-color: #f1f1f1;
+}
+
+/* Estilo cuando el select está enfocado */
+.filter-select:focus {
+    border-color: #27AE60; /* Color verde */
+    outline: none;
+    background-color: #fff;
+}
+
+/* Estilo de los options */
+.filter-select option {
+    padding: 8px; /* Reducido padding */
+    background-color: #fff;
+    color: #333;
+    border: none;
+}
+
+/* Estilo para la opción seleccionada */
+.filter-select option:checked {
+    background-color: #27AE60;
+    color: #fff;
+}
+
+/* Estilo para los selects dentro de formularios */
+form .filter-select {
+    margin-bottom: 8px; /* Espacio reducido entre selects */
 }
