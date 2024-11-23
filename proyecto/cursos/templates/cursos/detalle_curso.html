@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <div class="background-blur"></div> 
     <!-- Navbar -->
     <header class="navbar">
         <div class="logo"><a href="{% url 'home' %}" class="home-link">OpositaConmigo</a></div> 
@@ -32,17 +33,23 @@
     </header>
 
     <!-- Sección de detalles del curso -->
+    <main class="courses-container-detail">
     <section class="course-section">
         <h2>{{ curso.nombre }}</h2>
         <div class="course-details">
-            <img src="{{ curso.imagen }}" alt="Imagen de {{ curso.nombre }}">
-            <p><strong>Descripción:</strong> {{ curso.descripcion }}</p>
-            <p><strong>Fecha de inicio:</strong> {{ curso.fecha_inicio }}</p>
-            <p><strong>Duración:</strong> {{ curso.duracion_semanas }} semanas</p>
-            <p><strong>Plazas disponibles:</strong> {{ curso.plazas_disponibles }}</p>
-            <p><strong>Precio:</strong> {{ curso.precio }} €</p>
-            <p><strong>Departamento:</strong> {{ curso.get_departamento_display }}</p>
-            <p><strong>Sector laboral:</strong> {{ curso.get_sector_laboral_display }}</p>
+            <!-- Columna 1: Imagen -->
+            <img src="/{{ curso.imagen }}" alt="Imagen de {{ curso.nombre }}">
+        
+            <!-- Columna 2: Detalles -->
+            <div class="course-info">
+                <p><strong>Descripción:</strong> {{ curso.descripcion }}</p>
+                <p><strong>Fecha de inicio:</strong> {{ curso.fecha_inicio }}</p>
+                <p><strong>Duración:</strong> {{ curso.duracion_semanas }} semanas</p>
+                <p><strong>Plazas disponibles:</strong> {{ curso.plazas_disponibles }}</p>
+                <p><strong>Precio:</strong> {{ curso.precio }} €</p>
+                <p><strong>Departamento:</strong> {{ curso.get_departamento_display }}</p>
+                <p><strong>Sector laboral:</strong> {{ curso.get_sector_laboral_display }}</p>
+            </div>
         </div>
 
         <div class="course-buttons">
@@ -58,5 +65,6 @@
 
         <a href="/" class="back-link">Volver al inicio</a>
     </section>
+</main>
 </body>
 </html>
