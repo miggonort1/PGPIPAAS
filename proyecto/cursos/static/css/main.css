@@ -264,9 +264,9 @@ body {
 
 .dropdown {
     position: absolute;
-    top: 10;
+    top: 100%;
     right: 0;
-    background-color: #fff;
+    background-color: #ffffff;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     width: 300px;
@@ -421,4 +421,24 @@ body {
 /* Estilo para los selects dentro de formularios */
 form .filter-select {
     margin-bottom: 8px; /* Espacio reducido entre selects */
+}
+
+
+#checkout-button {
+    display: block;
+    background-color: #2C3E50;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#checkout-button:hover {
+    background-color: #242b32;
+}
+
+#checkout-button:active {
+    background-color: #004085;
 }
