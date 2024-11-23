@@ -13,8 +13,28 @@
     <header class="navbar">
         <div class="logo"><a href="{% url 'home' %}" class="home-link">OpositaConmigo</a></div> 
         <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
-        <input type="text" class="search-bar" name="q" placeholder="Buscar curso..." value="{{ query }}">
+        
     </form>
+    <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
+        <!-- Campo de búsqueda -->    
+        <input type="text" class="search-bar" name="q" placeholder="Buscar curso..." value="{{ query }}">
+        
+        <!-- Filtro de Departamento -->
+        <select name="departamento" id="departamento" class="filter-select" onchange="this.form.submit()">
+            <option value="" {% if not request.GET.departamento %}selected{% endif %}>Todos los departamentos</option>
+            {% for key, value in departamento_choices %}
+                <option value="{{ key }}" {% if request.GET.departamento == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+        
+        <!-- Filtro de Sector Laboral -->
+        <select name="sector_laboral" id="sector_laboral" class="filter-select" onchange="this.form.submit()">
+            <option value="" {% if not request.GET.sector_laboral %}selected{% endif %}>Todos los sectores</option>
+            {% for key, value in sector_laboral_choices %}
+                <option value="{{ key }}" {% if request.GET.sector_laboral == key %}selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+        </select>
+    </form>   
     <nav class="navbar-icons">
         <div class="icon profile">
             {% if request.user.is_authenticated %}
@@ -29,45 +49,11 @@
                 </a>
             {% endif %}
         </div>
-        <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
-            <!-- Campo de búsqueda -->    
-            <input type="text" class="search-bar" name="q" placeholder="Buscar curso..." value="{{ query }}">
-            
-            <!-- Filtro de Departamento -->
-            <select name="departamento" id="departamento" class="filter-select" onchange="this.form.submit()">
-                <option value="" {% if not request.GET.departamento %}selected{% endif %}>Todos los departamentos</option>
-                {% for key, value in departamento_choices %}
-                    <option value="{{ key }}" {% if request.GET.departamento == key %}selected{% endif %}>{{ value }}</option>
-                {% endfor %}
-            </select>
-            
-            <!-- Filtro de Sector Laboral -->
-            <select name="sector_laboral" id="sector_laboral" class="filter-select" onchange="this.form.submit()">
-                <option value="" {% if not request.GET.sector_laboral %}selected{% endif %}>Todos los sectores</option>
-                {% for key, value in sector_laboral_choices %}
-                    <option value="{{ key }}" {% if request.GET.sector_laboral == key %}selected{% endif %}>{{ value }}</option>
-                {% endfor %}
-            </select>
-        </form>        
-        <nav class="navbar-icons">
-            <div class="icon profile">
-                {% if request.user.is_authenticated %}
-                    <a href="{% url 'perfil' %}" class="profile-link">
-                        <i class="fas fa-user-circle"></i>
-                        <span>{{ request.user.nombre_usuario }}</span>
-                    </a>
-                {% else %}
-                    <a href="{% url 'inicioSesion' %}" class="profile-link">
-                        <i class="fas fa-user-circle"></i>
-                        <span>Perfil</span>
-                    </a>
-                {% endif %}
-            </div>
-            <div class="icon cart">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Carrito</span>
-            </div>
-        </nav>
+        <div class="icon cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Carrito</span>
+        </div>
+        
     </header>
     
     <main class="courses-container">
@@ -77,11 +63,13 @@
                 {% if resultados %}
                     {% for curso in resultados %}
                         <div class="course-card">
+                            <a href="/curso/{{ curso.id }}">
                             <img src="{{ curso.imagen }}" alt="Imagen del curso">
                             <h3>{{ curso.nombre }}</h3>
                             <p>Fecha de inicio: {{ curso.fecha_inicio }}</p>
                             <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
                             <p>Precio: {{ curso.precio }}€</p>
+                            </a>
                         </div>
                     {% endfor %}
                 {% else %}

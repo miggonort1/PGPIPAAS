@@ -29,7 +29,7 @@ cursos_iniciales = [
         "precio": 300,
         "departamento": "MD",
         "sector_laboral": "POL",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Bombero",
@@ -40,7 +40,7 @@ cursos_iniciales = [
         "precio": 280,
         "departamento": "BCN",
         "sector_laboral": "BOM",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Guardia Civil",
@@ -51,7 +51,7 @@ cursos_iniciales = [
         "precio": 350,
         "departamento": "VAL",
         "sector_laboral": "GUA",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Sanidad Pública",
@@ -62,7 +62,7 @@ cursos_iniciales = [
         "precio": 320,
         "departamento": "SEV",
         "sector_laboral": "SAL",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Justicia Administrativa",
@@ -73,7 +73,7 @@ cursos_iniciales = [
         "precio": 450,
         "departamento": "ZGZ",
         "sector_laboral": "JUS",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Educación Primaria",
@@ -84,7 +84,7 @@ cursos_iniciales = [
         "precio": 400,
         "departamento": "MAL",
         "sector_laboral": "EDU",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Fiscal de Hacienda",
@@ -95,7 +95,7 @@ cursos_iniciales = [
         "precio": 500,
         "departamento": "BIL",
         "sector_laboral": "FIS",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Administración Pública",
@@ -106,7 +106,7 @@ cursos_iniciales = [
         "precio": 320,
         "departamento": "VLL",
         "sector_laboral": "ADM",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Informática para Oposiciones",
@@ -117,7 +117,7 @@ cursos_iniciales = [
         "precio": 270,
         "departamento": "MD",
         "sector_laboral": "ADM",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Tráfico y Transporte",
@@ -128,7 +128,7 @@ cursos_iniciales = [
         "precio": 380,
         "departamento": "BCN",
         "sector_laboral": "TRA",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Derecho Administrativo",
@@ -139,7 +139,7 @@ cursos_iniciales = [
         "precio": 340,
         "departamento": "VAL",
         "sector_laboral": "JUS",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Economía Pública",
@@ -150,7 +150,7 @@ cursos_iniciales = [
         "precio": 360,
         "departamento": "SEV",
         "sector_laboral": "ADM",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Gestión Municipal",
@@ -161,7 +161,7 @@ cursos_iniciales = [
         "precio": 300,
         "departamento": "ZGZ",
         "sector_laboral": "ADM",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Seguridad Social",
@@ -172,7 +172,7 @@ cursos_iniciales = [
         "precio": 380,
         "departamento": "MAL",
         "sector_laboral": "SAL",
-        "imagen": "https://via.placeholder.com/150"
+        
     },
     {
         "nombre": "Curso de Prisiones",
@@ -183,7 +183,6 @@ cursos_iniciales = [
         "precio": 330,
         "departamento": "BIL",
         "sector_laboral": "PRI",
-        "imagen": "https://via.placeholder.com/150"
     },
 ]
 

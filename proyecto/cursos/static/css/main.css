@@ -7,9 +7,23 @@
 
 /* Fuente general y colores */
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f7f4ef;
+    font-family: 'Arial Nova', sans-serif;
+    background-color: #ebebeb;
     color: #333;
+}
+
+.background-blur {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Mantener el fondo detrás del contenido */
+    background-image: url("../images/fondo2.jpg");
+    background-size: cover;
+    background-position: center;
+    filter: blur(1px); /* Aplicar el desenfoque */
+    opacity: 0.45; /* Reducir opacidad si se desea */
 }
 
 .home-link {
@@ -19,7 +33,6 @@ body {
     font-weight: 600;
     text-align: center;
     transition: transform 0.3s ease, color 0.3s ease;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 .home-link:hover {
@@ -31,9 +44,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #49777b;
+    background-color: #3669ac;
     padding: 15px 20px;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
     color: #fff;
 }
 
@@ -61,16 +73,15 @@ body {
     padding: 40px;
     margin: 20px auto;
     max-width: 1200px;
-    background-color: #ffffff;
+    background-color: #ffffffb8;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .course-section h2 {
-    color: #f67103;
+    color: #3669ac;
     font-size: 24px;
     margin-bottom: 20px;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 /* Cards */
@@ -103,10 +114,14 @@ body {
 .course-card a {
     font-size: 18px;
     margin: 10px;
-    color: #49777b;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
+    color:  #4486db;
+    text-decoration: none;
 }
-
+.course-card h3 {
+    font-size: 18px;
+    margin: 10px;
+    color: #3669ac;
+}
 .course-card p {
     font-size: 14px;
     margin: 10px;
@@ -132,7 +147,7 @@ body {
 }
 
 .profile-link span {
-    color: #333; /* Color del texto */
+    color: #ffffff; /* Color del texto */
 }
 
 /* Hover para realzar el elemento */
@@ -142,7 +157,7 @@ body {
 }
 
 .profile-link:hover i {
-    color: #f67103; /* Naranja más vivo */
+    color: #3669ac; /* Naranja más vivo */
 }
 /* Enlace carrito estilizado */
 .cart-link {
@@ -174,7 +189,7 @@ body {
 }
 
 .cart-link:hover i {
-    color: #f67103; /* Naranja más vivo */
+    color: #3669ac; /* Naranja más vivo */
 }
 
 .paginacion {
@@ -186,23 +201,22 @@ body {
 
 .step-links a {
     text-decoration: none;
-    color: #49777b;
-    border: 1px solid #49777b;
+    color: #3669ac;
+    border: 1px solid #3669ac;
     padding: 5px 10px;
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;
-    font-family: 'Lobster', cursive; /* Usa la fuente importada */
 }
 
 .step-links a:hover {
-    background-color: #49777b;
+    background-color: #3669ac;
     color: #fff;
 }
 
 .step-links .pagina-actual {
     font-weight: bold;
     color: #fff;
-    background-color: #49777b;
+    background-color: #3669ac;
     padding: 5px 10px;
     border-radius: 5px;
 }
