@@ -9,7 +9,7 @@ services:
       MYSQL_USER: pgpipaas_user
       MYSQL_PASSWORD: pgpipaas_password
     ports:
-      - "3306:3306"
+      - "3307:3306"
 
   web:
     build: .
