@@ -2,6 +2,7 @@ import os
 import django
 from decimal import Decimal
 from datetime import datetime
+from django.templatetags.static import static
 
 # Configura Django para acceder a los modelos
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "proyecto.settings")
@@ -29,6 +30,7 @@ cursos_iniciales = [
         "precio": 300,
         "departamento": "MD",
         "sector_laboral": "POL",
+        "imagen": "static/images/policia.jpg",
         
     },
     {
@@ -40,6 +42,7 @@ cursos_iniciales = [
         "precio": 280,
         "departamento": "BCN",
         "sector_laboral": "BOM",
+        "imagen": "static/images/bomberos.jpg",
         
     },
     {
@@ -51,6 +54,7 @@ cursos_iniciales = [
         "precio": 350,
         "departamento": "VAL",
         "sector_laboral": "GUA",
+        "imagen": "static/images/guardiacivil.jpg",
         
     },
     {
@@ -62,6 +66,7 @@ cursos_iniciales = [
         "precio": 320,
         "departamento": "SEV",
         "sector_laboral": "SAL",
+        "imagen": "static/images/sanidadpublica.jpg",
         
     },
     {
@@ -73,6 +78,7 @@ cursos_iniciales = [
         "precio": 450,
         "departamento": "ZGZ",
         "sector_laboral": "JUS",
+        "imagen": "static/images/justiciaadministrativa.jpg",
         
     },
     {
@@ -84,6 +90,7 @@ cursos_iniciales = [
         "precio": 400,
         "departamento": "MAL",
         "sector_laboral": "EDU",
+        "imagen": "static/images/educacionprimaria.jpg",
         
     },
     {
@@ -95,6 +102,7 @@ cursos_iniciales = [
         "precio": 500,
         "departamento": "BIL",
         "sector_laboral": "FIS",
+        "imagen": "static/images/fiscalhacienda.jpg",
         
     },
     {
@@ -106,6 +114,7 @@ cursos_iniciales = [
         "precio": 320,
         "departamento": "VLL",
         "sector_laboral": "ADM",
+        "imagen": "static/images/administracionpublica.jpg",
         
     },
     {
@@ -117,6 +126,7 @@ cursos_iniciales = [
         "precio": 270,
         "departamento": "MD",
         "sector_laboral": "ADM",
+        "imagen": "static/images/informatico.jpg",
         
     },
     {
@@ -128,6 +138,7 @@ cursos_iniciales = [
         "precio": 380,
         "departamento": "BCN",
         "sector_laboral": "TRA",
+        "imagen": "static/images/traficotransporte.jpg",
         
     },
     {
@@ -139,6 +150,7 @@ cursos_iniciales = [
         "precio": 340,
         "departamento": "VAL",
         "sector_laboral": "JUS",
+        "imagen": "static/images/derechoadministrativo.jpg",
         
     },
     {
@@ -150,6 +162,7 @@ cursos_iniciales = [
         "precio": 360,
         "departamento": "SEV",
         "sector_laboral": "ADM",
+        "imagen": "static/images/economiapublica.jpg",
         
     },
     {
@@ -161,6 +174,7 @@ cursos_iniciales = [
         "precio": 300,
         "departamento": "ZGZ",
         "sector_laboral": "ADM",
+        "imagen": "static/images/gestionmunicipal.jpg",
         
     },
     {
@@ -172,6 +186,7 @@ cursos_iniciales = [
         "precio": 380,
         "departamento": "MAL",
         "sector_laboral": "SAL",
+        "imagen": "static/images/seguridadsocial.jpg",
         
     },
     {
@@ -183,6 +198,7 @@ cursos_iniciales = [
         "precio": 330,
         "departamento": "BIL",
         "sector_laboral": "PRI",
+        "imagen": "static/images/prisiones.jpg",
     },
 ]
 
