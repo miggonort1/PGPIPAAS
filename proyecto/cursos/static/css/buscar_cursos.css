@@ -288,3 +288,41 @@ body {
     background-color: #244469;
     transform: scale(0.95);
 }
+
+
+
+.dropdown {
+    position: absolute;
+    top: 10;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 300px;
+    padding: 15px;
+    z-index: 10;
+    display: none;
+}
+
+.dropdown.hidden {
+    display: none;
+}
+
+.dropdown.visible {
+    display: block;
+}
+
+#cart-items {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#cart-total {
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: right;
+}
+
+#cart-items .cart-item p {
+    color: #000000;  /* Color oscuro para el texto de los cursos */
+}

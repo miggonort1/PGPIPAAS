@@ -57,9 +57,14 @@
                 </a>
             {% endif %}
         </div>
-        <div class="icon cart">
+        <div class="icon cart" id="cart-button">
             <i class="fas fa-shopping-cart"></i>
             <span>Carrito</span>
+            <div id="cart-dropdown" class="dropdown hidden">
+                <div id="cart-items"></div>
+                <div id="cart-total"></div>
+                <a href="{% url 'finalizar_compra' %}" id="checkout-button">Finalizar Compra</a>
+            </div>
         </div>
         
     </header>
