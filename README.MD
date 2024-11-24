@@ -55,6 +55,15 @@ PARA ARRANCAR EL SERVER LOCAL
  - Desde la carpeta proyecto 
  python manage.py runserver
 
+PARA QUE FUNCIONEN LOS TESTS
+  - mariadb -u root -p
+  - GRANT ALL PRIVILEGES ON *.* TO 'pgpipaas_user'@'localhost';
+  FLUSH PRIVILEGES;
+
+PARA EJECUTAR LOS TESTS
+  - (Desde el venv si no lo has hecho antes): pip install pytest pytest-django
+  - pytest
+
 
 
 CORREO:
