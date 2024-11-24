@@ -133,15 +133,14 @@ def registro(request):
     if request.method == 'POST':
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
-            # Crear el usuario con la información proporcionada
             usuario = form.save(commit=False)
-            usuario.set_password(form.cleaned_data['password'])  # Establecer la contraseña encriptada
+            usuario.set_password(form.cleaned_data['password'])
             usuario.save()
-
             messages.success(request, "¡Registro exitoso! Ahora puedes iniciar sesión.")
-            return redirect('home')  # Redirigir a la vista de inicio de sesión o al home
+            return redirect('home')
         else:
             messages.error(request, "Por favor corrige los errores en el formulario.")
+            print(form.errors)  # Imprimir errores para depuración
     else:
         form = RegistroUsuarioForm()
 
@@ -166,9 +165,10 @@ def editar_perfil(request):
         return render(request, 'cursos/perfil.html', {'form': form})
 
     else:
-        # Si no está autenticado, redirigir al login
-        messages.error(request, "Debes iniciar sesión para acceder a tu perfil.")
-        return redirect('perfil')  # Redirige a la página de inicio de sesión (ajusta la URL según corresponda)
+        if not messages.get_messages(request):
+            # Asegurarse de que no se agregue el mensaje de error si ya está en la sesión
+            messages.error(request, "Debes iniciar sesión para acceder a tu perfil.")
+        return redirect('inicioSesion')  # Redirige a la página de inicio de sesión (ajusta la URL según corresponda)
     
 
 def detalle_curso(request, id):
