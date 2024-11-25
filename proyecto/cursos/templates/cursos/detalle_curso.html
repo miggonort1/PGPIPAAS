@@ -67,6 +67,7 @@
         </div>
 
         <div class="course-buttons">
+            {% csrf_token %}
             <button class="btn add-to-cart" data-curso-id="{{ curso.id }}" data-curso-nombre="{{ curso.nombre }}">
                 <i class="fas fa-shopping-cart"></i> Añadir al carrito
             </button>
