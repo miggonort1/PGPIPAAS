@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cartDropdown = document.getElementById("cart-dropdown");
     const cartItems = document.getElementById("cart-items");
     const cartTotal = document.getElementById("cart-total");
+    const checkoutButton = document.getElementById('checkout-button');
 
     cartButton.addEventListener("click", async () => {
         cartDropdown.classList.toggle("hidden");
@@ -34,6 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
             item.innerHTML = `<p>Total: ${data.total_precio}€ </p>`;
             
             cartItems.appendChild(item);
+
+            if (cartItems.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="empty-cart-message">No hay cursos en el carrito.</p>';
+                checkoutButton.style.display = 'none'; // Oculta el botón si el carrito está vacío
+            } else {
+                checkoutButton.style.display = 'block'; // Muestra el botón si hay elementos
+            }
         } catch (error) {
             cartItems.innerHTML = "<p>Error al cargar el carrito.</p>";
         }

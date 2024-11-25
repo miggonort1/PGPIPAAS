@@ -136,14 +136,14 @@ class Pedido(models.Model):
     ]
 
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="pedidos", null=True, blank=True)
-    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación", null=True, blank=True)
-    estado = models.CharField(max_length=3, choices=ESTADO_PEDIDO, default='PEN', verbose_name="Estado del Pedido", null=True, blank=True)
-    direccion_envio = models.CharField(max_length=255, verbose_name="Dirección de Envío", null=True, blank=True)
-    ciudad_envio = models.CharField(max_length=100, verbose_name="Ciudad de Envío", null=True, blank=True)
-    provincia_envio = models.CharField(max_length=100, verbose_name="Provincia de Envío", null=True, blank=True)
-    codigo_postal_envio = models.CharField(max_length=10, verbose_name="Código Postal de Envío", null=True, blank=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total del Pedido", null=True, blank=True)
-
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
+    estado = models.CharField(max_length=3, choices=ESTADO_PEDIDO, default='PEN', verbose_name="Estado del Pedido")
+    direccion_envio = models.CharField(max_length=255, verbose_name="Dirección de Envío")
+    ciudad_envio = models.CharField(max_length=100, verbose_name="Ciudad de Envío")
+    provincia_envio = models.CharField(max_length=100, verbose_name="Provincia de Envío")
+    codigo_postal_envio = models.CharField(max_length=10, verbose_name="Código Postal de Envío")
+    total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total del Pedido")
+    codigo_seguimiento = models.CharField(max_length=36,unique=True,editable=False, verbose_name="Código de Seguimiento") 
     def __str__(self):
         return f"Pedido {self.id} ({self.estado})"
 

@@ -22,4 +22,5 @@ urlpatterns = [
     path('finalizar_compra/', views.finalizar_compra, name='finalizar_compra'),
     path('api/confirmar_compra/', views.confirmar_compra, name='confirmar_compra'),
     path('api/usuario/', views.obtener_datos_usuario, name='obtener_datos_usuario'),
+    path('pedido/detalle/', views.detalle_pedido, name='detalle_pedido'),
 ]
