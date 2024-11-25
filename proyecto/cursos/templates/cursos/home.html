@@ -40,7 +40,7 @@
                     <div id="cart-total" class="cart-total">
                         <span>Total: </span><span id="total-price">$0.00</span>
                     </div>
-                    <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button">Finalizar Compra</a>
+                    <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button" style="display: none;">Finalizar Compra</a>
                 </div>
             </div>
 
@@ -149,7 +149,14 @@
                 {% endfor %}
             </div>
         </section>
-        
+        <section id="track-order" class="course-section">
+            <h2>Rastrea tu Pedido</h2>
+            <form action="{% url 'detalle_pedido' %}" method="get" class="track-order-form">
+                <label for="codigo_seguimiento">Introduce tu código de seguimiento:</label>
+                <input type="text" id="codigo_seguimiento" name="codigo_seguimiento" placeholder="Código de Seguimiento" required>
+                <button type="submit" class="track-order-button">Rastrear Pedido</button>
+            </form>
+        </section>
     </main>
 
     <script src="{% static 'js/main.js' %}"></script>

@@ -10,34 +10,173 @@ body {
     font-family: 'Arial Nova', sans-serif;
     background-color: #f8f8f8;
     color: #333;
-    padding: 20px;
 }
 
-.container {
-    width: 80%;
-    margin: 0 auto;
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2C3E50;
+    padding: 15px 20px;
+    color: #fff;
+    
+    position: fixed;      /* Fija la barra en su posición */
+    top: 0;               /* Posición en la parte superior de la ventana */
+    width: 100%;          /* Asegura que la barra ocupe todo el ancho de la ventana */
+    z-index: 1000; 
+}
+
+.navbar .logo {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.navbar .search-bar {
+    border: 2px solid #2C3E50;
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+.navbar-icons .icon {
+    font-size: 18px;
+    color: #fff;
+    margin-left: 20px;
+    cursor: pointer;
+}
+.navbar-icons :hover span{
+    color: #2C3E50;
+}
+
+
+.profile-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none; /* Sin subrayado */
+    color: #333; /* Color neutro */
+    font-size: 16px;
+    font-weight: 500;
+    gap: 8px; /* Espacio entre el ícono y el texto */
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.profile-link i {
+    font-size: 22px; /* Tamaño del ícono */
+    color: #27AE60; /* Naranja oscuro */
+}
+
+.profile-link span {
+    color: #ffffff; /* Color del texto */
+}
+
+/* Hover para realzar el elemento */
+.profile-link:hover {
+    background-color: #f2ebe1; /* Fondo claro al pasar el ratón */
+    color: #27AE60; /* Naranja oscuro */
+}
+
+.profile-link:hover i {
+    color: #27AE60; /* Naranja más vivo */
+}
+
+.dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 300px;
+    padding: 15px;
+    z-index: 10;
+    display: none;
+}
+
+.dropdown.hidden {
+    display: none;
+}
+
+.dropdown.visible {
+    display: block;
+}
+
+
+.home-link {
+    font-size: 30px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.home-link:hover {
+    color: #27AE60;
+    transform: scale(1.05);
+}
+
+.container{
+    margin-top: 6.5%;
+}
+.container-detail{
+    margin-top: 7%;
 }
 
 h2 {
     text-align: center;
-    color: #3669ac;
+    color: #2C3E50;
 }
-
-/* Estilo de la lista de cursos */
 .cart-course {
-    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 15px;
-    margin: 10px 0;
-    border-radius: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #f9f9f9;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.cart-course h3 {
-    color: #3669ac;
+.cart-course:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
-.cart-course p {
-    color: #555;
+.course-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.cantidad, .precio-total {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.remove-course {
+    background-color: #27AE60;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.remove-course:hover {
+    background-color: #1b7340;
+    transform: scale(1.05);
+}
+
+.remove-course:active {
+    transform: scale(0.95);
 }
 
 /* Estilos de formulario */

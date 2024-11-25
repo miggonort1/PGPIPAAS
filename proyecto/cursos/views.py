@@ -393,7 +393,7 @@ def confirmar_compra(request):
                         'nombre': nombre,
                         'email': email,
                     })
-
+            codigo_seguimiento = str(uuid.uuid4())
             # Crear el pedido principal
             pedido = Pedido.objects.create(
                 usuario=request.user if request.user.is_authenticated else None, # No asociamos un usuario
@@ -403,7 +403,8 @@ def confirmar_compra(request):
                 codigo_postal_envio=codigo_postal_envio,
                 total=total, # Total vacío
                 estado= 'PEN' if payment_method == "cash-on-delivery" else 'PAG',
-                fecha_creacion=timezone.now()  # Fecha de creación actual
+                fecha_creacion=timezone.now(), # Fecha de creación actual
+                codigo_seguimiento=codigo_seguimiento
             )
             for curso in cursos:
                 PedidoCurso.objects.create(
@@ -434,3 +435,17 @@ def obtener_datos_usuario(request):
         "provincia": user.provincia,
         "codigo_postal": user.codigo_postal,
     })
+
+
+def detalle_pedido(request):
+    codigo_seguimiento = request.GET.get('codigo_seguimiento')
+    
+    if not codigo_seguimiento:
+        return render(request, 'cursos/pedido_detalle.html', {'error': 'Por favor, introduce un código de seguimiento válido.'})
+    
+    try:
+        pedido = Pedido.objects.get(codigo_seguimiento=codigo_seguimiento)
+    except Pedido.DoesNotExist:
+        return render(request, 'cursos/pedido_detalle.html', {'error': 'Pedido no encontrado. Verifica el código de seguimiento.'})
+    
+    return render(request, 'cursos/pedido_detalle.html', {'pedido': pedido})
