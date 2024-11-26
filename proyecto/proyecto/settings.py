@@ -152,3 +152,11 @@ EMAIL_USE_TLS = True  # Usar TLS
 EMAIL_HOST_USER = 'pgpipaas@gmail.com'  # Tu dirección de correo
 EMAIL_HOST_PASSWORD = 'jqbb eueg fwfq gpaw'  # Tu contraseña
 DEFAULT_FROM_EMAIL = 'pgpipaas@gmail.com'  # El correo que aparecerá como remitente
+
+
+#stripe
+
+import os
+from decouple import config
+
+STRIPE_API_KEY = config('STRIPE_API_KEY')
