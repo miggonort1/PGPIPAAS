@@ -88,7 +88,7 @@ DATABASES = {
         'NAME': 'dbpgpipaas',
         'USER': 'pgpipaas_user',
         'PASSWORD': 'pgpipaas_password',
-        'HOST': 'localhost',  # O la IP de tu servidor de MariaDB si está en otro lugar
+        'HOST': 'host.docker.internal',  # O la IP de tu servidor de MariaDB si está en otro lugar
         'PORT': '3306',       # Puerto predeterminado para MariaDB
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"

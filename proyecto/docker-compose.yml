@@ -1,21 +1,33 @@
-version: '3'
-
 services:
   db:
-    image: mariadb:11.5
+    image: mariadb:latest
+    env_file:
+      - .env
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: dbpgpipaas
-      MYSQL_USER: pgpipaas_user
-      MYSQL_PASSWORD: pgpipaas_password
-    ports:
-      - "3307:3306"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      # ports:
+      # - "3306:3306"
 
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - .env
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+    command: >
+      sh -c "wait-for-it ${DB_HOST}:${DB_PORT} -- python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/app
+      - .:/proyecto
     ports:
       - "8000:8000"
     depends_on:
