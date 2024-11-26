@@ -31,6 +31,8 @@ Si base de datos peta hacer esto:
   CREATE USER 'pgpipaas_user'@'localhost' IDENTIFIED BY 'pgpipaas_password';
   GRANT ALL PRIVILEGES ON dbpgpipaas.* TO 'pgpipaas_user'@'localhost';
   FLUSH PRIVILEGES;
+  GRANT ALL PRIVILEGES ON dbpgpipaas.* TO 'pgpipaas_user'@'host.docker.internal' IDENTIFIED BY 'pgpipaas_password';
+  FLUSH PRIVILEGES;
   EXIT;
 
 CERRAMOS EL MARIADB
