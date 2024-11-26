@@ -459,7 +459,7 @@ def detalle_pedido(request):
 #---------------------------------- STRIPE ----------------------------------
 
 
-stripe.api_key = 'sk_test_51QOIAtFgZCaIswPm7qEZCTVfk9OntiyYOpnJazS8ddW2EJ72puB3AwAQd4YPULQOf6Ew1hsRHCbBVAt2ShcidvQ500rwGrmdsE'
+stripe.api_key = settings.STRIPE_API_KEY
 
 YOUR_DOMAIN = 'http://127.0.0.1:8000'
 
