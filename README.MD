@@ -66,6 +66,10 @@ PARA EJECUTAR LOS TESTS
   - (Desde el venv si no lo has hecho antes): pip install pytest pytest-django
   - pytest
 
+PARA QUUE FUNCIONE STRIPE:
+pip install python-decouple
+pip install stripe
+
 
 
 CORREO:
