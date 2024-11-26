@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from .views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView, CreateCheckoutSessionView
 
 
 urlpatterns = [
@@ -23,4 +23,7 @@ urlpatterns = [
     path('api/confirmar_compra/', views.confirmar_compra, name='confirmar_compra'),
     path('api/usuario/', views.obtener_datos_usuario, name='obtener_datos_usuario'),
     path('pedido/detalle/', views.detalle_pedido, name='detalle_pedido'),
+    path('create_checkout_session', CreateCheckoutSessionView.as_view(), name='create_checkout_session'),
+    path('success', views.success_view, name='success'),
+    path('cancel', views.cancel_view, name='cancel'),
 ]

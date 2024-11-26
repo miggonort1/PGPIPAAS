@@ -24,6 +24,10 @@ import json
 import uuid
 from django.utils import timezone
 from decimal import Decimal
+from django.views import View
+from django.views.generic import TemplateView
+from django.conf import settings
+import stripe
 
 
 def home(request):
@@ -361,8 +365,8 @@ def finalizar_compra(request):
 def confirmar_compra(request):
     if request.method == "POST":
         try:
-            data = json.loads(request.body) # Verifica si los datos se reciben correctamente
-
+            data = json.loads(request.body.decode('utf-8')) # Verifica si los datos se reciben correctamente
+            print("Datos recibidos:", data) 
             # Extraer los datos necesarios
             nombre_comprador = data.get("nombre_comprador")
             email_comprador = data.get("email_comprador")
@@ -449,3 +453,47 @@ def detalle_pedido(request):
         return render(request, 'cursos/pedido_detalle.html', {'error': 'Pedido no encontrado. Verifica el código de seguimiento.'})
     
     return render(request, 'cursos/pedido_detalle.html', {'pedido': pedido})
+
+
+
+#---------------------------------- STRIPE ----------------------------------
+
+
+stripe.api_key = 'sk_test_51QOIAtFgZCaIswPm7qEZCTVfk9OntiyYOpnJazS8ddW2EJ72puB3AwAQd4YPULQOf6Ew1hsRHCbBVAt2ShcidvQ500rwGrmdsE'
+
+YOUR_DOMAIN = 'http://127.0.0.1:8000'
+
+class CreateCheckoutSessionView(View):
+    def post(self, request, *args, **kwargs):  # Cambiar create_checkout_session por post
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            items = data.get("items", [])
+            line_items = []
+            for item in items:
+                curso_id = item.get("curso_id")
+                cantidad = item.get("cantidad",1)
+            
+                curso = Curso.objects.get(id=curso_id)
+            
+                line_items.append({
+                    'price': curso.price_id,
+                    'quantity': cantidad,
+                })
+                print(item)
+
+            checkout_session = stripe.checkout.Session.create(
+                line_items= line_items,
+                mode='payment',
+                success_url=YOUR_DOMAIN + '/success.html',
+                cancel_url=YOUR_DOMAIN + '/cancel.html',
+            )
+            return JsonResponse({'url': checkout_session.url})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+
+def success_view(request):
+    return render(request, 'cursos/success.html')
+
+def cancel_view(request):
+    return render(request, 'cursos/cancel.html')

@@ -32,6 +32,7 @@ cursos_iniciales = [
         "departamento": "MD",
         "sector_laboral": "POL",
         "imagen": "static/images/policia.jpg",
+        "price_id": "price_1QONhgFgZCaIswPm8CDiy8uG",
         
     },
     {
@@ -44,7 +45,8 @@ cursos_iniciales = [
         "departamento": "BCN",
         "sector_laboral": "BOM",
         "imagen": "static/images/bomberos.jpg",
-        
+        "price_id": "price_1QONiIFgZCaIswPmUfU6Y2C9",
+
     },
     {
         "nombre": "Curso de Guardia Civil",
@@ -56,6 +58,7 @@ cursos_iniciales = [
         "departamento": "VAL",
         "sector_laboral": "GUA",
         "imagen": "static/images/guardiacivil.jpg",
+        "price_id": "price_1QONipFgZCaIswPm7o3ln59I",
         
     },
     {
@@ -68,6 +71,7 @@ cursos_iniciales = [
         "departamento": "SEV",
         "sector_laboral": "SAL",
         "imagen": "static/images/sanidadpublica.jpg",
+        "price_id": "price_1QONj7FgZCaIswPmaOVqsg3X",
         
     },
     {
@@ -80,6 +84,7 @@ cursos_iniciales = [
         "departamento": "ZGZ",
         "sector_laboral": "JUS",
         "imagen": "static/images/justiciaadministrativa.jpg",
+        "price_id": "price_1QONlEFgZCaIswPmXo6XAtD4",
         
     },
     {
@@ -92,6 +97,7 @@ cursos_iniciales = [
         "departamento": "MAL",
         "sector_laboral": "EDU",
         "imagen": "static/images/educacionprimaria.jpg",
+        "price_id": "price_1QONlEFgZCaIswPmXo6XAtD4",
         
     },
     {
@@ -104,6 +110,7 @@ cursos_iniciales = [
         "departamento": "BIL",
         "sector_laboral": "FIS",
         "imagen": "static/images/fiscalhacienda.jpg",
+        "price_id": "price_1QONlbFgZCaIswPmDviikpV2",
         
     },
     {
@@ -116,6 +123,7 @@ cursos_iniciales = [
         "departamento": "VLL",
         "sector_laboral": "ADM",
         "imagen": "static/images/administracionpublica.jpg",
+        "price_id": "price_1QONmJFgZCaIswPm2cQzPxZH",
         
     },
     {
@@ -128,6 +136,7 @@ cursos_iniciales = [
         "departamento": "MD",
         "sector_laboral": "ADM",
         "imagen": "static/images/informatico.jpg",
+        "price_id": "price_1QONmyFgZCaIswPmOrCM7qEi",
         
     },
     {
@@ -140,6 +149,7 @@ cursos_iniciales = [
         "departamento": "BCN",
         "sector_laboral": "TRA",
         "imagen": "static/images/traficotransporte.jpg",
+        "price_id": "price_1QONncFgZCaIswPmhD9Awr3R",
         
     },
     {
@@ -152,6 +162,7 @@ cursos_iniciales = [
         "departamento": "VAL",
         "sector_laboral": "JUS",
         "imagen": "static/images/derechoadministrativo.jpg",
+        "price_id": "price_1QONoDFgZCaIswPmmrH5JisL",
         
     },
     {
@@ -164,6 +175,7 @@ cursos_iniciales = [
         "departamento": "SEV",
         "sector_laboral": "ADM",
         "imagen": "static/images/economiapublica.jpg",
+        "price_id": "price_1QONokFgZCaIswPmycaa7MYq",
         
     },
     {
@@ -176,6 +188,7 @@ cursos_iniciales = [
         "departamento": "ZGZ",
         "sector_laboral": "ADM",
         "imagen": "static/images/gestionmunicipal.jpg",
+        "price_id": "price_1QONpMFgZCaIswPm8oGLQyXE",
         
     },
     {
@@ -188,6 +201,7 @@ cursos_iniciales = [
         "departamento": "MAL",
         "sector_laboral": "SAL",
         "imagen": "static/images/seguridadsocial.jpg",
+        "price_id": "price_1QONpnFgZCaIswPmtijJJrtA",
         
     },
     {
@@ -200,6 +214,7 @@ cursos_iniciales = [
         "departamento": "BIL",
         "sector_laboral": "PRI",
         "imagen": "static/images/prisiones.jpg",
+        "price_id": "price_1QONqDFgZCaIswPmJSoS6iwG",
     },
 ]
 
