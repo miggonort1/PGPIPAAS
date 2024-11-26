@@ -11,6 +11,7 @@ class Curso(models.Model):
     plazas_disponibles = models.IntegerField()
     precio = models.IntegerField()
     imagen = models.CharField(max_length=200, default=static('images/bomberos.jpg'))
+    price_id = models.CharField(max_length=255, null=True, blank=True)
 
     DEPARTAMENTO_CHOICES = [
         ('MD', 'Madrid'),
@@ -143,9 +144,11 @@ class Pedido(models.Model):
     provincia_envio = models.CharField(max_length=100, verbose_name="Provincia de Envío")
     codigo_postal_envio = models.CharField(max_length=10, verbose_name="Código Postal de Envío")
     total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total del Pedido")
-    codigo_seguimiento = models.CharField(max_length=36,unique=True,editable=False, verbose_name="Código de Seguimiento") 
+    codigo_seguimiento = models.CharField(max_length=36, unique=True, editable=False, verbose_name="Código de Seguimiento")
+
     def __str__(self):
         return f"Pedido {self.id} ({self.estado})"
+
 
 class PedidoCurso(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="cursos")

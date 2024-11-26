@@ -66,7 +66,8 @@
                         type="text" 
                         id="nombre-comprador" 
                         name="nombre_comprador" 
-                        value="{{ user_data.nombre }}" 
+                        value="{{ user_data.nombre|default:'' }}" 
+                        placeholder="Escribe tu nombre completo" 
                         required>
                 </div>
                 <div>
@@ -75,7 +76,8 @@
                         type="email" 
                         id="email-comprador" 
                         name="email_comprador" 
-                        value="{{ user_data.email }}" 
+                        value="{{ user_data.email|default:'' }}" 
+                        placeholder="Escribe tu correo electrónico" 
                         required>
                 </div>
                 <div>
@@ -84,7 +86,8 @@
                         type="text" 
                         id="direccion-envio" 
                         name="direccion_envio" 
-                        value="{{ user_data.direccion_entrega }}" 
+                        value="{{ user_data.direccion_entrega|default:'' }}" 
+                        placeholder="Escribe tu dirección completa" 
                         required>
                 </div>
                 <div>
@@ -93,7 +96,8 @@
                         type="text" 
                         id="ciudad-envio" 
                         name="ciudad_envio" 
-                        value="{{ user_data.ciudad }}" 
+                        value="{{ user_data.ciudad|default:'' }}" 
+                        placeholder="Escribe tu ciudad" 
                         required>
                 </div>
                 <div>
@@ -102,7 +106,8 @@
                         type="text" 
                         id="provincia-envio" 
                         name="provincia_envio" 
-                        value="{{ user_data.provincia }}" 
+                        value="{{ user_data.provincia|default:'' }}" 
+                        placeholder="Escribe tu provincia" 
                         required>
                 </div>
                 <div>
@@ -111,15 +116,15 @@
                         type="text" 
                         id="codigo-postal-envio" 
                         name="codigo_postal_envio" 
-                        value="{{ user_data.codigo_postal }}" 
+                        value="{{ user_data.codigo_postal|default:'' }}" 
+                        placeholder="Escribe tu código postal" 
                         required>
                 </div>
+                
                 <div>
                     <label for="payment-method">Forma de Pago:</label>
                     <select id="payment-method" name="payment-method" required>
                         <option value="credit-card">Tarjeta de Crédito</option>
-                        <option value="paypal">PayPal</option>
-                        <option value="bank-transfer">Transferencia Bancaria</option>
                         <option value="cash-on-delivery">Contrarreembolso</option>
                     </select>
                 </div>
@@ -156,12 +161,26 @@
                         courseDiv.innerHTML = `
                             <h3>${curso.nombre}</h3>
                             <p class="cantidad">Cantidad: ${curso.cantidad}</p>
-                            <p  class="precio-total">Total: ${curso.precio_total}€</p>
+                            <p class="precio-total">Total: ${curso.precio_total}€</p>
                             <button class="remove-course" data-course-id="${curso.id}">Eliminar</button>
-                            <input type="hidden" name="curso_id[]" value="${curso.id}">
-                            <input type="hidden" name="cantidad[]" value="${curso.cantidad}">
                         `;
+
+                        // Añadir inputs ocultos directamente al formulario
+                        const hiddenCourseId = document.createElement("input");
+                        hiddenCourseId.type = "hidden";
+                        hiddenCourseId.name = "curso_id[]";
+                        hiddenCourseId.value = curso.id;
+
+                        const hiddenCantidad = document.createElement("input");
+                        hiddenCantidad.type = "hidden";
+                        hiddenCantidad.name = "cantidad[]";
+                        hiddenCantidad.value = curso.cantidad;
+
+                        checkoutForm.appendChild(hiddenCourseId);
+                        checkoutForm.appendChild(hiddenCantidad);
+
                         cartCoursesContainer.appendChild(courseDiv);
+
 
                         // Añadir evento de eliminación
                         courseDiv.querySelector(".remove-course").addEventListener("click", async (e) => {
@@ -217,35 +236,105 @@
 
             // Enviar el formulario de compra
             checkoutForm.addEventListener("submit", async (e) => {
-                e.preventDefault();
+    e.preventDefault();
 
-                const formData = new FormData(checkoutForm);
-                const paymentMethod = formData.get("payment-method");
-                const data = {};
+    const formData = new FormData(checkoutForm);
+    const paymentMethod = formData.get("payment-method");
 
-                // Convertir FormData a un objeto JSON
-                formData.forEach((value, key) => {
-                    data[key] = value;
-                });
-                // Realizar la compra a través de un POST
-                const response = await fetch("../api/confirmar_compra/", {
-                    method: "POST",
-                    headers: {
+    // Recoger los datos del comprador
+    const nombreComprador = formData.get("nombre_comprador");
+    const emailComprador = formData.get("email_comprador");
+    const direccionEnvio = formData.get("direccion_envio");
+    const ciudadEnvio = formData.get("ciudad_envio");
+    const provinciaEnvio = formData.get("provincia_envio");
+    const codigoPostalEnvio = formData.get("codigo_postal_envio");
+
+    // Recoger los datos de los cursos y las cantidades
+    const cursoIds = formData.getAll("curso_id[]");
+    const cantidades = formData.getAll("cantidad[]");
+
+    const items = cursoIds.map((cursoId, index) => ({
+        curso_id: cursoId,
+        cantidad: parseInt(cantidades[index], 10),
+    }));
+
+    if (items.length === 0) {
+        alert("El carrito está vacío.");
+        return;
+    }
+
+    // Validar que los datos del comprador estén completos
+    if (!nombreComprador || !emailComprador || !direccionEnvio || !ciudadEnvio || !provinciaEnvio || !codigoPostalEnvio) {
+        alert("Por favor, completa todos los campos de información del comprador.");
+        return;
+    }
+
+    // Gestión del pago
+    if (paymentMethod === "credit-card") {
+        try {
+            const response = await fetch("{% url 'create_checkout_session' %}", {
+                method: "POST",
+                headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken') // Necesitas configurar el token CSRF
-                    },
-                    body: JSON.stringify(data),
-                });
-                
-
-                const result = await response.json();
-                if (result.success) {
-                    alert("Compra realizada con éxito!");
-                    window.location.href = "/";  // Redirigir a una página de agradecimiento
-                } else {
-                    alert("Hubo un error al procesar tu compra.");
-                }
+                    'X-CSRFToken': getCookie('csrftoken'), // Configuración del token CSRF
+                },
+                body: JSON.stringify({ items }), // Enviar el carrito completo al backend
             });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.url) {
+                    window.location.href = data.url; // Redirige al usuario a la sesión de Stripe
+                } else {
+                    alert("Error al generar la sesión de Stripe.");
+                }
+            } else {
+                alert("Error en la comunicación con el servidor.");
+            }
+        } catch (error) {
+            console.error("Error al redirigir a Stripe:", error);
+            alert("Hubo un error al procesar el pago con tarjeta.");
+        }
+    } else if (paymentMethod === "cash-on-delivery") {
+        // Preparar datos para el pago contra reembolso
+        const data = {
+            nombre_comprador: nombreComprador,
+            email_comprador: emailComprador,
+            direccion_envio: direccionEnvio,
+            ciudad_envio: ciudadEnvio,
+            provincia_envio: provinciaEnvio,
+            codigo_postal_envio: codigoPostalEnvio,
+            items: items, // Enviar los cursos y cantidades
+            payment_method: paymentMethod,
+        };
+
+        try {
+            const response = await fetch("../api/confirmar_compra/", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert("Compra realizada con éxito!");
+                window.location.href = "/"; // Redirigir a una página de agradecimiento
+            } else {
+                alert(`Error: ${result.message}`);
+            }
+        } catch (error) {
+            console.error("Error en el proceso de Contrarreembolso:", error);
+            alert("Hubo un error al confirmar tu compra.");
+        }
+    } else {
+        alert("Método de pago no reconocido.");
+    }
+});
+
+
 
             // Cancelar la compra
             cancelButton.addEventListener("click", () => {
