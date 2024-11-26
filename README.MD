@@ -85,3 +85,8 @@ CORREO:
 
  Crear un admin:
  - python manage.py createsuperuser;
+
+ DOCKER:
+
+ - docker-compose down --rmi all
+ - docker-compose up

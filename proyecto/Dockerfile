@@ -29,7 +29,8 @@ COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Instalar las dependencias de Python
-RUN pip install --no-cache-dir -r /proyecto/requirements.txt
+RUN pip install --no-cache-dir -r /proyecto/requirements.txt\
+&& pip install stripe python-decouple
 
 # Exponer el puerto 8000
 EXPOSE 3306 8000

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -81,6 +81,9 @@ WSGI_APPLICATION = 'proyecto.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Lee la variable de entorno ENVIRONMENT
+ENVIRONMENT = os.getenv('ENVIRONMENT', 'local')
+
 # settings.py
 DATABASES = {
     'default': {
@@ -88,13 +91,15 @@ DATABASES = {
         'NAME': 'dbpgpipaas',
         'USER': 'pgpipaas_user',
         'PASSWORD': 'pgpipaas_password',
-        'HOST': 'host.docker.internal',  # O la IP de tu servidor de MariaDB si está en otro lugar
+        'HOST': 'host.docker.internal' if ENVIRONMENT == 'docker' else 'localhost',  # O la IP de tu servidor de MariaDB si está en otro lugar
         'PORT': '3306',       # Puerto predeterminado para MariaDB
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         }
     }
 }
+
+print(f"Running in {ENVIRONMENT} environment. Using database host: {'host.docker.internal' if ENVIRONMENT == 'docker' else 'localhost'}")
 
 
 
