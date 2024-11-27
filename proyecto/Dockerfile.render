@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Convertir entrypoint.sh a formato Unix
+COPY render_entrypoint.sh /proyecto/render_entrypoint.sh
 RUN dos2unix render_entrypoint.sh
 
 # Descargar wait-for-it para esperar a que la base de datos esté lista
@@ -25,8 +26,7 @@ RUN chmod +x /usr/local/bin/wait-for-it
 COPY . /proyecto
 
 # Copiar el entrypoint y asignar permisos
-COPY render_entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/render_entrypoint.sh
+RUN chmod +x /proyecto/render_entrypoint.sh
 
 # Instalar las dependencias de Python
 RUN pip install --no-cache-dir -r /proyecto/requirements.txt \
@@ -36,4 +36,4 @@ RUN pip install --no-cache-dir -r /proyecto/requirements.txt \
 EXPOSE 8000
 
 # Configurar el script de entrada como comando por defecto
-CMD ["/usr/local/bin/render_entrypoint.sh"]
+CMD ["/proyecto/render_entrypoint.sh"]
