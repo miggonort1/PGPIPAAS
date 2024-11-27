@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     {% load static %}
+    {% csrf_token %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ curso.nombre }}</title>
@@ -28,19 +29,20 @@
                 <i class="fas fa-user"></i><span>Perfil</span>
             </a>
         {% endif %}
-            <div class="profile-link" id="cart-button">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Carrito</span>
-                <div id="cart-dropdown" class="dropdown hidden">
-                    <div id="cart-items" class="cart-items">
-                        <!-- Los productos del carrito se insertarán aquí dinámicamente -->
-                    </div>
-                    <div id="cart-total" class="cart-total">
-                        <span>Total: </span><span id="total-price">$0.00</span>
-                    </div>
-                    <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button">Finalizar Compra</a>
-                </div>
+        <div class="profile-link" id="cart-button">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Carrito</span>
+        
+    </div>
+        <div id="cart-dropdown" class="dropdown hidden">
+            <div id="cart-items" class="cart-items">
+                <!-- Los productos del carrito se insertarán aquí dinámi    amente -->
             </div>
+            <div id="cart-total" class="cart-total">
+                <span>Total: </span><span id="total-price">$0.00</span>
+            </div>
+            <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button">Finalizar Compra</a>
+        </div>
         </nav>
     </header>
 
@@ -51,6 +53,7 @@
         <div class="course-details">
 
             <!-- Columna 1: Imagen -->
+             
             <img src="/{{ curso.imagen }}" alt="Imagen de {{ curso.nombre }}">
         
             <!-- Columna 2: Detalles -->
@@ -62,23 +65,21 @@
                 <p><strong>Precio:</strong> {{ curso.precio }} €</p>
                 <p><strong>Departamento:</strong> {{ curso.get_departamento_display }}</p>
                 <p><strong>Sector laboral:</strong> {{ curso.get_sector_laboral_display }}</p>
+                <p><strong>Fabricante:</strong> {{ curso.get_fabricante_display }}</p>
             </div>
 
         </div>
 
         <div class="course-buttons">
-            {% csrf_token %}
-            <button class="btn add-to-cart" data-curso-id="{{ curso.id }}" data-curso-nombre="{{ curso.nombre }}">
-                <i class="fas fa-shopping-cart"></i> Añadir al carrito
-            </button>
-            <button class="btn share-course">
-                <i class="fas fa-share-alt"></i> Compartir
+            <input type="number" id="cantidad-cursos" min="1" max="{{ curso.plazas_disponibles }}" value="1">
+            <button class="btn add-to-cart {% if curso.plazas_disponibles == 0 %}agotado{% endif %}" data-curso-id="{{ curso.id }}" data-curso-nombre="{{ curso.nombre }}" {% if curso.plazas_disponibles == 0 %}disabled{% endif %}>
+                <i class="fas fa-shopping-cart"></i> 
+                {% if curso.plazas_disponibles == 0 %}{% else %}Añadir al carrito{% endif %}
             </button>
         </div>
 
         
 
-        <a href="/" class="back-link">Volver al inicio</a>
         <div id="custom-alert" class="custom-alert hidden">
             <span id="alert-message"></span>
             <button id="close-alert" class="close-alert">&times;</button>

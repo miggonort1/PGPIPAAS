@@ -1,12 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Checkout canceled</title>
-  <link rel="stylesheet" href="style.css">
+    {% load static %}
+    {% csrf_token %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Canceled</title>
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <section>
-    <p>Forgot to add something to your cart? Shop around then come back to pay!</p>
-  </section>
+    <div class="background-blur"></div> 
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo"><a href="{% url 'home' %}" class="home-link">OpositaConmigo</a></div> 
+        <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
+            <input type="text" class="search-bar" name="q" placeholder="Buscar curso..." value="{{ query }}">
+        </form>
+
+        <nav class="navbar-icons">
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'perfil' %}" class="profile-link">
+                    <i class="fas fa-user"></i><span>{{ request.user.nombre_usuario }}</span>
+                </a>
+            {% else %}
+                <a href="{% url 'inicioSesion' %}" class="profile-link">
+                    <i class="fas fa-user"></i><span>Perfil</span>
+                </a>
+            {% endif %}
+            
+            <div class="profile-link" id="cart-button">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Carrito</span>
+            </div>
+                <div id="cart-dropdown" class="dropdown hidden">
+                    <div id="cart-items" class="cart-items">
+                        <!-- Los productos del carrito se insertarán aquí dinámi    amente -->
+                    </div>
+                    <div id="cart-total" class="cart-total">
+                        <span>Total: </span><span id="total-price">$0.00</span>
+                    </div>
+                    <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button" style="display: none;">Finalizar Compra</a>
+                </div>
+           
+
+        </nav>
+    </header>
+
+    <main class="courses-container">
+              <p><strong>PEDIDO CANCELADO</strong></p>
+              
+  </main>
+
+    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

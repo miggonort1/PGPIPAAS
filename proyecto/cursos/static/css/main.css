@@ -119,6 +119,7 @@ body {
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s;
+    position:relative
 }
 
 .course-card:hover {
@@ -339,6 +340,37 @@ body {
 .course-buttons .share-course:hover {
     background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
 }
+/* Agotado - Botón deshabilitado */
+.course-buttons .add-to-cart.agotado {
+    background-color: #e74c3c; /* Fondo rojo */
+    cursor: not-allowed; /* Desactiva el cursor */
+    opacity: 0.6; /* Baja la opacidad para hacerlo ver deshabilitado */
+}
+
+.course-buttons .add-to-cart.agotado i {
+    pointer-events: none; /* Evita la interacción con el ícono */
+}
+
+/* Estilo cuando el botón tiene texto "Agotado" */
+.course-buttons .add-to-cart[disabled] {
+    background-color: #e74c3c; /* Fondo rojo */
+    cursor: not-allowed; /* Desactiva el cursor */
+    opacity: 0.6; /* Opacidad para mostrar que está deshabilitado */
+}
+
+/* Cambiar el texto a "Agotado" cuando no hay plazas disponibles */
+.course-buttons .add-to-cart[disabled] i {
+    display: none; /* Ocultar el ícono cuando está agotado */
+}
+
+/* Para el texto "Agotado" en lugar de "Añadir al carrito" */
+.course-buttons .add-to-cart[disabled]::before {
+    content: "Agotado"; /* El texto que aparece cuando está agotado */
+    font-size: 16px;
+    color: #fff;
+    text-align: center;
+    display: block;
+}
 
 
 /* Estilos para la alerta personalizada */
@@ -483,4 +515,72 @@ form .filter-select {
 
 .track-order-form button:hover {
     background-color: #0056b3;
+}
+
+.sticker {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: red;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 100;
+    text-transform: uppercase;
+}
+
+.sticker.agotado {
+    background-color: #e74c3c; /* Color rojo */
+    color: white;
+}
+
+
+.detsticker {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #e74c3c; /* Color rojo */
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 100;
+    text-transform: uppercase;
+}
+
+.detsticker.agotado {
+    background-color: #e74c3c; /* Color rojo */
+    color: white;
+    font-size: 16px; /* Puedes aumentar el tamaño para hacerlo más visible */
+}
+
+
+.quantity{
+    position: relative;
+    color: black    
+}
+
+input[type="number"] {
+    width: 80px; /* Ancho personalizado */
+    padding: 8px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de fuente */
+    border: 2px solid #ccc; /* Borde gris claro */
+    border-radius: 5px; /* Bordes redondeados */
+    margin-right: 10px; /* Espaciado a la derecha del input */
+    transition: border-color 0.3s ease; /* Efecto de transición al pasar el ratón */
+}
+
+/* Estilo del input cuando está enfocado (cuando el usuario hace clic en él) */
+input[type="number"]:focus {
+    border-color: #4CAF50; /* Borde verde cuando está enfocado */
+    outline: none; /* Elimina el contorno por defecto */
+}
+
+/* Estilo cuando el input tiene un valor no válido (por ejemplo, un valor fuera de rango) */
+input[type="number"]:invalid {
+    border-color: red; /* Borde rojo si el valor no es válido */
 }
