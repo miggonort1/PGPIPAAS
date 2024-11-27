@@ -21,7 +21,7 @@ RUN chmod +x /usr/local/bin/wait-for-it
 COPY . /proyecto
 
 # Copiar el entrypoint y asignar permisos
-COPY docker/entrypoints/render_entrypoint.sh /proyecto/render_entrypoint.sh
+COPY render_entrypoint.sh /proyecto/render_entrypoint.sh
 RUN chmod +x /proyecto/render_entrypoint.sh
 
 # Instalar las dependencias de Python
