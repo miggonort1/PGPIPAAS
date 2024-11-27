@@ -20,9 +20,9 @@ RUN chmod +x /usr/local/bin/wait-for-it
 # Copiar los archivos de la aplicación al contenedor
 COPY . /proyecto
 
-# Copiar el entrypoint y asignar permisos
-COPY render_entrypoint.sh /proyecto/
-RUN chmod +x /proyecto/render_entrypoint.sh
+# Copiar y asignar permisos al script de entrada
+COPY render_entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/render_entrypoint.sh
 
 # Instalar las dependencias de Python
 RUN pip install --no-cache-dir -r /proyecto/requirements.txt \
