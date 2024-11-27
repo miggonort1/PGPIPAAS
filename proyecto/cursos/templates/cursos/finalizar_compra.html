@@ -3,6 +3,7 @@
 
 <head>
     {% load static %}
+    {% csrf_token %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra</title>
@@ -32,16 +33,16 @@
             <div class="profile-link" id="cart-button">
                 <i class="fas fa-shopping-cart"></i>
                 <span>Carrito</span>
+            </div>
                 <div id="cart-dropdown" class="dropdown hidden">
                     <div id="cart-items" class="cart-items">
                         <!-- Los productos del carrito se insertarán aquí dinámicamente -->
                     </div>
                     <div id="cart-total" class="cart-total">
-                        <span>Total: </span><span id="total-price">$0.00</span>
                     </div>
                     <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button">Finalizar Compra</a>
                 </div>
-            </div>
+            
 
         </nav>
     </header>
@@ -133,9 +134,9 @@
             <button type="submit">Confirmar Compra</button>
             <button type="button" class="cancel-button" id="cancel-button">Cancelar</button>
         </form>
-
         <div class="cart-total">
-            <p>Total: <span id="total-price">0€</span></p>
+            <h3>Resumen de la compra</h3>
+            <p><strong>Total:</strong> <span id="total-price" class="total-price"></span></p>
         </div>
     </div>
 
@@ -152,6 +153,11 @@
                 .then(response => response.json())
                 .then(data => {
                     let totalPrice = 0;
+                    console.log(data.total_precio)
+                    const totalPriceElement = document.getElementById("total-price");
+                    
+                    totalPriceElement.textContent = `${data.total_precio}€`;
+                    console.log(totalPriceElement.textContent)
 
                     // Mostrar cada curso en el carrito
                     data.cursos.forEach((curso, index) => {
@@ -175,6 +181,8 @@
                         hiddenCantidad.type = "hidden";
                         hiddenCantidad.name = "cantidad[]";
                         hiddenCantidad.value = curso.cantidad;
+
+                        
 
                         checkoutForm.appendChild(hiddenCourseId);
                         checkoutForm.appendChild(hiddenCantidad);
@@ -223,6 +231,21 @@
                                 <input type="hidden" name="course_id-${index}-${i}" value="${curso.id}">
                                 <input type="hidden" name="course_quantity-${index}-${i}" value="1">
                             `;
+
+                            const hiddenNombre = document.createElement("input");
+                            hiddenNombre.type = "hidden";
+                            hiddenNombre.name = "nombre[]";
+                            hiddenNombre.value = curso.name;
+
+                            
+                            const hiddenemail = document.createElement("input");
+                            hiddenemail.type = "hidden";
+                            hiddenemail.name = "email[]";
+                            hiddenemail.value = curso.email;
+
+                            
+                            checkoutForm.appendChild(hiddenNombre);
+                            checkoutForm.appendChild(hiddenemail);
                             courseFormContainer.appendChild(courseForm);
                         }
 
@@ -248,14 +271,17 @@
     const ciudadEnvio = formData.get("ciudad_envio");
     const provinciaEnvio = formData.get("provincia_envio");
     const codigoPostalEnvio = formData.get("codigo_postal_envio");
-
-    // Recoger los datos de los cursos y las cantidades
     const cursoIds = formData.getAll("curso_id[]");
     const cantidades = formData.getAll("cantidad[]");
+    const nombres = formData.getAll("nombre[]");
+    const emails = formData.getAll("email[]");
 
     const items = cursoIds.map((cursoId, index) => ({
         curso_id: cursoId,
         cantidad: parseInt(cantidades[index], 10),
+        nombre: formData.get(`name-${index}-0`),
+        email:formData.get(`email-${index}-0`)
+
     }));
 
     if (items.length === 0) {
@@ -268,6 +294,16 @@
         alert("Por favor, completa todos los campos de información del comprador.");
         return;
     }
+    const data = {
+            nombre_comprador: nombreComprador,
+            email_comprador: emailComprador,
+            direccion_envio: direccionEnvio,
+            ciudad_envio: ciudadEnvio,
+            provincia_envio: provinciaEnvio,
+            codigo_postal_envio: codigoPostalEnvio,
+            items: items, // Enviar los cursos y cantidades
+            payment_method: paymentMethod,
+        };
 
     // Gestión del pago
     if (paymentMethod === "credit-card") {
@@ -278,10 +314,12 @@
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCookie('csrftoken'), // Configuración del token CSRF
                 },
-                body: JSON.stringify({ items }), // Enviar el carrito completo al backend
+                body: JSON.stringify({ data }), // Enviar el carrito completo al backend
             });
 
             if (response.ok) {
+              
+
                 const data = await response.json();
                 if (data.url) {
                     window.location.href = data.url; // Redirige al usuario a la sesión de Stripe
@@ -297,17 +335,6 @@
         }
     } else if (paymentMethod === "cash-on-delivery") {
         // Preparar datos para el pago contra reembolso
-        const data = {
-            nombre_comprador: nombreComprador,
-            email_comprador: emailComprador,
-            direccion_envio: direccionEnvio,
-            ciudad_envio: ciudadEnvio,
-            provincia_envio: provinciaEnvio,
-            codigo_postal_envio: codigoPostalEnvio,
-            items: items, // Enviar los cursos y cantidades
-            payment_method: paymentMethod,
-        };
-
         try {
             const response = await fetch("../api/confirmar_compra/", {
                 method: "POST",
@@ -321,7 +348,7 @@
             const result = await response.json();
             if (result.success) {
                 alert("Compra realizada con éxito!");
-                window.location.href = "/"; // Redirigir a una página de agradecimiento
+                window.location.href = "/success"; // Redirigir a una página de agradecimiento
             } else {
                 alert(`Error: ${result.message}`);
             }

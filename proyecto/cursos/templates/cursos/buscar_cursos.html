@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     {% load static %}
+    {% csrf_token %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Cursos</title>
@@ -59,16 +60,17 @@
         <div class="profile-link" id="cart-button">
             <i class="fas fa-shopping-cart"></i>
             <span>Carrito</span>
-            <div id="cart-dropdown" class="dropdown hidden">
-                <div id="cart-items" class="cart-items">
-                    <!-- Los productos del carrito se insertarán aquí dinámicamente -->
-                </div>
-                <div id="cart-total" class="cart-total">
-                    <span>Total: </span><span id="total-price">$0.00</span>
-                </div>
-                <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button">Finalizar Compra</a>
-            </div>
         </div>
+        <div id="cart-dropdown" class="dropdown hidden">
+            <div id="cart-items" class="cart-items">
+                    <!-- Los productos del carrito se insertarán aquí dinámicamente -->
+            </div>
+            <div id="cart-total" class="cart-total">
+                    <span>Total: </span><span id="total-price">$0.00</span>
+            </div>
+            <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button">Finalizar Compra</a>
+        </div>
+       
         
     </header>
     
@@ -100,6 +102,9 @@
                 {% if resultados %}
                     {% for curso in resultados %}
                         <div class="course-card">
+                            {% if curso.plazas_disponibles == 0 %}
+                        <div class="sticker agotado">Agotado</div>
+                        {% endif %}
                             <a href="/curso/{{ curso.id }}">
                             <div class="div-images-help"></div>
                             <img src="../{{curso.imagen }}" alt="Imagen del curso">

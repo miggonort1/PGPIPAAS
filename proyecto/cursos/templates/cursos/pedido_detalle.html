@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     {% load static %}
+    {% csrf_token %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle del Pedido</title>
@@ -30,6 +31,7 @@
             <div class="profile-link" id="cart-button">
                 <i class="fas fa-shopping-cart"></i>
                 <span>Carrito</span>
+            </div>
                 <div id="cart-dropdown" class="dropdown hidden">
                     <div id="cart-items" class="cart-items">
                         <!-- Los productos del carrito se insertarán aquí dinámicamente -->
@@ -39,7 +41,7 @@
                     </div>
                     <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button" style="display: none;">Finalizar Compra</a>
                 </div>
-            </div>
+            
 
         </nav>
     </header>
@@ -67,5 +69,6 @@
             </ul>
         {% endif %}
     </main>
+    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
