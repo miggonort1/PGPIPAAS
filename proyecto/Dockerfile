@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     libmariadb-dev \
     build-essential \
     curl \
+    dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
 # Descargar wait-for-it para esperar a que la base de datos esté lista
@@ -26,17 +27,15 @@ COPY setup.sql /docker-entrypoint-initdb.d/
 
 # Copiar y asignar permisos al script de entrada
 COPY entrypoint.sh /usr/local/bin/
+RUN dos2unix /usr/local/bin/entrypoint.sh  # Convertir el archivo a formato Unix
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Instalar las dependencias de Python
-RUN pip install --no-cache-dir -r /proyecto/requirements.txt\
-&& pip install stripe python-decouple
+RUN pip install --no-cache-dir -r /proyecto/requirements.txt \
+    && pip install stripe python-decouple
 
-# Exponer el puerto 8000
+# Exponer los puertos necesarios
 EXPOSE 3306 8000
 
-# Comando para ejecutar el servidor de desarrollo de Django
-# CMD ["sh", "-c", "wait-for-it localhost:3306 -- python manage.py runserver 0.0.0.0:8000"]
-
 # Configurar el script de entrada como comando por defecto
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
