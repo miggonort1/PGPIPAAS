@@ -13,6 +13,9 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Convertir entrypoint.sh a formato Unix
+RUN dos2unix entrypoint.sh
+
 # Descargar wait-for-it para esperar a que la base de datos esté lista
 ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /usr/local/bin/wait-for-it
 RUN chmod +x /usr/local/bin/wait-for-it
@@ -32,4 +35,4 @@ RUN pip install --no-cache-dir -r /proyecto/requirements.txt \
 EXPOSE 8000
 
 # Configurar el script de entrada como comando por defecto
-CMD ["./render_entrypoint.sh"]
+CMD ["/render_entrypoint.sh"]
