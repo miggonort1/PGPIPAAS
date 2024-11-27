@@ -36,4 +36,4 @@ RUN pip install --no-cache-dir -r /proyecto/requirements.txt \
 EXPOSE 8000
 
 # Configurar el script de entrada como comando por defecto
-CMD ["/render_entrypoint.sh"]
+CMD ["/usr/local/bin/render_entrypoint.sh"]
