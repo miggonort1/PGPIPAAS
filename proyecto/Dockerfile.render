@@ -7,7 +7,6 @@ WORKDIR /proyecto
 # Instalar las dependencias del sistema necesarias para mysqlclient y herramientas de compilación
 RUN apt-get update && apt-get install -y \
     pkg-config \
-    mariadb-server \
     mariadb-client \
     libmariadb-dev \
     build-essential \
@@ -21,22 +20,16 @@ RUN chmod +x /usr/local/bin/wait-for-it
 # Copiar los archivos de la aplicación al contenedor
 COPY . /proyecto
 
-# Crear un script SQL para configuraciones iniciales
-COPY setup.sql /docker-entrypoint-initdb.d/
-
-# Copiar y asignar permisos al script de entrada
-COPY entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# Copiar el entrypoint y asignar permisos
+COPY docker/entrypoints/render_entrypoint.sh /proyecto/render_entrypoint.sh
+RUN chmod +x /proyecto/render_entrypoint.sh
 
 # Instalar las dependencias de Python
-RUN pip install --no-cache-dir -r /requirements.txt\
-&& pip install stripe python-decouple
+RUN pip install --no-cache-dir -r /proyecto/requirements.txt \
+    && pip install stripe python-decouple
 
-# Exponer el puerto 8000
-EXPOSE 3306 8000
-
-# Comando para ejecutar el servidor de desarrollo de Django
-# CMD ["sh", "-c", "wait-for-it localhost:3306 -- python manage.py runserver 0.0.0.0:8000"]
+# Exponer el puerto de la aplicación
+EXPOSE 8000
 
 # Configurar el script de entrada como comando por defecto
-ENTRYPOINT ["entrypoint.sh"]
+CMD ["./render_entrypoint.sh"]
