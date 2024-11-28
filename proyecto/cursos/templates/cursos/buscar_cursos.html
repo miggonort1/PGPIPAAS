@@ -19,6 +19,11 @@
         <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
         
     </form>
+    {% if request.user.is_superuser %}
+    <div class="admin-banner">
+        <span>Eres Admin</span>
+    </div>
+{% endif %}
     <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
         <!-- Campo de búsqueda -->    
         <input type="text" class="search-bar" name="q" placeholder="Buscar curso..." value="{{ query }}">
