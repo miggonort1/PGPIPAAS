@@ -31,7 +31,7 @@ cursos_iniciales = [
         "precio": 300,
         "departamento": "MD",
         "sector_laboral": "POL",
-        "imagen": "static/images/policia.jpg",
+        "imagen": "/static/images/policia.jpg",
         "price_id": "price_1QONhgFgZCaIswPm8CDiy8uG",
         
     },
@@ -44,7 +44,7 @@ cursos_iniciales = [
         "precio": 280,
         "departamento": "BCN",
         "sector_laboral": "BOM",
-        "imagen": "static/images/bomberos.jpg",
+        "imagen": "/static/images/bomberos.jpg",
         "price_id": "price_1QONiIFgZCaIswPmUfU6Y2C9",
         "fabricante": "BU",
 
@@ -58,7 +58,7 @@ cursos_iniciales = [
         "precio": 350,
         "departamento": "VAL",
         "sector_laboral": "GUA",
-        "imagen": "static/images/guardiacivil.jpg",
+        "imagen": "/static/images/guardiacivil.jpg",
         "price_id": "price_1QONipFgZCaIswPm7o3ln59I",
         
     },
@@ -71,7 +71,7 @@ cursos_iniciales = [
         "precio": 320,
         "departamento": "SEV",
         "sector_laboral": "SAL",
-        "imagen": "static/images/sanidadpublica.jpg",
+        "imagen": "/static/images/sanidadpublica.jpg",
         "price_id": "price_1QONj7FgZCaIswPmaOVqsg3X",
         
     },
@@ -84,7 +84,7 @@ cursos_iniciales = [
         "precio": 450,
         "departamento": "ZGZ",
         "sector_laboral": "JUS",
-        "imagen": "static/images/justiciaadministrativa.jpg",
+        "imagen": "/static/images/justiciaadministrativa.jpg",
         "price_id": "price_1QONlEFgZCaIswPmXo6XAtD4",
         "fabricante": "JCE",
         
@@ -98,7 +98,7 @@ cursos_iniciales = [
         "precio": 400,
         "departamento": "MAL",
         "sector_laboral": "EDU",
-        "imagen": "static/images/educacionprimaria.jpg",
+        "imagen": "/static/images/educacionprimaria.jpg",
         "price_id": "price_1QONlEFgZCaIswPmXo6XAtD4",
         
     },
@@ -111,7 +111,7 @@ cursos_iniciales = [
         "precio": 500,
         "departamento": "BIL",
         "sector_laboral": "FIS",
-        "imagen": "static/images/fiscalhacienda.jpg",
+        "imagen": "/static/images/fiscalhacienda.jpg",
         "price_id": "price_1QONlbFgZCaIswPmDviikpV2",
         "fabricante": "JCE",
         
@@ -125,7 +125,7 @@ cursos_iniciales = [
         "precio": 320,
         "departamento": "VLL",
         "sector_laboral": "ADM",
-        "imagen": "static/images/administracionpublica.jpg",
+        "imagen": "/static/images/administracionpublica.jpg",
         "price_id": "price_1QONmJFgZCaIswPm2cQzPxZH",
         "fabricante": "US",
         
@@ -139,7 +139,7 @@ cursos_iniciales = [
         "precio": 170,
         "departamento": "MD",
         "sector_laboral": "ADM",
-        "imagen": "static/images/informatico.jpg",
+        "imagen": "/static/images/informatico.jpg",
         "price_id": "price_1QONmyFgZCaIswPmOrCM7qEi",
         "fabricante": "US",
         
@@ -153,7 +153,7 @@ cursos_iniciales = [
         "precio": 380,
         "departamento": "BCN",
         "sector_laboral": "TRA",
-        "imagen": "static/images/traficotransporte.jpg",
+        "imagen": "/static/images/traficotransporte.jpg",
         "price_id": "price_1QONncFgZCaIswPmhD9Awr3R",
         
     },
@@ -166,7 +166,7 @@ cursos_iniciales = [
         "precio": 340,
         "departamento": "VAL",
         "sector_laboral": "JUS",
-        "imagen": "static/images/derechoadministrativo.jpg",
+        "imagen": "/static/images/derechoadministrativo.jpg",
         "price_id": "price_1QONoDFgZCaIswPmmrH5JisL",
         "fabricante": "EDX",
         
@@ -180,7 +180,7 @@ cursos_iniciales = [
         "precio": 360,
         "departamento": "SEV",
         "sector_laboral": "ADM",
-        "imagen": "static/images/economiapublica.jpg",
+        "imagen": "/static/images/economiapublica.jpg",
         "price_id": "price_1QONokFgZCaIswPmycaa7MYq",
         
     },
@@ -193,7 +193,7 @@ cursos_iniciales = [
         "precio": 300,
         "departamento": "ZGZ",
         "sector_laboral": "ADM",
-        "imagen": "static/images/gestionmunicipal.jpg",
+        "imagen": "/static/images/gestionmunicipal.jpg",
         "price_id": "price_1QONpMFgZCaIswPm8oGLQyXE",
         "fabricante": "EDX",
         
@@ -207,7 +207,7 @@ cursos_iniciales = [
         "precio": 380,
         "departamento": "MAL",
         "sector_laboral": "SAL",
-        "imagen": "static/images/seguridadsocial.jpg",
+        "imagen": "/static/images/seguridadsocial.jpg",
         "price_id": "price_1QONpnFgZCaIswPmtijJJrtA",
         
     },
@@ -220,7 +220,7 @@ cursos_iniciales = [
         "precio": 330,
         "departamento": "BIL",
         "sector_laboral": "PRI",
-        "imagen": "static/images/prisiones.jpg",
+        "imagen": "/static/images/prisiones.jpg",
         "price_id": "price_1QONqDFgZCaIswPmJSoS6iwG",
         "fabricante": "US",
     },

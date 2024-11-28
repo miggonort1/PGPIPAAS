@@ -10,7 +10,7 @@ class Curso(models.Model):
     duracion_semanas = models.IntegerField()
     plazas_disponibles = models.IntegerField()
     precio = models.IntegerField()
-    imagen = models.CharField(max_length=200, default=static('images/bomberos.jpg'))
+    imagen = models.CharField(max_length=200, default=static('images/defecto.jpg'))
     price_id = models.CharField(max_length=255, null=True, blank=True)
 
     DEPARTAMENTO_CHOICES = [

@@ -505,7 +505,7 @@ form .filter-select {
 
 .track-order-form button {
     padding: 10px;
-    background-color: #007bff;
+    background-color: #004085;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -514,7 +514,7 @@ form .filter-select {
 }
 
 .track-order-form button:hover {
-    background-color: #0056b3;
+    background-color: #023265;
 }
 
 .sticker {
@@ -615,6 +615,15 @@ input[type="number"]:invalid {
     transition: background-color 0.3s ease;
 }
 
+.create-course {
+    background-color: #004085;
+    margin-left: 1%;
+}
+
+.create-course:hover {
+    background-color: #002853;
+}
+
 .edit-course {
     background-color: #007bff;
 }
@@ -622,6 +631,7 @@ input[type="number"]:invalid {
 .edit-course:hover {
     background-color: #0056b3;
 }
+
 
 .delete-course {
     background-color: #dc3545;
