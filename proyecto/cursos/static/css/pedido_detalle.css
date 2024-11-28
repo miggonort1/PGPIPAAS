@@ -107,66 +107,58 @@ body {
 }
 .courses-container{
     margin-top: 6.5%;
-}
-.courses-container-detail{
-    margin-top: 7%;
-}
-.course-card {
-    background-color: #F5F5F5;
-    width: 300px;
-    margin:auto;
+
+    padding: 20px;
+    background: #fff;
     border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s;
-    position:relative
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
-.course-card:hover {
-    transform: translateY(-10px);
-}
-.course-card img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-}
-.course-details {
-    display: flex;               /* Activa el modo Flexbox */
-    flex-direction: row;         /* Configura en fila */
-    gap: 20px;                   /* Espacio entre los elementos */
-    align-items: center;         /* Centra los elementos verticalmente */
-    justify-content: flex-start; /* Alineación horizontal, ajustable según sea necesario */
-}
-.course-info {
-    background-color: #F5F5F5;    /* Fondo claro */
-    color: #2C3E50;               /* Color del texto */
-    padding: 20px;                /* Espaciado interno */
-    border-radius: 15px;          /* Bordes redondeados */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Sombra detrás del div */
-    display: flex;                /* Usa flexbox para centrar contenido */
-    flex-direction: column;       /* Asegura que el contenido esté en columnas */
-    justify-content: center;      /* Centra el contenido verticalmente dentro de .course-info */
-    width: 45%;                   /* Ajusta el ancho de .course-info */
-    min-height: 150px;            /* Asegura que tenga una altura mínima */
-}
-
-
-.course-card a {
-    font-size: 18px;
-    margin: 10px;
-    color:  #2C3E50;
-    text-decoration: none;
-}
-.course-card h3 {
-    font-size: 18px;
-    margin: 10px;
+main.courses-container h1 {
+    font-size: 28px;
     color: #2C3E50;
+    text-align: center;
+    margin-bottom: 20px;
 }
-.course-card p {
-    font-size: 14px;
-    margin: 10px;
+
+main.courses-container p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+main.courses-container strong {
     color: #333;
 }
+
+main.courses-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+main.courses-container ul li {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 10px 0;
+    padding: 10px 15px;
+    font-size: 16px;
+}
+
+main.courses-container ul li:hover {
+    background: #f1f1f1;
+}
+
+/* Error message */
+.error-message {
+    color: #d9534f;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 15px;
+}
+
 
 .profile-link {
     display: flex;
@@ -340,37 +332,6 @@ body {
 .course-buttons .share-course:hover {
     background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
 }
-/* Agotado - Botón deshabilitado */
-.course-buttons .add-to-cart.agotado {
-    background-color: #e74c3c; /* Fondo rojo */
-    cursor: not-allowed; /* Desactiva el cursor */
-    opacity: 0.6; /* Baja la opacidad para hacerlo ver deshabilitado */
-}
-
-.course-buttons .add-to-cart.agotado i {
-    pointer-events: none; /* Evita la interacción con el ícono */
-}
-
-/* Estilo cuando el botón tiene texto "Agotado" */
-.course-buttons .add-to-cart[disabled] {
-    background-color: #e74c3c; /* Fondo rojo */
-    cursor: not-allowed; /* Desactiva el cursor */
-    opacity: 0.6; /* Opacidad para mostrar que está deshabilitado */
-}
-
-/* Cambiar el texto a "Agotado" cuando no hay plazas disponibles */
-.course-buttons .add-to-cart[disabled] i {
-    display: none; /* Ocultar el ícono cuando está agotado */
-}
-
-/* Para el texto "Agotado" en lugar de "Añadir al carrito" */
-.course-buttons .add-to-cart[disabled]::before {
-    content: "Agotado"; /* El texto que aparece cuando está agotado */
-    font-size: 16px;
-    color: #fff;
-    text-align: center;
-    display: block;
-}
 
 
 /* Estilos para la alerta personalizada */
@@ -515,72 +476,4 @@ form .filter-select {
 
 .track-order-form button:hover {
     background-color: #0056b3;
-}
-
-.sticker {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: red;
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 5px;
-    z-index: 100;
-    text-transform: uppercase;
-}
-
-.sticker.agotado {
-    background-color: #e74c3c; /* Color rojo */
-    color: white;
-}
-
-
-.detsticker {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #e74c3c; /* Color rojo */
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 5px 10px;
-    border-radius: 5px;
-    z-index: 100;
-    text-transform: uppercase;
-}
-
-.detsticker.agotado {
-    background-color: #e74c3c; /* Color rojo */
-    color: white;
-    font-size: 16px; /* Puedes aumentar el tamaño para hacerlo más visible */
-}
-
-
-.quantity{
-    position: relative;
-    color: black    
-}
-
-input[type="number"] {
-    width: 80px; /* Ancho personalizado */
-    padding: 8px; /* Espaciado interno */
-    font-size: 16px; /* Tamaño de fuente */
-    border: 2px solid #ccc; /* Borde gris claro */
-    border-radius: 5px; /* Bordes redondeados */
-    margin-right: 10px; /* Espaciado a la derecha del input */
-    transition: border-color 0.3s ease; /* Efecto de transición al pasar el ratón */
-}
-
-/* Estilo del input cuando está enfocado (cuando el usuario hace clic en él) */
-input[type="number"]:focus {
-    border-color: #4CAF50; /* Borde verde cuando está enfocado */
-    outline: none; /* Elimina el contorno por defecto */
-}
-
-/* Estilo cuando el input tiene un valor no válido (por ejemplo, un valor fuera de rango) */
-input[type="number"]:invalid {
-    border-color: red; /* Borde rojo si el valor no es válido */
 }

@@ -31,6 +31,8 @@ Si base de datos peta hacer esto:
   CREATE USER 'pgpipaas_user'@'localhost' IDENTIFIED BY 'pgpipaas_password';
   GRANT ALL PRIVILEGES ON dbpgpipaas.* TO 'pgpipaas_user'@'localhost';
   FLUSH PRIVILEGES;
+  GRANT ALL PRIVILEGES ON dbpgpipaas.* TO 'pgpipaas_user'@'host.docker.internal' IDENTIFIED BY 'pgpipaas_password';
+  FLUSH PRIVILEGES;
   EXIT;
 
 CERRAMOS EL MARIADB
@@ -55,6 +57,19 @@ PARA ARRANCAR EL SERVER LOCAL
  - Desde la carpeta proyecto 
  python manage.py runserver
 
+PARA QUE FUNCIONEN LOS TESTS
+  - mariadb -u root -p
+  - GRANT ALL PRIVILEGES ON *.* TO 'pgpipaas_user'@'localhost';
+  FLUSH PRIVILEGES;
+
+PARA EJECUTAR LOS TESTS
+  - (Desde el venv si no lo has hecho antes): pip install pytest pytest-django
+  - pytest
+
+PARA QUUE FUNCIONE STRIPE:
+pip install python-decouple
+pip install stripe
+
 
 
 CORREO:
@@ -70,3 +85,8 @@ CORREO:
 
  Crear un admin:
  - python manage.py createsuperuser;
+
+ DOCKER:
+
+ - docker-compose down --rmi all
+ - docker-compose up

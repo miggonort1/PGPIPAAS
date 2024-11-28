@@ -32,6 +32,7 @@ cursos_iniciales = [
         "departamento": "MD",
         "sector_laboral": "POL",
         "imagen": "static/images/policia.jpg",
+        "price_id": "price_1QONhgFgZCaIswPm8CDiy8uG",
         
     },
     {
@@ -44,7 +45,9 @@ cursos_iniciales = [
         "departamento": "BCN",
         "sector_laboral": "BOM",
         "imagen": "static/images/bomberos.jpg",
-        
+        "price_id": "price_1QONiIFgZCaIswPmUfU6Y2C9",
+        "fabricante": "BU",
+
     },
     {
         "nombre": "Curso de Guardia Civil",
@@ -56,6 +59,7 @@ cursos_iniciales = [
         "departamento": "VAL",
         "sector_laboral": "GUA",
         "imagen": "static/images/guardiacivil.jpg",
+        "price_id": "price_1QONipFgZCaIswPm7o3ln59I",
         
     },
     {
@@ -68,6 +72,7 @@ cursos_iniciales = [
         "departamento": "SEV",
         "sector_laboral": "SAL",
         "imagen": "static/images/sanidadpublica.jpg",
+        "price_id": "price_1QONj7FgZCaIswPmaOVqsg3X",
         
     },
     {
@@ -80,6 +85,8 @@ cursos_iniciales = [
         "departamento": "ZGZ",
         "sector_laboral": "JUS",
         "imagen": "static/images/justiciaadministrativa.jpg",
+        "price_id": "price_1QONlEFgZCaIswPmXo6XAtD4",
+        "fabricante": "JCE",
         
     },
     {
@@ -92,6 +99,7 @@ cursos_iniciales = [
         "departamento": "MAL",
         "sector_laboral": "EDU",
         "imagen": "static/images/educacionprimaria.jpg",
+        "price_id": "price_1QONlEFgZCaIswPmXo6XAtD4",
         
     },
     {
@@ -104,6 +112,8 @@ cursos_iniciales = [
         "departamento": "BIL",
         "sector_laboral": "FIS",
         "imagen": "static/images/fiscalhacienda.jpg",
+        "price_id": "price_1QONlbFgZCaIswPmDviikpV2",
+        "fabricante": "JCE",
         
     },
     {
@@ -116,6 +126,8 @@ cursos_iniciales = [
         "departamento": "VLL",
         "sector_laboral": "ADM",
         "imagen": "static/images/administracionpublica.jpg",
+        "price_id": "price_1QONmJFgZCaIswPm2cQzPxZH",
+        "fabricante": "US",
         
     },
     {
@@ -124,10 +136,12 @@ cursos_iniciales = [
         "fecha_inicio": "2025-03-10",
         "duracion_semanas": 8,
         "plazas_disponibles": 25,
-        "precio": 270,
+        "precio": 170,
         "departamento": "MD",
         "sector_laboral": "ADM",
         "imagen": "static/images/informatico.jpg",
+        "price_id": "price_1QONmyFgZCaIswPmOrCM7qEi",
+        "fabricante": "US",
         
     },
     {
@@ -140,6 +154,7 @@ cursos_iniciales = [
         "departamento": "BCN",
         "sector_laboral": "TRA",
         "imagen": "static/images/traficotransporte.jpg",
+        "price_id": "price_1QONncFgZCaIswPmhD9Awr3R",
         
     },
     {
@@ -152,6 +167,8 @@ cursos_iniciales = [
         "departamento": "VAL",
         "sector_laboral": "JUS",
         "imagen": "static/images/derechoadministrativo.jpg",
+        "price_id": "price_1QONoDFgZCaIswPmmrH5JisL",
+        "fabricante": "EDX",
         
     },
     {
@@ -164,6 +181,7 @@ cursos_iniciales = [
         "departamento": "SEV",
         "sector_laboral": "ADM",
         "imagen": "static/images/economiapublica.jpg",
+        "price_id": "price_1QONokFgZCaIswPmycaa7MYq",
         
     },
     {
@@ -176,6 +194,8 @@ cursos_iniciales = [
         "departamento": "ZGZ",
         "sector_laboral": "ADM",
         "imagen": "static/images/gestionmunicipal.jpg",
+        "price_id": "price_1QONpMFgZCaIswPm8oGLQyXE",
+        "fabricante": "EDX",
         
     },
     {
@@ -183,11 +203,12 @@ cursos_iniciales = [
         "descripcion": "Curso completo para trabajar en seguridad social.",
         "fecha_inicio": "2025-04-05",
         "duracion_semanas": 15,
-        "plazas_disponibles": 30,
+        "plazas_disponibles": 2,
         "precio": 380,
         "departamento": "MAL",
         "sector_laboral": "SAL",
         "imagen": "static/images/seguridadsocial.jpg",
+        "price_id": "price_1QONpnFgZCaIswPmtijJJrtA",
         
     },
     {
@@ -195,11 +216,13 @@ cursos_iniciales = [
         "descripcion": "Preparación específica para oposiciones de prisiones.",
         "fecha_inicio": "2025-04-10",
         "duracion_semanas": 9,
-        "plazas_disponibles": 25,
+        "plazas_disponibles": 0,
         "precio": 330,
         "departamento": "BIL",
         "sector_laboral": "PRI",
         "imagen": "static/images/prisiones.jpg",
+        "price_id": "price_1QONqDFgZCaIswPmJSoS6iwG",
+        "fabricante": "US",
     },
 ]
 
@@ -235,6 +258,22 @@ usuario2 = Usuario.objects.create(
 )
 usuario2.set_password("1234")  # Cifra la contraseña
 usuario2.save()  # Guarda los cambios
+
+usuario3= Usuario.objects.create(
+    email="admin@example.com",
+    nombre_usuario="admin1",
+    nombre="Ana",
+    apellido="López",
+    direccion_entrega="Avenida Siempre Viva 742",
+    ciudad="Barcelona",
+    provincia="Barcelona",
+    codigo_postal="08001",
+    telefono="987654321",
+    is_active=True,
+    is_superuser=True
+)
+usuario3.set_password("1234")  # Cifra la contraseña
+usuario3.save()  # Guarda los cambios
 
 print("Usuarios añadidos a la base de datos.")
 

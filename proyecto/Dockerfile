@@ -1,17 +1,41 @@
-# Usar una imagen oficial de Python 3.12
+# Usar una imagen base oficial de Python
 FROM python:3.12-slim
 
-# Establecer el directorio de trabajo
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /proyecto
 
-# Copiar el contenido del directorio actual al contenedor
+# Instalar las dependencias del sistema necesarias para mysqlclient y herramientas de compilación
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    mariadb-server \
+    mariadb-client \
+    libmariadb-dev \
+    build-essential \
+    curl \
+    dos2unix \
+    && rm -rf /var/lib/apt/lists/*
+
+# Descargar wait-for-it para esperar a que la base de datos esté lista
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /usr/local/bin/wait-for-it
+RUN chmod +x /usr/local/bin/wait-for-it
+
+# Copiar los archivos de la aplicación al contenedor
 COPY . /proyecto
 
-# Instalar las dependencias
-RUN pip install --no-cache-dir -r proyecto/requirements.txt
+# Crear un script SQL para configuraciones iniciales
+COPY setup.sql /docker-entrypoint-initdb.d/
 
-# Exponer el puerto 8000
-EXPOSE 8000
+# Copiar y asignar permisos al script de entrada
+COPY entrypoint.sh /usr/local/bin/
+RUN dos2unix /usr/local/bin/entrypoint.sh  # Convertir el archivo a formato Unix
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Comando para ejecutar el servidor Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Instalar las dependencias de Python
+RUN pip install --no-cache-dir -r /proyecto/requirements.txt \
+    && pip install stripe python-decouple
+
+# Exponer los puertos necesarios
+EXPOSE 3306 8000
+
+# Configurar el script de entrada como comando por defecto
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

@@ -11,6 +11,7 @@ class Curso(models.Model):
     plazas_disponibles = models.IntegerField()
     precio = models.IntegerField()
     imagen = models.CharField(max_length=200, default=static('images/bomberos.jpg'))
+    price_id = models.CharField(max_length=255, null=True, blank=True)
 
     DEPARTAMENTO_CHOICES = [
         ('MD', 'Madrid'),
@@ -135,7 +136,7 @@ class Pedido(models.Model):
         ('ENT', 'Entregado'),
     ]
 
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="pedidos")
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="pedidos", null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
     estado = models.CharField(max_length=3, choices=ESTADO_PEDIDO, default='PEN', verbose_name="Estado del Pedido")
     direccion_envio = models.CharField(max_length=255, verbose_name="Dirección de Envío")
@@ -143,15 +144,19 @@ class Pedido(models.Model):
     provincia_envio = models.CharField(max_length=100, verbose_name="Provincia de Envío")
     codigo_postal_envio = models.CharField(max_length=10, verbose_name="Código Postal de Envío")
     total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total del Pedido")
+    codigo_seguimiento = models.CharField(max_length=36, unique=True, editable=False, verbose_name="Código de Seguimiento")
 
     def __str__(self):
-        return f"Pedido {self.id} - {self.usuario.nombre_usuario} ({self.estado})"
+        return f"Pedido {self.id} ({self.estado})"
+
 
 class PedidoCurso(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="cursos")
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name="en_pedidos")
     cantidad = models.PositiveIntegerField(default=1, verbose_name="Cantidad")
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio Unitario")
+    email = models.EmailField(unique=False, null=False)
+    nombre = models.CharField(max_length=50, null=False)
 
     def __str__(self):
         return f"{self.cantidad}x {self.curso.nombre} en Pedido {self.pedido.id}"

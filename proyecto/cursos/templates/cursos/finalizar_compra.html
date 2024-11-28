@@ -3,6 +3,7 @@
 
 <head>
     {% load static %}
+    {% csrf_token %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra</title>
@@ -12,7 +13,39 @@
 </head>
 
 <body>
+    <header class="navbar">
+        <div class="logo"><a href="{% url 'home' %}" class="home-link">OpositaConmigo</a></div> 
+        <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
+            <input type="text" class="search-bar" name="q" placeholder="Buscar curso..." value="{{ query }}">
+        </form>
 
+        <nav class="navbar-icons">
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'perfil' %}" class="profile-link">
+                    <i class="fas fa-user"></i><span>{{ request.user.nombre_usuario }}</span>
+                </a>
+            {% else %}
+                <a href="{% url 'inicioSesion' %}" class="profile-link">
+                    <i class="fas fa-user"></i><span>Perfil</span>
+                </a>
+            {% endif %}
+            
+            <div class="profile-link" id="cart-button">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Carrito</span>
+            </div>
+                <div id="cart-dropdown" class="dropdown hidden">
+                    <div id="cart-items" class="cart-items">
+                        <!-- Los productos del carrito se insertarán aquí dinámicamente -->
+                    </div>
+                    <div id="cart-total" class="cart-total">
+                    </div>
+                    <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button">Finalizar Compra</a>
+                </div>
+            
+
+        </nav>
+    </header>
     <div class="container">
         <h2>Finalizar Compra</h2>
 
@@ -25,22 +58,85 @@
 
             <div id="course-form-container"></div>
 
-            <div>
-                <label for="payment-method">Forma de Pago:</label>
-                <select id="payment-method" name="payment-method" required>
-                    <option value="credit-card">Tarjeta de Crédito</option>
-                    <option value="paypal">PayPal</option>
-                    <option value="bank-transfer">Transferencia Bancaria</option>
-                    <option value="cash-on-delivery">Contrarreembolso</option>
-                </select>
+            <div id="checkout-form">
+                <h3>Detalles del Comprador</h3>
+
+                <div>
+                    <label for="nombre-comprador">Nombre:</label>
+                    <input 
+                        type="text" 
+                        id="nombre-comprador" 
+                        name="nombre_comprador" 
+                        value="{{ user_data.nombre|default:'' }}" 
+                        placeholder="Escribe tu nombre completo" 
+                        required>
+                </div>
+                <div>
+                    <label for="email-comprador">Correo Electrónico:</label>
+                    <input 
+                        type="email" 
+                        id="email-comprador" 
+                        name="email_comprador" 
+                        value="{{ user_data.email|default:'' }}" 
+                        placeholder="Escribe tu correo electrónico" 
+                        required>
+                </div>
+                <div>
+                    <label for="direccion-envio">Dirección:</label>
+                    <input 
+                        type="text" 
+                        id="direccion-envio" 
+                        name="direccion_envio" 
+                        value="{{ user_data.direccion_entrega|default:'' }}" 
+                        placeholder="Escribe tu dirección completa" 
+                        required>
+                </div>
+                <div>
+                    <label for="ciudad-envio">Ciudad:</label>
+                    <input 
+                        type="text" 
+                        id="ciudad-envio" 
+                        name="ciudad_envio" 
+                        value="{{ user_data.ciudad|default:'' }}" 
+                        placeholder="Escribe tu ciudad" 
+                        required>
+                </div>
+                <div>
+                    <label for="provincia-envio">Provincia:</label>
+                    <input 
+                        type="text" 
+                        id="provincia-envio" 
+                        name="provincia_envio" 
+                        value="{{ user_data.provincia|default:'' }}" 
+                        placeholder="Escribe tu provincia" 
+                        required>
+                </div>
+                <div>
+                    <label for="codigo-postal-envio">Código Postal:</label>
+                    <input 
+                        type="text" 
+                        id="codigo-postal-envio" 
+                        name="codigo_postal_envio" 
+                        value="{{ user_data.codigo_postal|default:'' }}" 
+                        placeholder="Escribe tu código postal" 
+                        required>
+                </div>
+                
+                <div>
+                    <label for="payment-method">Forma de Pago:</label>
+                    <select id="payment-method" name="payment-method" required>
+                        <option value="credit-card">Tarjeta de Crédito</option>
+                        <option value="cash-on-delivery">Contrarreembolso</option>
+                    </select>
+                </div>
             </div>
 
             <button type="submit">Confirmar Compra</button>
             <button type="button" class="cancel-button" id="cancel-button">Cancelar</button>
         </form>
-
         <div class="cart-total">
-            <p>Total: <span id="total-price">0€</span></p>
+            <h3>Resumen de la compra</h3>
+            <p><strong>Total:</strong> <span id="total-price" class="total-price"></span></p>
         </div>
     </div>
 
@@ -57,6 +153,11 @@
                 .then(response => response.json())
                 .then(data => {
                     let totalPrice = 0;
+                    console.log(data.total_precio)
+                    const totalPriceElement = document.getElementById("total-price");
+                    
+                    totalPriceElement.textContent = `${data.total_precio}€`;
+                    console.log(totalPriceElement.textContent)
 
                     // Mostrar cada curso en el carrito
                     data.cursos.forEach((curso, index) => {
@@ -66,17 +167,33 @@
                         courseDiv.innerHTML = `
                             <h3>${curso.nombre}</h3>
                             <p class="cantidad">Cantidad: ${curso.cantidad}</p>
-                            <p  class="precio-total">Total: ${curso.precio_total}€</p>
+                            <p class="precio-total">Total: ${curso.precio_total}€</p>
                             <button class="remove-course" data-course-id="${curso.id}">Eliminar</button>
-                            <input type="hidden" name="curso_id[]" value="${curso.id}">
-                            <input type="hidden" name="cantidad[]" value="${curso.cantidad}">
                         `;
+
+                        // Añadir inputs ocultos directamente al formulario
+                        const hiddenCourseId = document.createElement("input");
+                        hiddenCourseId.type = "hidden";
+                        hiddenCourseId.name = "curso_id[]";
+                        hiddenCourseId.value = curso.id;
+
+                        const hiddenCantidad = document.createElement("input");
+                        hiddenCantidad.type = "hidden";
+                        hiddenCantidad.name = "cantidad[]";
+                        hiddenCantidad.value = curso.cantidad;
+
+                        
+
+                        checkoutForm.appendChild(hiddenCourseId);
+                        checkoutForm.appendChild(hiddenCantidad);
+
                         cartCoursesContainer.appendChild(courseDiv);
+
 
                         // Añadir evento de eliminación
                         courseDiv.querySelector(".remove-course").addEventListener("click", async (e) => {
                             const courseId = e.target.getAttribute("data-course-id");
-
+                            
                             // Enviar solicitud para eliminar el curso
                             const response = await fetch(`../api/carrito/eliminar/`, {
                                 method: "DELETE",
@@ -103,10 +220,9 @@
                             courseForm.classList.add("course-form");
                             courseForm.innerHTML = `
                                 <h4>${curso.nombre} - Persona ${i + 1}</h4>
-                                <p>Precio total: ${curso.precio_total}€</p>
                                 <div>
-                                    <label for="name-${index}-${i}">Nombre:</label>
-                                    <input type="text" id="name-${index}-${i}" name="name-${index}-${i}" required>
+                                    <label for="nombre-${index}-${i}">Nombre:</label>
+                                    <input type="text" id="nombre-${index}-${i}" name="name-${index}-${i}" required>
                                 </div>
                                 <div>
                                     <label for="email-${index}-${i}">Correo Electrónico:</label>
@@ -115,6 +231,21 @@
                                 <input type="hidden" name="course_id-${index}-${i}" value="${curso.id}">
                                 <input type="hidden" name="course_quantity-${index}-${i}" value="1">
                             `;
+
+                            const hiddenNombre = document.createElement("input");
+                            hiddenNombre.type = "hidden";
+                            hiddenNombre.name = "nombre[]";
+                            hiddenNombre.value = curso.name;
+
+                            
+                            const hiddenemail = document.createElement("input");
+                            hiddenemail.type = "hidden";
+                            hiddenemail.name = "email[]";
+                            hiddenemail.value = curso.email;
+
+                            
+                            checkoutForm.appendChild(hiddenNombre);
+                            checkoutForm.appendChild(hiddenemail);
                             courseFormContainer.appendChild(courseForm);
                         }
 
@@ -128,29 +259,113 @@
 
             // Enviar el formulario de compra
             checkoutForm.addEventListener("submit", async (e) => {
-                e.preventDefault();
+    e.preventDefault();
 
-                const formData = new FormData(checkoutForm);
-                const paymentMethod = formData.get("payment-method");
+    const formData = new FormData(checkoutForm);
+    const paymentMethod = formData.get("payment-method");
 
-                // Realizar la compra a través de un POST
-                const response = await fetch("/api/confirmar-compra/", {
-                    method: "POST",
-                    body: formData
-                });
+    // Recoger los datos del comprador
+    const nombreComprador = formData.get("nombre_comprador");
+    const emailComprador = formData.get("email_comprador");
+    const direccionEnvio = formData.get("direccion_envio");
+    const ciudadEnvio = formData.get("ciudad_envio");
+    const provinciaEnvio = formData.get("provincia_envio");
+    const codigoPostalEnvio = formData.get("codigo_postal_envio");
+    const cursoIds = formData.getAll("curso_id[]");
+    const cantidades = formData.getAll("cantidad[]");
+    const nombres = formData.getAll("nombre[]");
+    const emails = formData.getAll("email[]");
 
-                const result = await response.json();
-                if (result.success) {
-                    alert("Compra realizada con éxito!");
-                    window.location.href = "/gracias";  // Redirigir a una página de agradecimiento
-                } else {
-                    alert("Hubo un error al procesar tu compra.");
-                }
+    const items = cursoIds.map((cursoId, index) => ({
+        curso_id: cursoId,
+        cantidad: parseInt(cantidades[index], 10),
+        nombre: formData.get(`name-${index}-0`),
+        email:formData.get(`email-${index}-0`)
+
+    }));
+
+    if (items.length === 0) {
+        alert("El carrito está vacío.");
+        return;
+    }
+
+    // Validar que los datos del comprador estén completos
+    if (!nombreComprador || !emailComprador || !direccionEnvio || !ciudadEnvio || !provinciaEnvio || !codigoPostalEnvio) {
+        alert("Por favor, completa todos los campos de información del comprador.");
+        return;
+    }
+    const data = {
+            nombre_comprador: nombreComprador,
+            email_comprador: emailComprador,
+            direccion_envio: direccionEnvio,
+            ciudad_envio: ciudadEnvio,
+            provincia_envio: provinciaEnvio,
+            codigo_postal_envio: codigoPostalEnvio,
+            items: items, // Enviar los cursos y cantidades
+            payment_method: paymentMethod,
+        };
+
+    // Gestión del pago
+    if (paymentMethod === "credit-card") {
+        try {
+            const response = await fetch("{% url 'create_checkout_session' %}", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'), // Configuración del token CSRF
+                },
+                body: JSON.stringify({ data }), // Enviar el carrito completo al backend
             });
+
+            if (response.ok) {
+              
+
+                const data = await response.json();
+                if (data.url) {
+                    window.location.href = data.url; // Redirige al usuario a la sesión de Stripe
+                } else {
+                    alert("Error al generar la sesión de Stripe.");
+                }
+            } else {
+                alert("Error en la comunicación con el servidor.");
+            }
+        } catch (error) {
+            console.error("Error al redirigir a Stripe:", error);
+            alert("Hubo un error al procesar el pago con tarjeta.");
+        }
+    } else if (paymentMethod === "cash-on-delivery") {
+        // Preparar datos para el pago contra reembolso
+        try {
+            const response = await fetch("../api/confirmar_compra/", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert("Compra realizada con éxito!");
+                window.location.href = "/success"; // Redirigir a una página de agradecimiento
+            } else {
+                alert(`Error: ${result.message}`);
+            }
+        } catch (error) {
+            console.error("Error en el proceso de Contrarreembolso:", error);
+            alert("Hubo un error al confirmar tu compra.");
+        }
+    } else {
+        alert("Método de pago no reconocido.");
+    }
+});
+
+
 
             // Cancelar la compra
             cancelButton.addEventListener("click", () => {
-                window.location.href = "/home";  // Redirigir al carrito para editarlo si es necesario
+                window.location.href = "/";  // Redirigir al carrito para editarlo si es necesario
             });
             // Función para obtener el token CSRF de las cookies
             function getCookie(name) {
@@ -159,6 +374,26 @@
                     .find(row => row.startsWith(name + '='));
                 return cookieValue ? cookieValue.split('=')[1] : null;
             }
+
+            fetch("/api/usuario/")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Usuario no autenticado");
+                }
+                return response.json();
+            })
+            .then(user => {
+                // Rellenar los campos del formulario con los datos del usuario
+                document.getElementById("nombre-comprador").value = user.nombre || "";
+                document.getElementById("email-comprador").value = user.email || "";
+                document.getElementById("direccion-envio").value = user.direccion_entrega || "";
+                document.getElementById("ciudad-envio").value = user.ciudad || "";
+                document.getElementById("provincia-envio").value = user.provincia || "";
+                document.getElementById("codigo-postal-envio").value = user.codigo_postal || "";
+            })
+            .catch(error => {
+                console.error("Error al obtener los datos del usuario:", error);
+            });
         });
     </script>
 

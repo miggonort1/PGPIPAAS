@@ -22,6 +22,14 @@ from .models import Carrito, CarritoCurso
 from django.http import JsonResponse
 import json
 import uuid
+from django.utils import timezone
+from decimal import Decimal
+from django.views import View
+from django.views.generic import TemplateView
+from django.conf import settings
+import stripe
+from django.core.mail import send_mail
+
 
 def home(request):
     # Obtener todos los cursos
@@ -30,7 +38,7 @@ def home(request):
     # Filtros de cursos
     hoy = date.today()
     cursos_pronto = cursos.filter(fecha_inicio__gte=hoy).order_by('fecha_inicio')
-    cursos_pocas_plazas = cursos.filter(plazas_disponibles__lt=20).order_by('plazas_disponibles')
+    cursos_pocas_plazas = cursos.filter(plazas_disponibles__gt=0 ,plazas_disponibles__lt=20 ).order_by('plazas_disponibles')
     cursos_baratos = cursos.filter(precio__lt=220).order_by('precio')
 
     # Obtener el orden y dirección (ascendente/descendente)
@@ -102,16 +110,13 @@ def inicioSesion(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        print(f'Email: {email}, Contraseña: {password}')  # Depuración
 
         user = authenticate(request, email=email, password=password)
-        print(user)
         if user is None:
             # Si 'authenticate' devuelve None, significa que las credenciales no son correctas
             try:
                 # Intentamos obtener al usuario de la base de datos para dar mensajes más específicos
                 usuario = Usuario.objects.get(email=email)
-                print(usuario)
                 if not usuario.is_active:
                     # Si el usuario está inactivo, agregamos un mensaje
                     messages.error(request, "Tu cuenta está inactiva. No puedes iniciar sesión.")
@@ -133,15 +138,14 @@ def registro(request):
     if request.method == 'POST':
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
-            # Crear el usuario con la información proporcionada
             usuario = form.save(commit=False)
-            usuario.set_password(form.cleaned_data['password'])  # Establecer la contraseña encriptada
+            usuario.set_password(form.cleaned_data['password'])
             usuario.save()
-
             messages.success(request, "¡Registro exitoso! Ahora puedes iniciar sesión.")
-            return redirect('home')  # Redirigir a la vista de inicio de sesión o al home
+            return redirect('home')
         else:
             messages.error(request, "Por favor corrige los errores en el formulario.")
+            print(form.errors)  # Imprimir errores para depuración
     else:
         form = RegistroUsuarioForm()
 
@@ -166,9 +170,10 @@ def editar_perfil(request):
         return render(request, 'cursos/perfil.html', {'form': form})
 
     else:
-        # Si no está autenticado, redirigir al login
-        messages.error(request, "Debes iniciar sesión para acceder a tu perfil.")
-        return redirect('perfil')  # Redirige a la página de inicio de sesión (ajusta la URL según corresponda)
+        if not messages.get_messages(request):
+            # Asegurarse de que no se agregue el mensaje de error si ya está en la sesión
+            messages.error(request, "Debes iniciar sesión para acceder a tu perfil.")
+        return redirect('inicioSesion')  # Redirige a la página de inicio de sesión (ajusta la URL según corresponda)
     
 
 def detalle_curso(request, id):
@@ -255,6 +260,7 @@ def agregar_al_carrito(request):
         # Parsear datos de la solicitud
         data = json.loads(request.body)
         curso_id = data.get('curso_id')
+        cantidad = int(data.get('cantidad'))
 
         # Obtener el carrito desde la sesión
         carrito = request.session.get('carrito', {})
@@ -267,42 +273,46 @@ def agregar_al_carrito(request):
         try:
             curso = Curso.objects.get(id=curso_id)
             
-            # Si el curso ya está en el carrito, incrementar la cantidad
-            if curso_id in carrito:
-                carrito[curso_id]['cantidad'] += 1
+            # Verificar si la cantidad solicitada no supera las plazas disponibles
+            if cantidad <= curso.plazas_disponibles:
+                # Si el curso ya está en el carrito, incrementar la cantidad
+                if curso_id in carrito:
+                    if (curso.plazas_disponibles - carrito[curso_id]['cantidad']) >= cantidad:
+                        carrito[curso_id]['cantidad'] += cantidad
+                    else:
+                        return JsonResponse({'success': False, 'message': 'No hay suficientes plazas disponibles'}, status=405)
+                else:
+                    carrito[curso_id] = {
+                        'nombre': curso.nombre,
+                        'precio': str(curso.precio),  # Convertir el precio a string por seguridad en JSON
+                        'cantidad': cantidad
+                    }
+
+                # Guardar el carrito en la sesión
+                request.session['carrito'] = carrito
+
+                return JsonResponse({'success': True, 'message': f'{cantidad} curso(s) añadido(s) al carrito.'})
             else:
-                # Si el curso no está en el carrito, agregarlo con cantidad 1
-                carrito[curso_id] = {
-                    'nombre': curso.nombre,
-                    'precio': str(curso.precio),  # Convertir el precio a string por seguridad en JSON
-                    'cantidad': 1
-                }
+                return JsonResponse({'success': False, 'message': 'No hay suficientes plazas disponibles'}, status=405)
 
-            # Guardar el carrito en la sesión
-            request.session['carrito'] = carrito
-
-            return JsonResponse({'success': True, 'message': 'Curso añadido al carrito.'})
         except Curso.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'Curso no encontrado.'}, status=404)
 
     return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)
-
 def eliminar_del_carrito(request):
+    
     if request.method == "DELETE":
         # Obtener el carrito desde la sesión
         carrito = request.session.get('carrito', {})
-
         # Cargar los datos enviados en el cuerpo de la solicitud (DELETE)
         data = json.loads(request.body)
         curso_id = data.get('curso_id')
-
         # Verificar si el carrito existe y si el curso_id está presente en el carrito
         if not carrito or curso_id not in carrito:
             return JsonResponse({"success": False, "message": "Curso no encontrado en el carrito."}, status=404)
 
         # Obtener los detalles del curso
         curso = Curso.objects.get(id=curso_id)
-        print(carrito[curso_id]['cantidad'])
         
         # Verificar si hay más de una unidad del curso
         if carrito[curso_id]['cantidad'] > 1:
@@ -356,5 +366,215 @@ def finalizar_compra(request):
         "cursos": cursos,
         "total_precio": total_precio,
     }
-
+    
     return render(request, "cursos/finalizar_compra.html", context)
+
+def confirmar_compra(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body.decode('utf-8')) # Verifica si los datos se reciben correctamente
+            print("Datos recibidos:", data) 
+            # Extraer los datos necesarios
+            
+            # Calcula el total (sumar precios de cursos)
+            total = 0
+            cursos = []
+            datos = data['data'] if 'data' in data else data
+
+             # Extraer datos generales
+            nombre_comprador = datos.get("nombre_comprador")
+            email_comprador = datos.get("email_comprador")
+            direccion_envio = datos.get("direccion_envio")
+            ciudad_envio = datos.get("ciudad_envio")
+            provincia_envio = datos.get("provincia_envio")
+            codigo_postal_envio = datos.get("codigo_postal_envio")
+            payment_method = datos.get("payment_method")
+            items = datos.get("items", [])
+
+            for item in items:
+                course_id = int(item['curso_id'])
+                course_quantity = int(item['cantidad'])
+                
+                # Obtener el curso desde la base de datos
+                course = Curso.objects.get(id=course_id)
+                total += (course.precio * course_quantity)  # Calcular el total
+                nombre = item['nombre']
+                email = item['email']
+                cursos.append({
+                    'course': course,
+                    'quantity': course_quantity,
+                    'precio_unitario': course.precio,
+                    'nombre': nombre,  # Usamos el nombre general del comprador
+                    'email': email,    # Usamos el email general del comprador
+                })
+            codigo_seguimiento = str(uuid.uuid4())
+
+            print("funciona 1")
+            # Crear el pedido principal
+            pedido = Pedido.objects.create(
+                usuario=request.user if request.user.is_authenticated else None, # No asociamos un usuario
+                direccion_envio=direccion_envio,  # Dejar vacío si no es obligatorio
+                ciudad_envio=ciudad_envio,
+                provincia_envio=provincia_envio,
+                codigo_postal_envio=codigo_postal_envio,
+                total=total, # Total vacío
+                estado= 'PEN' if payment_method == "cash-on-delivery" else 'PAG',
+                fecha_creacion=timezone.now(), # Fecha de creación actual
+                codigo_seguimiento=codigo_seguimiento
+            )
+            
+            
+            print("funciona 2")
+            for curso in cursos:
+                PedidoCurso.objects.create(
+                    pedido=pedido,
+                    curso=curso['course'],  # Curso asociado al pedido
+                    cantidad=curso['quantity'],
+                    precio_unitario=curso['precio_unitario'],
+                    email=curso['email'],
+                    nombre=curso['nombre']
+                )
+            if 'carrito' in request.session:
+                del request.session['carrito']  # Eliminar carrito de la sesión
+            request.session['ultimo_pedido_id'] = pedido.id
+            print(pedido.id)
+            print("asdasd")
+            return JsonResponse({"success": True, "message": "Pedido creado con éxito."})
+
+        except Exception as e:
+            # Capturar cualquier error y devolverlo como respuesta
+            return JsonResponse({"success": False, "message": str(e)}, status=400)
+
+    # Si no es un método POST, devolver error 405 (Método no permitido)
+    return JsonResponse({"success": False, "message": "Método no permitido."}, status=405)
+def obtener_datos_usuario(request):
+    user = request.user
+    return JsonResponse({
+        "nombre": user.nombre,
+        "email": user.email,
+        "direccion_entrega": user.direccion_entrega,
+        "ciudad": user.ciudad,
+        "provincia": user.provincia,
+        "codigo_postal": user.codigo_postal,
+    })
+
+
+def detalle_pedido(request):
+    codigo_seguimiento = request.GET.get('codigo_seguimiento')
+    
+    if not codigo_seguimiento:
+        return render(request, 'cursos/pedido_detalle.html', {'error': 'Por favor, introduce un código de seguimiento válido.'})
+    
+    try:
+        pedido = Pedido.objects.get(codigo_seguimiento=codigo_seguimiento)
+    except Pedido.DoesNotExist:
+        return render(request, 'cursos/pedido_detalle.html', {'error': 'Pedido no encontrado. Verifica el código de seguimiento.'})
+    
+    return render(request, 'cursos/pedido_detalle.html', {'pedido': pedido})
+
+
+
+#---------------------------------- STRIPE ----------------------------------
+
+
+stripe.api_key = settings.STRIPE_API_KEY
+
+YOUR_DOMAIN = 'http://127.0.0.1:8000'
+
+class CreateCheckoutSessionView(View):
+    def post(self, request, *args, **kwargs):  # Cambiar create_checkout_session por post
+        
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            print(data)
+            items = data['data']['items']
+            line_items = []
+            for item in items:
+                curso_id = item.get("curso_id")
+                cantidad = item.get("cantidad",1)
+            
+                curso = Curso.objects.get(id=curso_id)
+            
+                line_items.append({
+                    'price': curso.price_id,
+                    'quantity': cantidad,
+                })
+
+            checkout_session = stripe.checkout.Session.create(
+                line_items= line_items,
+                mode='payment',
+                success_url=YOUR_DOMAIN + '/success',
+                cancel_url=YOUR_DOMAIN + '/cancel',
+            )
+            confirmar_compra(request)
+            
+
+            return JsonResponse({'url': checkout_session.url})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+def success_view(request):
+    # Recuperar el ID del último pedido desde la sesión
+    pedido_id = request.session.get('ultimo_pedido_id')
+    ultimo_pedido = None
+
+    if pedido_id:
+        # Intentar recuperar el pedido
+        ultimo_pedido = get_object_or_404(Pedido, id=pedido_id)
+
+        # Enviar un correo con los detalles del pedido
+        if ultimo_pedido:
+            try:
+                # Enviar un correo a cada persona asociada a un curso
+                for curso_pedido in ultimo_pedido.cursos.all():
+                    curso_obj = curso_pedido.curso
+                    if curso_obj.plazas_disponibles > 0:  # Asegurarse de no tener stock negativo
+                        curso_obj.plazas_disponibles -= curso_pedido.cantidad
+                        curso_obj.save()
+                    subject = f"Detalles de tu curso comprado en el pedido #{ultimo_pedido.id}"
+                    recipient_email = curso_pedido.email
+
+                    # Mensaje personalizado por curso
+                    message = f"""
+                    Hola {curso_pedido.nombre},
+
+                    Gracias por tu compra. Aquí tienes los detalles de tu curso:
+
+                    Curso: {curso_pedido.curso.nombre}
+                    Cantidad: {curso_pedido.cantidad}
+                    Precio Unitario: {curso_pedido.precio_unitario}€
+
+                    Dirección de Envío:
+                    {ultimo_pedido.direccion_envio}
+                    {ultimo_pedido.ciudad_envio}, {ultimo_pedido.provincia_envio} {ultimo_pedido.codigo_postal_envio}
+
+                    Código de Seguimiento del Pedido: {ultimo_pedido.codigo_seguimiento}
+
+                    Si tienes alguna pregunta, no dudes en contactarnos.
+
+                    ¡Gracias por confiar en nosotros!
+                    """
+
+                    # Enviar el correo
+                    send_mail(
+                        subject,
+                        message,
+                        settings.DEFAULT_FROM_EMAIL,  # Remitente configurado en settings.py
+                        [recipient_email],           # Receptor
+                        fail_silently=False,         # Si hay un error, no pasa desapercibido
+                    )
+            except Exception as e:
+                print(f"Error enviando correo: {e}")
+
+    return render(request, 'cursos/success.html', {'ultimo_pedido': ultimo_pedido})
+
+def cancel_view(request):
+    pedido_id = request.session.get('ultimo_pedido_id')
+    ultimo_pedido = None
+    print(pedido_id)
+    if pedido_id:
+        # Intentar recuperar el pedido
+        ultimo_pedido = get_object_or_404(Pedido, id=pedido_id)
+        ultimo_pedido.delete()
+    return render(request, 'cursos/cancel.html', {'ultimo_pedido': ultimo_pedido})
+
