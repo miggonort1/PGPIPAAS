@@ -455,6 +455,8 @@ def confirmar_compra(request):
             # Crear el pedido principal
             pedido = Pedido.objects.create(
                 usuario=request.user if request.user.is_authenticated else None, # No asociamos un usuario
+                email=email_comprador,
+                nombre=nombre_comprador,
                 direccion_envio=direccion_envio,  # Dejar vacío si no es obligatorio
                 ciudad_envio=ciudad_envio,
                 provincia_envio=provincia_envio,
@@ -567,6 +569,38 @@ def success_view(request):
         # Enviar un correo con los detalles del pedido
         if ultimo_pedido:
             try:
+                cursos=[]
+                for curso_pedido in ultimo_pedido.cursos.all():
+                    cursos.append(curso_pedido.curso.nombre)
+                subject = f"Detalles de tu curso comprado en el pedido #{ultimo_pedido.id}"
+                recipient_email = ultimo_pedido.email
+                message2 = f"""
+                    Hola {ultimo_pedido.nombre},
+
+                   Gracias por comprar en nuestra web. Aquí tienes los detalles de tu curso:
+
+                    Cursos:{cursos}
+                    Total: {ultimo_pedido.total}
+                    
+                    Dirección de Envío:
+                    {ultimo_pedido.direccion_envio}
+                    {ultimo_pedido.ciudad_envio}, {ultimo_pedido.provincia_envio} {ultimo_pedido.codigo_postal_envio}
+
+                    Código de Seguimiento del Pedido: {ultimo_pedido.codigo_seguimiento}
+
+                    Si tienes alguna pregunta, no dudes en contactarnos.
+
+                    ¡Gracias por confiar en nosotros!
+                    """
+
+                    # Enviar el correo
+                send_mail(
+                        subject,
+                        message2,
+                        settings.DEFAULT_FROM_EMAIL,  # Remitente configurado en settings.py
+                        [recipient_email],           # Receptor
+                        fail_silently=False,         # Si hay un error, no pasa desapercibido
+                    )
                 # Enviar un correo a cada persona asociada a un curso
                 for curso_pedido in ultimo_pedido.cursos.all():
                     curso_obj = curso_pedido.curso
@@ -580,11 +614,12 @@ def success_view(request):
                     message = f"""
                     Hola {curso_pedido.nombre},
 
-                    Gracias por tu compra. Aquí tienes los detalles de tu curso:
+                   {ultimo_pedido.nombre} ha reservado un curso para tí. Aquí tienes los detalles de tu curso:
 
                     Curso: {curso_pedido.curso.nombre}
                     Cantidad: {curso_pedido.cantidad}
                     Precio Unitario: {curso_pedido.precio_unitario}€
+                    Estado: 
 
                     Dirección de Envío:
                     {ultimo_pedido.direccion_envio}

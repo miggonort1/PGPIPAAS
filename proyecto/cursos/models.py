@@ -137,6 +137,8 @@ class Pedido(models.Model):
     ]
 
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="pedidos", null=True, blank=True)
+    email = models.EmailField(unique=False, null=False)
+    nombre = models.CharField(max_length=50, null=False)
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
     estado = models.CharField(max_length=3, choices=ESTADO_PEDIDO, default='PEN', verbose_name="Estado del Pedido")
     direccion_envio = models.CharField(max_length=255, verbose_name="Dirección de Envío")
