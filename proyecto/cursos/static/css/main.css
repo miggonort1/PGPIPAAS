@@ -584,3 +584,50 @@ input[type="number"]:focus {
 input[type="number"]:invalid {
     border-color: red; /* Borde rojo si el valor no es válido */
 }
+
+
+.admin-banner {
+    background-color: #ffcc00;
+    color: #000;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    position: absolute;
+    top: 35%;
+    left:18%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.admin-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.admin-buttons .btn {
+    padding: 10px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.edit-course {
+    background-color: #007bff;
+}
+
+.edit-course:hover {
+    background-color: #0056b3;
+}
+
+.delete-course {
+    background-color: #dc3545;
+    border: none;
+}
+
+.delete-course:hover {
+    background-color: #a71d2a;
+}

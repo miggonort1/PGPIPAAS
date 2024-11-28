@@ -26,4 +26,6 @@ urlpatterns = [
     path('create_checkout_session', CreateCheckoutSessionView.as_view(), name='create_checkout_session'),
     path('success', views.success_view, name='success'),
     path('cancel', views.cancel_view, name='cancel'),
+    path('editar_curso/<int:id>/',views.editar_curso,name='editar_curso'),
+    path('borrar/<int:id>/', views.borrar_curso, name='borrar_curso'),
 ]

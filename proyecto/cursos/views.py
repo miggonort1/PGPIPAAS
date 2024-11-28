@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import RegistroUsuarioForm
+from .forms import RegistroUsuarioForm, CursoForm
 from cursos.models import Usuario
 from .forms import PerfilForm
 from django.contrib.auth import logout
@@ -16,6 +16,7 @@ from datetime import date
 from django.contrib.auth import views as auth_views
 from django.core.paginator import Paginator
 from django.db.models import F
+from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import Carrito, CarritoCurso
@@ -151,8 +152,6 @@ def registro(request):
 
     return render(request, 'cursos/registro.html', {'form': form})
 
-
-
 def editar_perfil(request):
     if request.user.is_authenticated:
         user = request.user  # Obtén el usuario autenticado
@@ -173,9 +172,37 @@ def editar_perfil(request):
         if not messages.get_messages(request):
             # Asegurarse de que no se agregue el mensaje de error si ya está en la sesión
             messages.error(request, "Debes iniciar sesión para acceder a tu perfil.")
-        return redirect('inicioSesion')  # Redirige a la página de inicio de sesión (ajusta la URL según corresponda)
-    
+        return redirect('inicioSesion')  
 
+def es_admin(user):
+    return user.is_superuser
+
+@user_passes_test(es_admin)
+def editar_curso(request, id):
+    # Obtener el curso que se va a editar
+    curso = get_object_or_404(Curso, id=id)
+    
+    if request.method == 'POST':
+        # Procesar el formulario enviado
+        form = CursoForm(request.POST, request.FILES, instance=curso)  # Incluye request.FILES si el curso tiene imágenes
+        if form.is_valid():
+            form.save()  # Guardar cambios en la base de datos
+            messages.success(request, f"El curso '{curso.nombre}' ha sido actualizado correctamente.")
+            return redirect('detalle_curso', id=curso.id)  # Redirige a la página de detalles del curso
+    else:
+        # Mostrar el formulario con los datos actuales del curso
+        form = CursoForm(instance=curso)
+
+    return render(request, 'cursos/editar_curso.html', {'form': form, 'curso': curso})# Redirige a la página de inicio de sesión (ajusta la URL según corresponda)
+@user_passes_test(es_admin)
+def borrar_curso(request, id):
+    curso = get_object_or_404(Curso, id=id)
+    curso_nombre = curso.nombre  # Guardar el nombre antes de borrarlo para mostrar en el mensaje
+    curso.delete()
+    messages.success(request, f"El curso '{curso_nombre}' ha sido eliminado correctamente.")
+    return redirect('home')  # Redirige a la lista de cursos después de eliminar    
+
+    
 def detalle_curso(request, id):
     # Obtener el curso o devolver un 404 si no existe
     curso = get_object_or_404(Curso, id=id)
