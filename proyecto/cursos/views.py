@@ -192,8 +192,23 @@ def editar_curso(request, id):
     else:
         # Mostrar el formulario con los datos actuales del curso
         form = CursoForm(instance=curso)
-
     return render(request, 'cursos/editar_curso.html', {'form': form, 'curso': curso})# Redirige a la página de inicio de sesión (ajusta la URL según corresponda)
+
+@user_passes_test(es_admin)
+def crear_curso(request):
+    if request.method == 'POST':
+        form = CursoForm(request.POST, request.FILES)
+        if form.is_valid():
+            curso = form.save()
+            messages.success(request, f"El curso '{curso.nombre}' ha sido creado exitosamente.")
+            return redirect('detalle_curso', id=curso.id)
+        else:
+            messages.error(request, "Por favor, corrige los errores en el formulario.")
+    else:
+        form = CursoForm()
+
+    return render(request, 'cursos/crear_curso.html', {'form': form})
+
 @user_passes_test(es_admin)
 def borrar_curso(request, id):
     curso = get_object_or_404(Curso, id=id)

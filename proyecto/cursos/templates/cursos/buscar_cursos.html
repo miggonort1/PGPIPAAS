@@ -80,6 +80,13 @@
     </header>
     
     <main class="courses-container">
+        {% if request.user.is_superuser %}
+        <div class="admin-buttons">
+            <a href="{% url 'crear_curso' %}" class="btn create-course">
+                <i class="fas fa-edit"></i> Crear Curso
+            </a>
+            </div>
+            {% endif %}
         <section id="soon-courses" class="course-section">
             <h2>
                 Resultados de búsqueda para 
