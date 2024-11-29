@@ -89,4 +89,9 @@ CORREO:
  DOCKER:
 
  - docker-compose down --rmi all
- - docker-compose up
+ - docker-compose up --build
+ 
+ Si peta al lanzar docker:
+
+ - docker build -t test-entrypoint . # Creo que este no hace falta
+ - dos2unix entrypoint.sh
