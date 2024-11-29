@@ -215,8 +215,21 @@ def borrar_curso(request, id):
     curso_nombre = curso.nombre  # Guardar el nombre antes de borrarlo para mostrar en el mensaje
     curso.delete()
     messages.success(request, f"El curso '{curso_nombre}' ha sido eliminado correctamente.")
-    return redirect('home')  # Redirige a la lista de cursos después de eliminar    
-
+    return redirect('home')  # Redirige a la lista de cursos después de eliminar
+    
+@user_passes_test(es_admin)
+def borrar_usuario(request, id):
+    usuario = get_object_or_404(Usuario, id=id)
+    nombre = usuario.nombre_usuario  # Guardar el nombre antes de borrarlo para mostrar en el mensaje
+    usuario.delete()
+    messages.success(request, f"El usuario '{nombre}' ha sido eliminado correctamente.")
+    return redirect('listar_usuarios')  # Redirige a la lista de cursos después de eliminar    
+    
+@user_passes_test(es_admin)
+def listar_usuarios(request):
+    usuarios = Usuario.objects.all()  # Obtenemos todos los pedidos
+    context = {'usuarios': usuarios}  # Definimos el contexto
+    return render(request, 'cursos/listar_usuarios.html', context)
     
 def detalle_curso(request, id):
     # Obtener el curso o devolver un 404 si no existe

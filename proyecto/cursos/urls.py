@@ -28,5 +28,7 @@ urlpatterns = [
     path('cancel', views.cancel_view, name='cancel'),
     path('editar_curso/<int:id>/',views.editar_curso,name='editar_curso'),
     path('crear_curso/',views.crear_curso,name='crear_curso'),
-    path('borrar/<int:id>/', views.borrar_curso, name='borrar_curso'),
+    path('borrar_curso/<int:id>/', views.borrar_curso, name='borrar_curso'),
+    path('listar_usuarios/',views.listar_usuarios,name='listar_usuarios'),
+    path('borrar_usuario/<int:id>/', views.borrar_usuario, name='borrar_usuario'),
 ]
