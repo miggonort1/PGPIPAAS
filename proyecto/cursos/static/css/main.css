@@ -199,6 +199,7 @@ body {
 .profile-link:hover i {
     color: #27AE60; /* Naranja más vivo */
 }
+
 /* Enlace carrito estilizado */
 .cart-link {
     display: flex;
