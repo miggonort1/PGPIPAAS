@@ -220,17 +220,43 @@ def borrar_curso(request, id):
 @user_passes_test(es_admin)
 def borrar_usuario(request, id):
     usuario = get_object_or_404(Usuario, id=id)
+
+    if usuario.is_superuser:  # Verifica si el usuario es un administrador
+        messages.error(request, f"No puedes eliminar al usuario administrador '{usuario.nombre_usuario}'.")
+        return redirect('listar_usuarios')  # Redirige sin eliminar
+
     nombre = usuario.nombre_usuario  # Guardar el nombre antes de borrarlo para mostrar en el mensaje
     usuario.delete()
     messages.success(request, f"El usuario '{nombre}' ha sido eliminado correctamente.")
-    return redirect('listar_usuarios')  # Redirige a la lista de cursos después de eliminar    
+    return redirect('listar_usuarios') 
     
 @user_passes_test(es_admin)
 def listar_usuarios(request):
     usuarios = Usuario.objects.all()  # Obtenemos todos los pedidos
     context = {'usuarios': usuarios}  # Definimos el contexto
     return render(request, 'cursos/listar_usuarios.html', context)
-    
+
+@user_passes_test(es_admin)
+def detalles_usuario(request, id):
+    # Obtén el usuario a editar o lanza un 404 si no existe
+    usuario = get_object_or_404(Usuario, id=id)
+    if usuario.is_superuser:
+        messages.error(request, "No puedes editar el perfil de un superusuario.")
+        return redirect('listar_usuarios')
+    if request.method == 'POST':
+        # Si el formulario se envía (POST), procesar la actualización
+        form = PerfilForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()  # Guardar los cambios
+            messages.success(request, f"El perfil del usuario {usuario.nombre_usuario} ha sido actualizado correctamente.")
+            return redirect('listar_usuarios')  # Redirige al listado de usuarios
+    else:
+        # Si la solicitud es GET, mostrar el formulario con los datos actuales del usuario
+        form = PerfilForm(instance=usuario)
+
+    return render(request, 'cursos/detalles_usuario.html', {'form': form, 'usuario': usuario})
+
+
 def detalle_curso(request, id):
     # Obtener el curso o devolver un 404 si no existe
     curso = get_object_or_404(Curso, id=id)
