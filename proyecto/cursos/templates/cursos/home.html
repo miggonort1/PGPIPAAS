@@ -24,7 +24,17 @@
             <span>Eres Admin</span>
         </div>
     {% endif %}
+    {% if request.user.is_superuser %}
+    <nav class="navbar-icons">
 
+            <a href="{% url 'inicioSesion' %}" class="profile-link">
+                <i class="fas fa-users"></i><span>Usuarios</span>
+            </a>
+            <a href="{% url 'inicioSesion' %}" class="profile-link">
+                <i class="fas fa-users"></i><span>Usuarios</span>
+            </a>
+    </nav>
+{% endif %}
         <nav class="navbar-icons">
             {% if request.user.is_authenticated %}
                 <a href="{% url 'perfil' %}" class="profile-link">
@@ -35,7 +45,7 @@
                     <i class="fas fa-user"></i><span>Perfil</span>
                 </a>
             {% endif %}
-            
+
             <div class="profile-link" id="cart-button">
                 <i class="fas fa-shopping-cart"></i>
                 <span>Carrito</span>
@@ -52,6 +62,8 @@
                 </div>
 
         </nav>
+
+    
     </header>
 
     <main class="courses-container">
