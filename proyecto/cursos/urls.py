@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from . import admin
 from .views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView, CreateCheckoutSessionView
 
 
@@ -29,4 +30,8 @@ urlpatterns = [
     path('editar_curso/<int:id>/',views.editar_curso,name='editar_curso'),
     path('crear_curso/',views.crear_curso,name='crear_curso'),
     path('borrar/<int:id>/', views.borrar_curso, name='borrar_curso'),
+    path('borrar_curso/<int:id>/', views.borrar_curso, name='borrar_curso'),
+    path('listar_pedidos/',views.listar_pedidos,name='listar_pedidos'),
+    path('detalles_pedido/<int:id>/',views.detalles_pedido,name='detalles_pedido'),
+    path('borrar_pedido/<int:id>/', views.borrar_pedido, name='borrar_pedido'),
 ]

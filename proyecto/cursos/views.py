@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistroUsuarioForm, CursoForm
 from cursos.models import Usuario
-from .forms import PerfilForm
+from .forms import PerfilForm, PedidoForm
 from django.contrib.auth import logout
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
@@ -30,6 +30,7 @@ from django.views.generic import TemplateView
 from django.conf import settings
 import stripe
 from django.core.mail import send_mail
+
 
 
 def home(request):
@@ -216,8 +217,58 @@ def borrar_curso(request, id):
     curso.delete()
     messages.success(request, f"El curso '{curso_nombre}' ha sido eliminado correctamente.")
     return redirect('home')  # Redirige a la lista de cursos después de eliminar    
-
     
+@user_passes_test(es_admin)
+def listar_pedidos(request):
+    pedidos = Pedido.objects.all()
+    context = {'pedidos': pedidos}
+    return render(request, 'cursos/listar_pedidos.html', context)
+
+@user_passes_test(es_admin)
+def borrar_pedido(request, id):
+    pedido = get_object_or_404(Pedido, id=id)
+    pedido_codigo_seguimiento = pedido.codigo_seguimiento  # Guardar el nombre antes de borrarlo para mostrar en el mensaje
+    pedido.delete()
+    messages.success(request, f"El curso '{pedido_codigo_seguimiento}' ha sido eliminado correctamente.")
+    return redirect('listar_pedidos')  # Redirige a la lista de cursos después de eliminar    
+    
+@user_passes_test(es_admin)
+def detalles_pedido(request, id):
+    # Obtén el pedido a editar o lanza un 404 si no existe
+    pedido = get_object_or_404(Pedido, id=id)
+    
+    if request.method == 'POST':
+        # Si el formulario se envía (POST), procesar la actualización
+        form = PedidoForm(request.POST, instance=pedido)
+        if form.is_valid():
+            form.save()  # Guardar los cambios
+            messages.success(request, f"El pedido #{pedido.id} ha sido actualizado correctamente.")
+            return redirect('listar_pedidos')  # Redirige al listado de pedidos
+        else:
+            messages.error(request, "Ha ocurrido un error al intentar actualizar el pedido.")
+    else:
+        # Si la solicitud es GET, mostrar el formulario con los datos actuales del pedido
+        form = PedidoForm(instance=pedido)
+    
+    return render(request, 'cursos/detalles_pedido.html', {'form': form, 'pedido': pedido})
+
+@user_passes_test(es_admin)
+def editar_pedido(request, id):
+    # Obtener el curso que se va a editar
+    pedido = get_object_or_404(Pedido, id=id)
+    
+    if request.method == 'POST':
+        # Procesar el formulario enviado
+        form = CursoForm(request.POST, request.FILES, instance=pedido)  # Incluye request.FILES si el curso tiene imágenes
+        if form.is_valid():
+            form.save()  # Guardar cambios en la base de datos
+            messages.success(request, f"El curso '{pedido.codigo_seguimiento}' ha sido actualizado correctamente.")
+            return redirect('detalle_curso', id=pedido.id)  # Redirige a la página de detalles del curso
+    else:
+        # Mostrar el formulario con los datos actuales del curso
+        form = CursoForm(instance=pedido)
+    return render(request, 'cursos/editar_curso.html', {'form': form, 'pedido': pedido})# Redirige a la página de inicio de sesión (ajusta la URL según corresponda)
+
 def detalle_curso(request, id):
     # Obtener el curso o devolver un 404 si no existe
     curso = get_object_or_404(Curso, id=id)

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Pedidos</title>
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-blur"></div>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}" class="home-link">OpositaConmigo</a>
+        </div>
+        <nav class="navbar-icons">
+            <a href="{% url 'perfil' %}" class="profile-link">
+                <i class="fas fa-user"></i><span>{{ request.user.nombre_usuario }}</span>
+            </a>
+            <a href="{% url 'inicioSesion' %}" class="profile-link">
+                <i class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span>
+            </a>
+        </nav>
+    </header>
+    <!-- Main container -->
+    <main class="courses-container">
+        <div class="course-section">
+        <h1 class="main-title">Listado de Pedidos</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Estado</th>
+                    <th>Email</th>
+                    <th>Fecha de Creacion</th>
+                    <th>Dirección de Envío</th>
+                    <th>Código Postal</th>
+                    <th>Total</th>
+                    <th>Código de seguimiento</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                <tr>
+                    <td>{{ pedido.id }}</td>
+                    <td>{{ pedido.estado }}</td>
+                    <td>{{ pedido.email }}</td>
+                    <td>{{ pedido.fecha_creacion|date:"d-m-Y" }}</td>
+                    <td>{{ pedido.direccion_envio }}</td>
+                    <td>{{ pedido.codigo_postal_envio }}</td>
+                    <td>{{ pedido.total }}</td>
+                    <td>{{ pedido.codigo_seguimiento }}</td>
+                    <td>
+                        <a href="{% url 'detalles_pedido' pedido.id %}" class="btn">Detalles</a>
+                        <a href="{% url 'borrar_pedido' pedido.id %}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este pedido?');">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No se encontraron pedidos registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </main>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
