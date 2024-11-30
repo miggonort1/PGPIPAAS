@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    {% csrf_token %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Pedido</title>
+    <link rel="stylesheet" href="{% static 'css/editar_perfil.css' %}">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    <div class="background-blur"></div>
+    <header class="navbar">
+        <div class="logo">
+            <a href="{% url 'home' %}">OpositaConmigo</a>
+        </div>
+        <nav>
+            {% if request.user.is_authenticated %}
+                <div>
+                    <a href="{% url 'cerrar_sesion' %}">Cerrar sesión</a>
+                </div>
+            {% else %}
+                <a href="{% url 'inicio_sesion' %}">Iniciar sesión</a>
+            {% endif %}
+        </nav>
+    </header>
+    <div class="profile-container">
+        <h1>Editar Pedido</h1>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-container">
+                {{ form.as_p }}
+                <button type="submit" class="btn">Actualizar Pedido</button>
+            </div>
+        </form>
+        <p><a href="{% url 'home' %}" class="home-link">Volver al inicio</a></p>
+    </div>
+</body>
+</html>

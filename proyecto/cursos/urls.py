@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from . import admin
 from .views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView, CreateCheckoutSessionView
 
 
@@ -32,4 +33,7 @@ urlpatterns = [
     path('listar_usuarios/',views.listar_usuarios,name='listar_usuarios'),
     path('detalles_usuario/<int:id>/',views.detalles_usuario,name='detalles_usuario'),
     path('borrar_usuario/<int:id>/', views.borrar_usuario, name='borrar_usuario'),
+    path('listar_pedidos/',views.listar_pedidos,name='listar_pedidos'),
+    path('detalles_pedido/<int:id>/',views.detalles_pedido,name='detalles_pedido'),
+    path('borrar_pedido/<int:id>/', views.borrar_pedido, name='borrar_pedido'),
 ]

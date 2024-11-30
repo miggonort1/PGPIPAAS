@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistroUsuarioForm, CursoForm
 from cursos.models import Usuario
-from .forms import PerfilForm
+from .forms import PerfilForm, PedidoForm
 from django.contrib.auth import logout
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
@@ -30,6 +30,7 @@ from django.views.generic import TemplateView
 from django.conf import settings
 import stripe
 from django.core.mail import send_mail
+
 
 
 def home(request):
@@ -256,6 +257,58 @@ def detalles_usuario(request, id):
 
     return render(request, 'cursos/detalles_usuario.html', {'form': form, 'usuario': usuario})
 
+    return redirect('home')  # Redirige a la lista de cursos después de eliminar    
+    
+@user_passes_test(es_admin)
+def listar_pedidos(request):
+    pedidos = Pedido.objects.all()
+    context = {'pedidos': pedidos}
+    return render(request, 'cursos/listar_pedidos.html', context)
+
+@user_passes_test(es_admin)
+def borrar_pedido(request, id):
+    pedido = get_object_or_404(Pedido, id=id)
+    pedido_codigo_seguimiento = pedido.codigo_seguimiento  # Guardar el nombre antes de borrarlo para mostrar en el mensaje
+    pedido.delete()
+    messages.success(request, f"El curso '{pedido_codigo_seguimiento}' ha sido eliminado correctamente.")
+    return redirect('listar_pedidos')  # Redirige a la lista de cursos después de eliminar    
+    
+@user_passes_test(es_admin)
+def detalles_pedido(request, id):
+    # Obtén el pedido a editar o lanza un 404 si no existe
+    pedido = get_object_or_404(Pedido, id=id)
+    
+    if request.method == 'POST':
+        # Si el formulario se envía (POST), procesar la actualización
+        form = PedidoForm(request.POST, instance=pedido)
+        if form.is_valid():
+            form.save()  # Guardar los cambios
+            messages.success(request, f"El pedido #{pedido.id} ha sido actualizado correctamente.")
+            return redirect('listar_pedidos')  # Redirige al listado de pedidos
+        else:
+            messages.error(request, "Ha ocurrido un error al intentar actualizar el pedido.")
+    else:
+        # Si la solicitud es GET, mostrar el formulario con los datos actuales del pedido
+        form = PedidoForm(instance=pedido)
+    
+    return render(request, 'cursos/detalles_pedido.html', {'form': form, 'pedido': pedido})
+
+@user_passes_test(es_admin)
+def editar_pedido(request, id):
+    # Obtener el curso que se va a editar
+    pedido = get_object_or_404(Pedido, id=id)
+    
+    if request.method == 'POST':
+        # Procesar el formulario enviado
+        form = CursoForm(request.POST, request.FILES, instance=pedido)  # Incluye request.FILES si el curso tiene imágenes
+        if form.is_valid():
+            form.save()  # Guardar cambios en la base de datos
+            messages.success(request, f"El curso '{pedido.codigo_seguimiento}' ha sido actualizado correctamente.")
+            return redirect('detalle_curso', id=pedido.id)  # Redirige a la página de detalles del curso
+    else:
+        # Mostrar el formulario con los datos actuales del curso
+        form = CursoForm(instance=pedido)
+    return render(request, 'cursos/editar_curso.html', {'form': form, 'pedido': pedido})# Redirige a la página de inicio de sesión (ajusta la URL según corresponda)
 
 def detalle_curso(request, id):
     # Obtener el curso o devolver un 404 si no existe
@@ -494,6 +547,8 @@ def confirmar_compra(request):
             # Crear el pedido principal
             pedido = Pedido.objects.create(
                 usuario=request.user if request.user.is_authenticated else None, # No asociamos un usuario
+                email=email_comprador,
+                nombre=nombre_comprador,
                 direccion_envio=direccion_envio,  # Dejar vacío si no es obligatorio
                 ciudad_envio=ciudad_envio,
                 provincia_envio=provincia_envio,
@@ -606,6 +661,38 @@ def success_view(request):
         # Enviar un correo con los detalles del pedido
         if ultimo_pedido:
             try:
+                cursos=[]
+                for curso_pedido in ultimo_pedido.cursos.all():
+                    cursos.append(curso_pedido.curso.nombre)
+                subject = f"Detalles de tu curso comprado en el pedido #{ultimo_pedido.id}"
+                recipient_email = ultimo_pedido.email
+                message2 = f"""
+                    Hola {ultimo_pedido.nombre},
+
+                   Gracias por comprar en nuestra web. Aquí tienes los detalles de tu curso:
+
+                    Cursos:{cursos}
+                    Total: {ultimo_pedido.total}
+                    
+                    Dirección de Envío:
+                    {ultimo_pedido.direccion_envio}
+                    {ultimo_pedido.ciudad_envio}, {ultimo_pedido.provincia_envio} {ultimo_pedido.codigo_postal_envio}
+
+                    Código de Seguimiento del Pedido: {ultimo_pedido.codigo_seguimiento}
+
+                    Si tienes alguna pregunta, no dudes en contactarnos.
+
+                    ¡Gracias por confiar en nosotros!
+                    """
+
+                    # Enviar el correo
+                send_mail(
+                        subject,
+                        message2,
+                        settings.DEFAULT_FROM_EMAIL,  # Remitente configurado en settings.py
+                        [recipient_email],           # Receptor
+                        fail_silently=False,         # Si hay un error, no pasa desapercibido
+                    )
                 # Enviar un correo a cada persona asociada a un curso
                 for curso_pedido in ultimo_pedido.cursos.all():
                     curso_obj = curso_pedido.curso
@@ -619,11 +706,12 @@ def success_view(request):
                     message = f"""
                     Hola {curso_pedido.nombre},
 
-                    Gracias por tu compra. Aquí tienes los detalles de tu curso:
+                   {ultimo_pedido.nombre} ha reservado un curso para tí. Aquí tienes los detalles de tu curso:
 
                     Curso: {curso_pedido.curso.nombre}
                     Cantidad: {curso_pedido.cantidad}
                     Precio Unitario: {curso_pedido.precio_unitario}€
+                    Estado: 
 
                     Dirección de Envío:
                     {ultimo_pedido.direccion_envio}

@@ -89,4 +89,7 @@ CORREO:
  DOCKER:
 
  - docker-compose down --rmi all
- - docker-compose up
+ - docker-compose up --build
+ 
+ Si peta al lanzar docker:
+ - dos2unix entrypoint.sh
