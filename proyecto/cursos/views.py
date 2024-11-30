@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistroUsuarioForm, CursoForm
 from cursos.models import Usuario
-from .forms import PerfilForm
+from .forms import PerfilForm, PedidoForm
 from django.contrib.auth import logout
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
@@ -30,6 +30,7 @@ from django.views.generic import TemplateView
 from django.conf import settings
 import stripe
 from django.core.mail import send_mail
+
 
 
 def home(request):
@@ -229,8 +230,28 @@ def borrar_pedido(request, id):
     pedido_codigo_seguimiento = pedido.codigo_seguimiento  # Guardar el nombre antes de borrarlo para mostrar en el mensaje
     pedido.delete()
     messages.success(request, f"El curso '{pedido_codigo_seguimiento}' ha sido eliminado correctamente.")
-    return redirect('home')  # Redirige a la lista de cursos después de eliminar    
+    return redirect('listar_pedidos')  # Redirige a la lista de cursos después de eliminar    
     
+@user_passes_test(es_admin)
+def detalles_pedido(request, id):
+    # Obtén el pedido a editar o lanza un 404 si no existe
+    pedido = get_object_or_404(Pedido, id=id)
+    
+    if request.method == 'POST':
+        # Si el formulario se envía (POST), procesar la actualización
+        form = PedidoForm(request.POST, instance=pedido)
+        if form.is_valid():
+            form.save()  # Guardar los cambios
+            messages.success(request, f"El pedido #{pedido.id} ha sido actualizado correctamente.")
+            return redirect('listar_pedidos')  # Redirige al listado de pedidos
+        else:
+            messages.error(request, "Ha ocurrido un error al intentar actualizar el pedido.")
+    else:
+        # Si la solicitud es GET, mostrar el formulario con los datos actuales del pedido
+        form = PedidoForm(instance=pedido)
+    
+    return render(request, 'cursos/detalles_pedido.html', {'form': form, 'pedido': pedido})
+
 @user_passes_test(es_admin)
 def editar_pedido(request, id):
     # Obtener el curso que se va a editar

@@ -38,8 +38,6 @@
                     <th>Email</th>
                     <th>Fecha de Creacion</th>
                     <th>Dirección de Envío</th>
-                    <th>Ciudad de Envío</th>
-                    <th>Provincia</th>
                     <th>Código Postal</th>
                     <th>Total</th>
                     <th>Código de seguimiento</th>
@@ -54,12 +52,11 @@
                     <td>{{ pedido.email }}</td>
                     <td>{{ pedido.fecha_creacion|date:"d-m-Y" }}</td>
                     <td>{{ pedido.direccion_envio }}</td>
-                    <td>{{ pedido.ciudad_envio }}</td>
-                    <td>{{ pedido.provincia_envio }}</td>
                     <td>{{ pedido.codigo_postal_envio }}</td>
                     <td>{{ pedido.total }}</td>
                     <td>{{ pedido.codigo_seguimiento }}</td>
                     <td>
+                        <a href="{% url 'detalles_pedido' pedido.id %}" class="btn">Detalles</a>
                         <a href="{% url 'borrar_pedido' pedido.id %}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este pedido?');">Eliminar</a>
                     </td>
                 </tr>

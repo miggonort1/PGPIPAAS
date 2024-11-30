@@ -32,5 +32,6 @@ urlpatterns = [
     path('borrar/<int:id>/', views.borrar_curso, name='borrar_curso'),
     path('borrar_curso/<int:id>/', views.borrar_curso, name='borrar_curso'),
     path('listar_pedidos/',views.listar_pedidos,name='listar_pedidos'),
+    path('detalles_pedido/<int:id>/',views.detalles_pedido,name='detalles_pedido'),
     path('borrar_pedido/<int:id>/', views.borrar_pedido, name='borrar_pedido'),
 ]
