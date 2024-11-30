@@ -55,6 +55,12 @@ body {
     width: 100%;          /* Asegura que la barra ocupe todo el ancho de la ventana */
     z-index: 1000; 
 }
+.main-title{
+    color: #2C3E50;
+    display: flex;
+    justify-content: center;
+    margin-bottom:20px ;
+}
 
 .main-title{
     color: #2C3E50;
@@ -648,6 +654,7 @@ input[type="number"]:invalid {
 
 .delete-course:hover {
     background-color: #a71d2a;
+
 }
 
 .list_usuarios{
