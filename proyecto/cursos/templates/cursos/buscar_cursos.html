@@ -63,6 +63,16 @@
                 <i class="fas fa-shopping-cart"></i>
                 <span>Carrito</span>
             </div>
+            <div id="cart-dropdown" class="dropdown hidden">
+                <div id="cart-items" class="cart-items">
+                    <!-- Los productos del carrito se insertarán aquí dinámi    amente -->
+                </div>
+                <div id="cart-total" class="cart-total">
+                    <span>Total: </span><span id="total-price">$0.00</span>
+                </div>
+                <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button" style="display: none;">Finalizar Compra</a>
+            </div>
+
         </nav>
     </header>
     <main class="courses-container">

@@ -26,6 +26,17 @@
             <span>Eres Admin</span>
         </div>
     {% endif %}
+        {% if request.user.is_superuser %}
+        <nav class="navbar-icons">
+
+                <a href="{% url 'listar_usuarios' %}" class="profile-link">
+                    <i class="fas fa-users"></i><span>Usuarios</span>
+                </a>
+                <a href="{% url 'listar_pedidos' %}" class="profile-link">
+                    <i class="fas fa-users"></i><span>Pedidos</span>
+                </a>    
+        </nav>
+    {% endif %}
 
         <nav class="navbar-icons">
             {% if request.user.is_authenticated %}
