@@ -43,14 +43,15 @@
             </thead>
             <tbody>
                 {% for usuario in usuarios %}
+                
                 <tr>
                     <td>{{ usuario.id }}</td>
                     <td>{{ usuario.nombre }}</td>
                     <td>{{ usuario.email }}</td>
                     <td>{{ usuario.fecha_registro|date:"d-m-Y" }}</td>
                     <td>
-                        <a href="{% url 'detalles_usuario' usuario.id %}" class="btn">Detalles</a>
                         {% if not usuario.is_superuser %}
+                        <a href="{% url 'detalles_usuario' usuario.id %}" class="btn">Detalles</a>
                         <a href="{% url 'borrar_usuario' usuario.id %}" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">Eliminar</a>
                         {% endif%}
                     </td>

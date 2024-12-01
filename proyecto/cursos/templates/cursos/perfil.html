@@ -30,15 +30,7 @@
     <div class="profile-container">
         <h1>Editar Perfil</h1>
 
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="message {% if message.tags == 'error' %}error{% else %}success{% endif %}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
+       
 
         <form method="post">
             {% csrf_token %}

@@ -3,6 +3,8 @@
 <head>
     {% load static %}
     {% csrf_token %}
+    {% load tz %}
+    {% now "Y-m-d H:i:s" as current_date %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservar Cursos Online</title>
@@ -68,23 +70,7 @@
 
     <main class="courses-container">
         <!-- Filtros de ordenamiento -->
-        <section id="sorting" class="sorting-section">
-            <form method="GET">
-                <label for="orden">Ordenar por:</label>
-                <select name="orden" id="orden" onchange="this.form.submit()">
-                    <option value="">Seleccione...</option>
-                    <option value="fecha" {% if orden == 'fecha' %} selected {% endif %}>Fecha de inicio</option>
-                    <option value="precio" {% if orden == 'precio' %} selected {% endif %}>Precio</option>
-                    <option value="plazas" {% if orden == 'plazas' %} selected {% endif %}>Plazas disponibles</option>
-                </select>
-                
-                <label for="direccion">Dirección:</label>
-                <select name="direccion" id="direccion" onchange="this.form.submit()">
-                    <option value="asc" {% if direccion == 'asc' %} selected {% endif %}>Ascendente</option>
-                    <option value="desc" {% if direccion == 'desc' %} selected {% endif %}>Descendente</option>
-                </select>
-            </form>
-        </section>
+       
 
         <!-- Cursos próximos -->
         <section id="soon-courses" class="course-section">
@@ -111,23 +97,7 @@
             </div>
             <div style="color: rgba(255, 255, 255, 0);">.</div>
             <!-- Paginación -->
-            <div class="pagination">
-                <span class="step-links">
-                    {% if cursos_pronto.has_previous %}
-                        <a href="?page=1&orden={{ orden }}&direccion={{ direccion }}">Primera</a>
-                        <a href="?page={{ cursos_pronto.previous_page_number }}&orden={{ orden }}&direccion={{ direccion }}">Anterior</a>
-                    {% endif %}
-                    
-                    <span class="current">
-                        Página {{ cursos_pronto.number }} de {{ cursos_pronto.paginator.num_pages }}.
-                    </span>
-
-                    {% if cursos_pronto.has_next %}
-                        <a href="?page={{ cursos_pronto.next_page_number }}&orden={{ orden }}&direccion={{ direccion }}">Siguiente</a>
-                        <a href="?page={{ cursos_pronto.paginator.num_pages }}&orden={{ orden }}&direccion={{ direccion }}">Última</a>
-                    {% endif %}
-                </span>
-            </div>
+            
         </section>
 
         <section id="limited-courses" class="course-section">
@@ -138,6 +108,9 @@
                         
                         {% if curso.plazas_disponibles == 0 %}
                         <div class="sticker agotado">Agotado</div>
+                        {% endif %}
+                        {% if curso.fecha_inicio <= current_date %}
+                        <div class="sticker agotado">Ya iniciado</div>
                         {% endif %}
                         <a href="/curso/{{ curso.id }}">
                             <div class="div-images-help"></div>

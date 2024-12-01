@@ -3,6 +3,8 @@ function showCourses() {
     document.getElementById('courses-section').classList.toggle('hidden');
 }
 document.addEventListener("DOMContentLoaded", () => {
+    
+    const addToCartButtons = document.querySelectorAll('.add-to-cart ');
     const cartButton = document.getElementById("cart-button");
     const cartDropdown = document.getElementById("cart-dropdown");
     const cartItems = document.getElementById("cart-items");
@@ -77,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': getCookie('csrftoken')
                     },
-                    body: JSON.stringify({ curso_id: courseId, cantidad: quantity })
+                    body: JSON.stringify({ curso_id: courseId, cantidad: 1 })
                 });
 
                 if (response.ok) {
@@ -126,6 +128,40 @@ document.addEventListener("DOMContentLoaded", () => {
         }
             
         }
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                // Obtenemos el ID y nombre del curso desde los atributos del botón
+                const cursoId = event.target.getAttribute('data-curso-id');
+                const cursoNombre = event.target.getAttribute('data-curso-nombre');
+    
+                // Obtener la cantidad seleccionada para este curso específico
+                const cantidad = document.getElementById(`cantidad-cursos-${cursoId}`).value;
+    
+                // Comprobar si la cantidad es válida
+                if (cantidad < 1 || cantidad > parseInt(button.getAttribute('data-plazas'))) {
+                    showAlert('Cantidad no válida o excede el límite de plazas disponibles.', 'error');
+                    return;
+                }
+    
+                // Realizar una solicitud al servidor para agregar el curso al carrito
+                fetch('/api/carrito/agregar/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken') // Asegúrate de tener el token CSRF configurado correctamente
+                    },
+                    body: JSON.stringify({ curso_id: cursoId, cantidad: cantidad })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showAlert(`El curso "${cursoNombre}" se añadió al carrito.`, 'success');
+                    } else {
+                        showAlert('No hay suficientes plazas disponibles', 'error');
+                    }
+                })
+                .catch(error => console.error('Error al añadir al carrito:', error));
+            });
+        });
     });
 
 

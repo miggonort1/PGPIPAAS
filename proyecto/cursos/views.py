@@ -47,7 +47,7 @@ def home(request):
     orden = request.GET.get('orden', '')  # Obtener el campo de ordenamiento
     direccion = request.GET.get('direccion', 'asc')  # Obtener la dirección de orden (ascendente por defecto)
 
-    if orden == 'fecha':
+    if orden == 'fecha_inicio':
         if direccion == 'asc':
             cursos_pronto = cursos_pronto.order_by('fecha_inicio')
             cursos_pocas_plazas = cursos_pocas_plazas.order_by('fecha_inicio')
@@ -324,24 +324,47 @@ def buscar_cursos(request):
     departamento = request.GET.get('departamento', '')
     sector_laboral = request.GET.get('sector_laboral', '')
     fabricante = request.GET.get('fabricante', '')
-    
-    # Si no se proporciona una búsqueda (query vacío), obtener todos los cursos
-    resultados = Curso.objects.all()
+    orden = request.GET.get('orden', '')
+    direccion = request.GET.get('direccion', 'asc')
 
+    # Obtener todos los cursos
+    cursos = Curso.objects.all()
+
+    # Filtrar por criterios
     if query:
-        resultados = Curso.objects.filter(nombre__icontains=query)
+        cursos = cursos.filter(nombre__icontains=query)
 
     if departamento:
-        resultados = resultados.filter(departamento=departamento)
+        cursos = cursos.filter(departamento=departamento)
 
     if sector_laboral:
-        resultados = resultados.filter(sector_laboral=sector_laboral)
-    
-    if fabricante:
-        resultados = resultados.filter(fabricante=fabricante)
-    return render(request, 'cursos/buscar_cursos.html', {'query': query, 'resultados': resultados, 'departamento_choices': Curso.DEPARTAMENTO_CHOICES,
-        'sector_laboral_choices': Curso.SECTOR_LABORAL_CHOICES, 'fabricante_choices': Curso.FABRICANTE_CHOICES,})
+        cursos = cursos.filter(sector_laboral=sector_laboral)
 
+    if fabricante:
+        cursos = cursos.filter(fabricante=fabricante)
+
+    # Ordenar los cursos
+    if orden:
+        if direccion == 'desc':
+            orden = f'-{orden}'
+        cursos = cursos.order_by(orden)
+
+    # Paginación
+    paginator = Paginator(cursos, 9)  # 9 cursos por página
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'query': query,
+        'resultados': page_obj,  # Página actual con los resultados
+        'departamento_choices': Curso.DEPARTAMENTO_CHOICES,
+        'sector_laboral_choices': Curso.SECTOR_LABORAL_CHOICES,
+        'fabricante_choices': Curso.FABRICANTE_CHOICES,
+        'orden': request.GET.get('orden', ''),
+        'direccion': direccion,
+    }
+
+    return render(request, 'cursos/buscar_cursos.html', context)
 class PasswordResetView(auth_views.PasswordResetView):
     template_name = 'cursos/password_reset.html'
     success_url = reverse_lazy('password_reset_done')
@@ -507,7 +530,7 @@ def confirmar_compra(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body.decode('utf-8')) # Verifica si los datos se reciben correctamente
-            print("Datos recibidos:", data) 
+            
             # Extraer los datos necesarios
             
             # Calcula el total (sumar precios de cursos)
@@ -543,7 +566,9 @@ def confirmar_compra(request):
                 })
             codigo_seguimiento = str(uuid.uuid4())
 
-            print("funciona 1")
+            if total<=450:
+                total=total+5
+                
             # Crear el pedido principal
             pedido = Pedido.objects.create(
                 usuario=request.user if request.user.is_authenticated else None, # No asociamos un usuario
@@ -560,7 +585,7 @@ def confirmar_compra(request):
             )
             
             
-            print("funciona 2")
+            
             for curso in cursos:
                 PedidoCurso.objects.create(
                     pedido=pedido,
@@ -573,8 +598,7 @@ def confirmar_compra(request):
             if 'carrito' in request.session:
                 del request.session['carrito']  # Eliminar carrito de la sesión
             request.session['ultimo_pedido_id'] = pedido.id
-            print(pedido.id)
-            print("asdasd")
+            
             return JsonResponse({"success": True, "message": "Pedido creado con éxito."})
 
         except Exception as e:
@@ -622,26 +646,66 @@ class CreateCheckoutSessionView(View):
         
         try:
             data = json.loads(request.body.decode('utf-8'))
-            print(data)
+            total_price = 0 
             items = data['data']['items']
             line_items = []
+            
             for item in items:
                 curso_id = item.get("curso_id")
                 cantidad = item.get("cantidad",1)
             
                 curso = Curso.objects.get(id=curso_id)
+                
+                total_price += curso.precio * cantidad 
             
                 line_items.append({
                     'price': curso.price_id,
                     'quantity': cantidad,
                 })
 
+            print("hawsja")
+            if total_price < 450 :  # 450 euros en centavos
+                shipping_options = [
+                    {
+                        'shipping_rate_data': {
+                            'type': 'fixed_amount',
+                            'fixed_amount': {
+                                'amount': 500,  # 5 euros en centavos
+                                'currency': 'eur',
+                            },
+                            'display_name': "Gastos de gestión",
+                            'delivery_estimate': {
+                                'minimum': {'unit': 'business_day', 'value': 5},
+                                'maximum': {'unit': 'business_day', 'value': 7},
+                            },
+                        }
+                    }
+                ]
+            else:
+                shipping_options = [
+                    {
+                        'shipping_rate_data': {
+                            'type': 'fixed_amount',
+                            'fixed_amount': {
+                                'amount': 0,  # Envío gratuito
+                                'currency': 'eur',
+                            },
+                            'display_name': "Free Shipping",
+                            'delivery_estimate': {
+                                'minimum': {'unit': 'business_day', 'value': 1},
+                                'maximum': {'unit': 'business_day', 'value': 1},
+                            },
+                        }
+                    }
+                ]
             checkout_session = stripe.checkout.Session.create(
                 line_items= line_items,
                 mode='payment',
                 success_url=YOUR_DOMAIN + '/success',
                 cancel_url=YOUR_DOMAIN + '/cancel',
+                shipping_options=shipping_options,
             )
+
             confirmar_compra(request)
             
 
@@ -740,7 +804,7 @@ def success_view(request):
 def cancel_view(request):
     pedido_id = request.session.get('ultimo_pedido_id')
     ultimo_pedido = None
-    print(pedido_id)
+   
     if pedido_id:
         # Intentar recuperar el pedido
         ultimo_pedido = get_object_or_404(Pedido, id=pedido_id)

@@ -3,11 +3,12 @@
 <head>
     {% load static %}
     {% csrf_token %}
+    {% load tz %}
+    {% now "Y-m-d" as current_date %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Cursos</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
@@ -17,125 +18,122 @@
     <header class="navbar">
         <div class="logo"><a href="{% url 'home' %}" class="home-link">OpositaConmigo</a></div> 
         <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
-        
-    </form>
-    {% if request.user.is_superuser %}
-    <div class="admin-banner">
-        <span>Eres Admin</span>
-    </div>
-{% endif %}
-    <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
-        <!-- Campo de búsqueda -->    
-        <input type="text" class="search-bar" name="q" placeholder="Buscar curso..." value="{{ query }}">
-        
-        <!-- Filtro de Departamento -->
-        <select name="departamento" id="departamento" class="filter-select" onchange="this.form.submit()">
-            <option value="" {% if not request.GET.departamento %}selected{% endif %}>Todos los departamentos</option>
-            {% for key, value in departamento_choices %}
-                <option value="{{ key }}" {% if request.GET.departamento == key %}selected{% endif %}>{{ value }}</option>
-            {% endfor %}
-        </select>
-        
-        <!-- Filtro de Sector Laboral -->
-        <select name="sector_laboral" id="sector_laboral" class="filter-select" onchange="this.form.submit()">
-            <option value="" {% if not request.GET.sector_laboral %}selected{% endif %}>Todos los sectores</option>
-            {% for key, value in sector_laboral_choices %}
-                <option value="{{ key }}" {% if request.GET.sector_laboral == key %}selected{% endif %}>{{ value }}</option>
-            {% endfor %}
-        </select>
-
-        <!-- Filtro de Fabricante -->
-        <select name="fabricante" id="fabricante" class="filter-select" onchange="this.form.submit()">
-            <option value="" {% if not request.GET.fabricante %}selected{% endif %}>Todos los fabricantes</option>
-            {% for key, value in fabricante_choices %}
-                <option value="{{ key }}" {% if request.GET.fabricante == key %}selected{% endif %}>{{ value }}</option>
-            {% endfor %}
-        </select>
-    </form>   
-    <nav class="navbar-icons">
-        {% if request.user.is_authenticated %}
-        <a href="{% url 'perfil' %}" class="profile-link">
-            <i class="fas fa-user"></i><span>{{ request.user.nombre_usuario }}</span>
-        </a>
-    {% else %}
-        <a href="{% url 'inicioSesion' %}" class="profile-link">
-            <i class="fas fa-user"></i><span>Perfil</span>
-        </a>
-    {% endif %}
-        <div class="profile-link" id="cart-button">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Carrito</span>
+        </form>
+        {% if request.user.is_superuser %}
+        <div class="admin-banner">
+            <span>Eres Admin</span>
         </div>
-        <div id="cart-dropdown" class="dropdown hidden">
-            <div id="cart-items" class="cart-items">
-                    <!-- Los productos del carrito se insertarán aquí dinámicamente -->
+        {% endif %}
+        <form id="searchForm" action="{% url 'buscar_cursos' %}" method="get">
+            <!-- Campo de búsqueda -->
+            <input type="text" class="search-bar" name="q" placeholder="Buscar curso..." value="{{ query }}">
+            <!-- Filtro de Departamento -->
+            <select name="departamento" class="filter-select" onchange="this.form.submit()">
+                <option value="" {% if not request.GET.departamento %}selected{% endif %}>Todos los departamentos</option>
+                {% for key, value in departamento_choices %}
+                    <option value="{{ key }}" {% if request.GET.departamento == key %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+            <!-- Filtro de Sector Laboral -->
+            <select name="sector_laboral" class="filter-select" onchange="this.form.submit()">
+                <option value="" {% if not request.GET.sector_laboral %}selected{% endif %}>Todos los sectores</option>
+                {% for key, value in sector_laboral_choices %}
+                    <option value="{{ key }}" {% if request.GET.sector_laboral == key %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+            <!-- Filtro de Fabricante -->
+            <select name="fabricante" class="filter-select" onchange="this.form.submit()">
+                <option value="" {% if not request.GET.fabricante %}selected{% endif %}>Todos los fabricantes</option>
+                {% for key, value in fabricante_choices %}
+                    <option value="{{ key }}" {% if request.GET.fabricante == key %}selected{% endif %}>{{ value }}</option>
+                {% endfor %}
+            </select>
+        </form>   
+        <nav class="navbar-icons">
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'perfil' %}" class="profile-link">
+                <i class="fas fa-user"></i><span>{{ request.user.nombre_usuario }}</span>
+            </a>
+            {% else %}
+            <a href="{% url 'inicioSesion' %}" class="profile-link">
+                <i class="fas fa-user"></i><span>Perfil</span>
+            </a>
+            {% endif %}
+            <div class="profile-link" id="cart-button">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Carrito</span>
             </div>
-            <div id="cart-total" class="cart-total">
-                    <span>Total: </span><span id="total-price">$0.00</span>
-            </div>
-            <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button">Finalizar Compra</a>
-        </div>
-       
-        
+        </nav>
     </header>
-    
     <main class="courses-container">
+        <!-- Filtros de ordenamiento -->
+        <section id="sorting" class="sorting-section">
+            <form method="GET" id="sorting-form">
+                <label for="orden">Ordenar por:</label>
+                <select name="orden" id="orden" onchange="document.getElementById('sorting-form').submit();">
+                    <option value="">Seleccione...</option>
+                    <option value="fecha_inicio" {% if orden == 'fecha_inicio' %}selected{% endif %}>Fecha de inicio</option>
+                    <option value="precio" {% if orden == 'precio' %}selected{% endif %}>Precio</option>
+                    <option value="plazas_disponibles" {% if orden == 'plazas_disponibles' %}selected{% endif %}>Plazas disponibles</option>
+                </select>
+                <label for="direccion"></label>
+                <select name="direccion" id="direccion" onchange="document.getElementById('sorting-form').submit();">
+                    <option value="asc" {% if direccion == 'asc' %}selected{% endif %}>Ascendente</option>
+                    <option value="desc" {% if direccion == 'desc' %}selected{% endif %}>Descendente</option>
+                </select>
+            </form>
+        </section>
         {% if request.user.is_superuser %}
         <div class="admin-buttons">
             <a href="{% url 'crear_curso' %}" class="btn create-course">
                 <i class="fas fa-edit"></i> Crear Curso
             </a>
-            </div>
-            {% endif %}
+        </div>
+        {% endif %}
         <section id="soon-courses" class="course-section">
             <h2>
                 Resultados de búsqueda para 
                 {% if query %}"{{ query }}"{% else %}"todos los cursos"{% endif %}
-                {% if request.GET.departamento %}
-                    del departamento de 
-                    {% for key, value in departamento_choices %}
-                        {% if key == request.GET.departamento %}{{ value }}{% endif %}
-                    {% endfor %}
-                {% endif %}
-                {% if request.GET.sector_laboral %}
-                    en el sector de 
-                    {% for key, value in sector_laboral_choices %}
-                        {% if key == request.GET.sector_laboral %}{{ value }}{% endif %}
-                    {% endfor %}
-                {% endif %}
-                {% if request.GET.fabricante %}
-                    por el fabricante 
-                    {% for key, value in fabricante_choices %}
-                        {% if key == request.GET.fabricante %}{{ value }}{% endif %}
-                    {% endfor %}
-                {% endif %}
             </h2>
             <div class="course-list">
                 {% if resultados %}
                     {% for curso in resultados %}
                         <div class="course-card">
                             {% if curso.plazas_disponibles == 0 %}
-                        <div class="sticker agotado">Agotado</div>
-                        {% endif %}
+                                <div class="sticker agotado">Agotado</div>
+                            {% endif %}
+                            {% if curso.fecha_inicio|date:"Y-m-d" <= current_date %}
+                                <div class="sticker agotado">Ya iniciado</div>
+                            {% endif %}
                             <a href="/curso/{{ curso.id }}">
+                                
                             <div class="div-images-help"></div>
-                            <img src="../{{curso.imagen }}" alt="Imagen del curso">
-
-                            <h3>{{ curso.nombre }}</h3>
-                            <p>Fecha de inicio: {{ curso.fecha_inicio }}</p>
-                            <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
-                            <p>Precio: {{ curso.precio }}€</p>
+                                <img src="../{{ curso.imagen }}" alt="Imagen del curso">
+                                <h3>{{ curso.nombre }}</h3>
+                                <p>Fecha de inicio: {{ curso.fecha_inicio }}</p>
+                                <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
+                                <p>Precio: {{ curso.precio }}€</p>
                             </a>
-                        
+                            
                         </div>
                     {% endfor %}
                 {% else %}
                     <p>No se encontraron cursos que coincidan con tu búsqueda.</p>
                 {% endif %}
             </div>
+            <div class="pagination">
+                {% if resultados.has_previous %}
+                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ resultados.previous_page_number }}">Anterior</a>
+                {% endif %}
+                <span>Página {{ resultados.number }} de {{ resultados.paginator.num_pages }}</span>
+                {% if resultados.has_next %}
+                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ resultados.next_page_number }}">Siguiente</a>
+                {% endif %}
+            </div>
         </section>
+        <!-- Paginación -->
+        
     </main>
-
     <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
