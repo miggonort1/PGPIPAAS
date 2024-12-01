@@ -16,7 +16,8 @@
         <!-- Sección de la izquierda -->
         <div class="left-section">
             <a href="{% url 'home' %}" class="home-link">
-        OPOSITA CONMIGO            </a>
+                OPOSITA CONMIGO
+            </a>
         </div>
 
         <!-- Formulario de Inicio de Sesión -->
@@ -25,8 +26,16 @@
                 <h1>Bienvenido de nuevo</h1>
                 <p class="subtitle">Por favor, inicia sesión para continuar</p>
 
-                <!-- Mensajes de error o éxito -->
-                
+                <!-- Mensajes de error -->
+                {% if messages %}
+                    <div class="error-messages">
+                        <ul>
+                            {% for message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
 
                 <!-- Formulario -->
                 <form method="post">
