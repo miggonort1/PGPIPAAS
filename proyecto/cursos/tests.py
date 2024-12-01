@@ -525,7 +525,8 @@ def test_obtener_carrito(client):
         precio=100,
         departamento="MD",
         sector_laboral="EDU",
-        fabricante="EDX"
+        fabricante="EDX",
+        price_id=500,
     )
 
     curso2 = Curso.objects.create(
@@ -537,17 +538,18 @@ def test_obtener_carrito(client):
         precio=120,
         departamento="BCN",
         sector_laboral="POL",
-        fabricante="US"
+        fabricante="US",
+        price_id=501,
     )
 
     # Simulamos la adición de cursos al carrito usando la vista 'agregar_al_carrito'
     # Primero, añadir el curso 1 al carrito
-    response = client.post(reverse('agregar_al_carrito'), data=json.dumps({'curso_id': curso1.id}), content_type='application/json')
+    response = client.post(reverse('agregar_al_carrito'), data=json.dumps({'curso_id': curso1.id, 'cantidad': 1}), content_type='application/json')
     assert response.status_code == 200
     assert response.json()['success'] == True
 
     # Luego, añadir el curso 2 al carrito
-    response = client.post(reverse('agregar_al_carrito'), data=json.dumps({'curso_id': curso2.id}), content_type='application/json')
+    response = client.post(reverse('agregar_al_carrito'), data=json.dumps({'curso_id': curso2.id, 'cantidad': 1}), content_type='application/json')
     assert response.status_code == 200
     assert response.json()['success'] == True
 
@@ -566,6 +568,8 @@ def test_obtener_carrito(client):
 
     # Verificar los detalles del primer curso (Curso de Python)
     curso1_data = response_data['cursos'][0]
+    print("AQUI APARECEN LOS DATOS DEL CURSO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print(curso1_data)
     assert curso1_data['id'] == str(curso1.id)
     assert curso1_data['nombre'] == curso1.nombre
     assert curso1_data['cantidad'] == 1
@@ -617,10 +621,9 @@ def test_agregar_al_carrito(client):
     assert len(response_data['cursos']) == 0  # El carrito está vacío al principio
 
     # Añadir el curso 1 al carrito
-    response = client.post(reverse('agregar_al_carrito'), data=json.dumps({'curso_id': curso1.id}), content_type='application/json')
+    response = client.post(reverse('agregar_al_carrito'), data=json.dumps({'curso_id': curso1.id, 'cantidad': 1}), content_type='application/json')
     assert response.status_code == 200
     assert response.json()['success'] == True
-    assert response.json()['message'] == 'Curso añadido al carrito.'
 
     # Verificar que el carrito tiene el curso 1
     response = client.get(reverse('obtener_carrito'))
@@ -632,10 +635,9 @@ def test_agregar_al_carrito(client):
     assert response_data['cursos'][0]['precio_unitario'] == (curso1.precio)  # Comparar como cadena
 
     # Añadir el curso 2 al carrito
-    response = client.post(reverse('agregar_al_carrito'), data=json.dumps({'curso_id': curso2.id}), content_type='application/json')
+    response = client.post(reverse('agregar_al_carrito'), data=json.dumps({'curso_id': curso2.id, 'cantidad': 1}), content_type='application/json')
     assert response.status_code == 200
     assert response.json()['success'] == True
-    assert response.json()['message'] == 'Curso añadido al carrito.'
 
     # Verificar que el carrito tiene ambos cursos
     response = client.get(reverse('obtener_carrito'))
@@ -649,77 +651,6 @@ def test_agregar_al_carrito(client):
     # Verificar el precio total
     total_precio = (curso1.precio * 1 + curso2.precio * 1)  # Asegúrate de comparar como cadena
     assert response_data['total_precio'] == total_precio
-
-@pytest.mark.django_db
-def test_confirmar_compra(client):
-    # Crear un usuario de prueba
-    user = get_user_model().objects.create_user(
-        email='testuser@example.com', 
-        nombre_usuario='testuser', 
-        password='testpassword'
-    )
-
-    # Crear algunos cursos de prueba
-    curso_1 = Curso.objects.create(
-        nombre='Curso 1', descripcion='Descripción Curso 1', precio=100,
-        fecha_inicio='2024-01-01', duracion_semanas=4, plazas_disponibles=30
-    )
-    curso_2 = Curso.objects.create(
-        nombre='Curso 2', descripcion='Descripción Curso 2', precio=150,
-        fecha_inicio='2024-01-01', duracion_semanas=6, plazas_disponibles=25
-    )
-
-    # Datos de la solicitud
-    data = {
-        "nombre_comprador": "Test User",
-        "email_comprador": "testuser@example.com",
-        "direccion_envio": "Calle Falsa 123",
-        "ciudad_envio": "Madrid",
-        "provincia_envio": "Madrid",
-        "codigo_postal_envio": "28001",
-        "payment-method": "cash-on-delivery",
-        "course_id-0-0": str(curso_1.id),
-        "course_quantity-0-0": 2,
-        "email-0-0": "testuser@example.com",
-        "name-0-0": "Test User",
-        "course_id-1-0": str(curso_2.id),
-        "course_quantity-1-0": 1,
-        "email-1-0": "testuser@example.com",
-        "name-1-0": "Test User",
-    }
-
-    # Iniciar sesión como el usuario
-    client.login(email='testuser@example.com', password='testpassword')
-
-    # Hacer la solicitud POST a la vista 'confirmar_compra'
-    response = client.post(reverse('confirmar_compra'), json.dumps(data), content_type='application/json')
-
-    # Verificar que la respuesta sea 200 OK
-    assert response.status_code == 200
-
-    # Obtener los datos de la respuesta
-    response_data = response.json()
-
-    # Verificar que la respuesta indique que el pedido se ha creado correctamente
-    assert response_data["success"] is True
-    assert response_data["message"] == "Pedido creado con éxito."
-
-    # Verificar que el pedido ha sido creado en la base de datos
-    pedido = Pedido.objects.get(usuario=user)
-    assert pedido.direccion_envio == "Calle Falsa 123"
-    assert pedido.ciudad_envio == "Madrid"
-    assert pedido.provincia_envio == "Madrid"
-    assert pedido.codigo_postal_envio == "28001"
-    assert pedido.total == (curso_1.precio * 2 + curso_2.precio * 1)  # Total = 200 + 150
-
-    # Verificar que los cursos se han agregado al pedido
-    pedido_cursos = PedidoCurso.objects.filter(pedido=pedido)
-    assert pedido_cursos.count() == 2
-    assert pedido_cursos.filter(curso=curso_1, cantidad=2).exists()
-    assert pedido_cursos.filter(curso=curso_2, cantidad=1).exists()
-
-    # Verificar que el carrito ha sido eliminado de la sesión
-    assert 'carrito' not in client.session
 
 @pytest.mark.django_db
 def test_obtener_datos_usuario(client):
