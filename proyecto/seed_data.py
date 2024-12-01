@@ -275,6 +275,5 @@ usuario3= Usuario.objects.create(
 usuario3.set_password("1234")  # Cifra la contraseña
 usuario3.save()  # Guarda los cambios
 
-print("Usuarios añadidos a la base de datos.")
 
 

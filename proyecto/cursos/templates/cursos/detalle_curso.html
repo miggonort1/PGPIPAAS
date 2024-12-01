@@ -3,6 +3,8 @@
 <head>
     {% load static %}
     {% csrf_token %}
+    {% load tz %}
+    {% now "Y-m-d" as current_date %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ curso.nombre }}</title>
@@ -77,7 +79,7 @@
 
         <div class="course-buttons">
             <input type="number" id="cantidad-cursos" min="1" max="{{ curso.plazas_disponibles }}" value="1">
-            <button class="btn add-to-cart {% if curso.plazas_disponibles == 0 %}agotado{% endif %}" data-curso-id="{{ curso.id }}" data-curso-nombre="{{ curso.nombre }}" {% if curso.plazas_disponibles == 0 %}disabled{% endif %}>
+            <button class="btn add-to-cart {% if curso.plazas_disponibles == 0 %}agotado{% endif %}" data-curso-id="{{ curso.id }}" data-curso-nombre="{{ curso.nombre }}" {% if curso.plazas_disponibles == 0 or curso.fecha_inicio|date:"Y-m-d" <= current_date %}disabled{% endif %}>
                 <i class="fas fa-shopping-cart"></i> 
                 {% if curso.plazas_disponibles == 0 %}{% else %}Añadir al carrito{% endif %}
             </button>

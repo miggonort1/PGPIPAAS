@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.templatetags.static import static
 import uuid
+from . import validators
+from django.core.exceptions import ValidationError
+import re
 
 class Curso(models.Model):
     nombre = models.CharField(max_length=200)
@@ -79,6 +82,10 @@ class UsuarioManager(BaseUserManager):
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(email, nombre_usuario, password, **extra_fields)
 
+def validate_phone_number(value):
+    phone_regex = re.compile(r'^\+?1?\d{9,15}$')  # Formato internacional
+    if not phone_regex.match(value):
+        raise ValidationError("El número de teléfono no es válido. Debe tener entre 9 y 15 dígitos y puede incluir un prefijo internacional.")
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
@@ -89,7 +96,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     ciudad = models.CharField(max_length=100)
     provincia = models.CharField(max_length=100)
     codigo_postal = models.CharField(max_length=10)
-    telefono = models.CharField(max_length=15, blank=True, null=True)
+    telefono = models.CharField(max_length=15,validators=[validate_phone_number], blank=True, null=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
     is_active = models.BooleanField(default=True)
@@ -103,6 +110,9 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.nombre_usuario
+    
+    
+  
 
 class Carrito(models.Model):
     usuario = models.OneToOneField(
@@ -162,3 +172,4 @@ class PedidoCurso(models.Model):
 
     def __str__(self):
         return f"{self.cantidad}x {self.curso.nombre} en Pedido {self.pedido.id}"
+    

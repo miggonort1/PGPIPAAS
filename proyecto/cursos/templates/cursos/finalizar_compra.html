@@ -42,8 +42,7 @@
                     <div id="cart-items" class="cart-items">
                         <!-- Los productos del carrito se insertarán aquí dinámicamente -->
                     </div>
-                    <div id="cart-total" class="cart-total">
-                    </div>
+                    
                     <a href="{% url 'finalizar_compra' %}" id="checkout-button" class="checkout-button">Finalizar Compra</a>
                 </div>
             
@@ -140,7 +139,12 @@
         </form>
         <div class="cart-total">
             <h3>Resumen de la compra</h3>
-            <p><strong>Total:</strong> <span id="total-price" class="total-price"></span></p>
+            <div id="gastos-gestion-container" class="gastos-gestion">
+                <!-- Los gastos de gestión se mostrarán aquí con el valor correspondiente -->
+            </div>
+            <p><strong>Total:</strong> <span id="total-price" class="total-price">0€</span></p>
+            <!-- Apartado de gastos de gestión -->
+           
         </div>
     </div>
 
@@ -151,18 +155,14 @@
             const totalPriceElement = document.getElementById("total-price");
             const cancelButton = document.getElementById("cancel-button");
             const courseFormContainer = document.getElementById("course-form-container");
-
+    
             // Obtener el carrito desde el servidor
             fetch("/api/carrito/")
                 .then(response => response.json())
                 .then(data => {
                     let totalPrice = 0;
                     console.log(data.total_precio)
-                    const totalPriceElement = document.getElementById("total-price");
-                    
-                    totalPriceElement.textContent = `${data.total_precio}€`;
-                    console.log(totalPriceElement.textContent)
-
+    
                     // Mostrar cada curso en el carrito
                     data.cursos.forEach((curso, index) => {
                         // Mostrar los cursos en el carrito
@@ -174,26 +174,23 @@
                             <p class="precio-total">Total: ${curso.precio_total}€</p>
                             <button class="remove-course" data-course-id="${curso.id}">Eliminar</button>
                         `;
-
+    
                         // Añadir inputs ocultos directamente al formulario
                         const hiddenCourseId = document.createElement("input");
                         hiddenCourseId.type = "hidden";
                         hiddenCourseId.name = "curso_id[]";
                         hiddenCourseId.value = curso.id;
-
+    
                         const hiddenCantidad = document.createElement("input");
                         hiddenCantidad.type = "hidden";
                         hiddenCantidad.name = "cantidad[]";
                         hiddenCantidad.value = curso.cantidad;
-
-                        
-
+    
                         checkoutForm.appendChild(hiddenCourseId);
                         checkoutForm.appendChild(hiddenCantidad);
-
+    
                         cartCoursesContainer.appendChild(courseDiv);
-
-
+    
                         // Añadir evento de eliminación
                         courseDiv.querySelector(".remove-course").addEventListener("click", async (e) => {
                             const courseId = e.target.getAttribute("data-course-id");
@@ -208,7 +205,7 @@
                                         
                                 body: JSON.stringify({ curso_id: curso.id })
                             });
-
+    
                             const result = await response.json();
                             if (result.success) {
                                 location.reload(); 
@@ -217,7 +214,7 @@
                                 alert("Hubo un error al eliminar el curso.");
                             }
                         });
-
+    
                         // Crear un formulario para cada unidad del curso
                         for (let i = 0; i < curso.cantidad; i++) {
                             const courseForm = document.createElement("div");
@@ -235,142 +232,147 @@
                                 <input type="hidden" name="course_id-${index}-${i}" value="${curso.id}">
                                 <input type="hidden" name="course_quantity-${index}-${i}" value="1">
                             `;
-
+    
                             const hiddenNombre = document.createElement("input");
                             hiddenNombre.type = "hidden";
                             hiddenNombre.name = "nombre[]";
                             hiddenNombre.value = curso.name;
-
-                            
+    
                             const hiddenemail = document.createElement("input");
                             hiddenemail.type = "hidden";
                             hiddenemail.name = "email[]";
                             hiddenemail.value = curso.email;
-
-                            
+    
                             checkoutForm.appendChild(hiddenNombre);
                             checkoutForm.appendChild(hiddenemail);
                             courseFormContainer.appendChild(courseForm);
                         }
-
+    
                         // Actualizar el total
                         totalPrice += curso.precio_total;
                     });
+    
+                    // Añadir los gastos de gestión si el total es menor a 300€
+                    const gastosGestion = totalPrice <= 450 ? 5 : 0;
+                    totalPrice += gastosGestion;
 
-                    // Mostrar el total en el formulario
+                // Mostrar el total en el formulario
                     totalPriceElement.textContent = `${totalPrice}€`;
-                });
 
+                    // Siempre mostrar los gastos de gestión, con 0€ si no se aplican
+                    const gastosGestionContainer = document.getElementById('gastos-gestion-container');  // Corrección aquí
+                    const gastosGestionText = gastosGestion > 0 ? `${gastosGestion}€` : "0€";
+                    gastosGestionContainer.innerHTML = `<p><strong>Gastos de gestión:</strong> ${gastosGestionText}</p>`;
+                    gastosGestionContainer.style.display = 'block'; // Mostrar siempre los gastos de gestión
+                });
+    
             // Enviar el formulario de compra
             checkoutForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(checkoutForm);
-    const paymentMethod = formData.get("payment-method");
-
-    // Recoger los datos del comprador
-    const nombreComprador = formData.get("nombre_comprador");
-    const emailComprador = formData.get("email_comprador");
-    const direccionEnvio = formData.get("direccion_envio");
-    const ciudadEnvio = formData.get("ciudad_envio");
-    const provinciaEnvio = formData.get("provincia_envio");
-    const codigoPostalEnvio = formData.get("codigo_postal_envio");
-    const cursoIds = formData.getAll("curso_id[]");
-    const cantidades = formData.getAll("cantidad[]");
-    const nombres = formData.getAll("nombre[]");
-    const emails = formData.getAll("email[]");
-
-    const items = cursoIds.map((cursoId, index) => ({
-        curso_id: cursoId,
-        cantidad: parseInt(cantidades[index], 10),
-        nombre: formData.get(`name-${index}-0`),
-        email:formData.get(`email-${index}-0`)
-
-    }));
-
-    if (items.length === 0) {
-        alert("El carrito está vacío.");
-        return;
-    }
-
-    // Validar que los datos del comprador estén completos
-    if (!nombreComprador || !emailComprador || !direccionEnvio || !ciudadEnvio || !provinciaEnvio || !codigoPostalEnvio) {
-        alert("Por favor, completa todos los campos de información del comprador.");
-        return;
-    }
-    const data = {
-            nombre_comprador: nombreComprador,
-            email_comprador: emailComprador,
-            direccion_envio: direccionEnvio,
-            ciudad_envio: ciudadEnvio,
-            provincia_envio: provinciaEnvio,
-            codigo_postal_envio: codigoPostalEnvio,
-            items: items, // Enviar los cursos y cantidades
-            payment_method: paymentMethod,
-        };
-
-    // Gestión del pago
-    if (paymentMethod === "credit-card") {
-        try {
-            const response = await fetch("{% url 'create_checkout_session' %}", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken'), // Configuración del token CSRF
-                },
-                body: JSON.stringify({ data }), // Enviar el carrito completo al backend
-            });
-
-            if (response.ok) {
-              
-
-                const data = await response.json();
-                if (data.url) {
-                    window.location.href = data.url; // Redirige al usuario a la sesión de Stripe
-                } else {
-                    alert("Error al generar la sesión de Stripe.");
+                e.preventDefault();
+    
+                const formData = new FormData(checkoutForm);
+                const paymentMethod = formData.get("payment-method");
+    
+                // Recoger los datos del comprador
+                const nombreComprador = formData.get("nombre_comprador");
+                const emailComprador = formData.get("email_comprador");
+                const direccionEnvio = formData.get("direccion_envio");
+                const ciudadEnvio = formData.get("ciudad_envio");
+                const provinciaEnvio = formData.get("provincia_envio");
+                const codigoPostalEnvio = formData.get("codigo_postal_envio");
+                const cursoIds = formData.getAll("curso_id[]");
+                const cantidades = formData.getAll("cantidad[]");
+                const nombres = formData.getAll("nombre[]");
+                const emails = formData.getAll("email[]");
+    
+                const items = cursoIds.map((cursoId, index) => ({
+                    curso_id: cursoId,
+                    cantidad: parseInt(cantidades[index], 10),
+                    nombre: formData.get(`name-${index}-0`),
+                    email: formData.get(`email-${index}-0`)
+                }));
+    
+                if (items.length === 0) {
+                    alert("El carrito está vacío.");
+                    return;
                 }
-            } else {
-                alert("Error en la comunicación con el servidor.");
-            }
-        } catch (error) {
-            console.error("Error al redirigir a Stripe:", error);
-            alert("Hubo un error al procesar el pago con tarjeta.");
-        }
-    } else if (paymentMethod === "cash-on-delivery") {
-        // Preparar datos para el pago contra reembolso
-        try {
-            const response = await fetch("../api/confirmar_compra/", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken'),
-                },
-                body: JSON.stringify(data),
+    
+                // Validar que los datos del comprador estén completos
+                if (!nombreComprador || !emailComprador || !direccionEnvio || !ciudadEnvio || !provinciaEnvio || !codigoPostalEnvio) {
+                    alert("Por favor, completa todos los campos de información del comprador.");
+                    return;
+                }
+    
+                const data = {
+                    nombre_comprador: nombreComprador,
+                    email_comprador: emailComprador,
+                    direccion_envio: direccionEnvio,
+                    ciudad_envio: ciudadEnvio,
+                    provincia_envio: provinciaEnvio,
+                    codigo_postal_envio: codigoPostalEnvio,
+                    items: items, // Enviar los cursos y cantidades
+                    payment_method: paymentMethod,
+                };
+    
+                // Gestión del pago
+                if (paymentMethod === "credit-card") {
+                    try {
+                        const response = await fetch("{% url 'create_checkout_session' %}", {
+                            method: "POST",
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken'), // Configuración del token CSRF
+                            },
+                            body: JSON.stringify({ data }), // Enviar el carrito completo al backend
+                        });
+    
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.url) {
+                                window.location.href = data.url; // Redirige al usuario a la sesión de Stripe
+                            } else {
+                                alert("Error al generar la sesión de Stripe.");
+                            }
+                        } else {
+                            alert("Error en la comunicación con el servidor.");
+                        }
+                    } catch (error) {
+                        console.error("Error al redirigir a Stripe:", error);
+                        alert("Hubo un error al procesar el pago con tarjeta.");
+                    }
+                } else if (paymentMethod === "cash-on-delivery") {
+                    // Preparar datos para el pago contra reembolso
+                    try {
+                        const response = await fetch("../api/confirmar_compra/", {
+                            method: "POST",
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken'),
+                            },
+                            body: JSON.stringify(data),
+                        });
+    
+                        const result = await response.json();
+                        if (result.success) {
+                            alert("Compra realizada con éxito!");
+                            window.location.href = "/success"; // Redirigir a una página de agradecimiento
+                        } else {
+                            alert(`Error: ${result.message}`);
+                        }
+                    } catch (error) {
+                        console.error("Error en el proceso de Contrarreembolso:", error);
+                        alert("Hubo un error al confirmar tu compra.");
+                    }
+                } else {
+                    alert("Método de pago no reconocido.");
+                }
             });
-
-            const result = await response.json();
-            if (result.success) {
-                alert("Compra realizada con éxito!");
-                window.location.href = "/success"; // Redirigir a una página de agradecimiento
-            } else {
-                alert(`Error: ${result.message}`);
-            }
-        } catch (error) {
-            console.error("Error en el proceso de Contrarreembolso:", error);
-            alert("Hubo un error al confirmar tu compra.");
-        }
-    } else {
-        alert("Método de pago no reconocido.");
-    }
-});
-
-
-
+    
             // Cancelar la compra
             cancelButton.addEventListener("click", () => {
                 window.location.href = "/";  // Redirigir al carrito para editarlo si es necesario
             });
+    
             // Función para obtener el token CSRF de las cookies
             function getCookie(name) {
                 const cookieValue = document.cookie
@@ -378,29 +380,29 @@
                     .find(row => row.startsWith(name + '='));
                 return cookieValue ? cookieValue.split('=')[1] : null;
             }
-
+    
             fetch("/api/usuario/")
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Usuario no autenticado");
-                }
-                return response.json();
-            })
-            .then(user => {
-                // Rellenar los campos del formulario con los datos del usuario
-                document.getElementById("nombre-comprador").value = user.nombre || "";
-                document.getElementById("email-comprador").value = user.email || "";
-                document.getElementById("direccion-envio").value = user.direccion_entrega || "";
-                document.getElementById("ciudad-envio").value = user.ciudad || "";
-                document.getElementById("provincia-envio").value = user.provincia || "";
-                document.getElementById("codigo-postal-envio").value = user.codigo_postal || "";
-            })
-            .catch(error => {
-                console.error("Error al obtener los datos del usuario:", error);
-            });
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Usuario no autenticado");
+                    }
+                    return response.json();
+                })
+                .then(user => {
+                    // Rellenar los campos del formulario con los datos del usuario
+                    document.getElementById("nombre-comprador").value = user.nombre || "";
+                    document.getElementById("email-comprador").value = user.email || "";
+                    document.getElementById("direccion-envio").value = user.direccion_entrega || "";
+                    document.getElementById("ciudad-envio").value = user.ciudad || "";
+                    document.getElementById("provincia-envio").value = user.provincia || "";
+                    document.getElementById("codigo-postal-envio").value = user.codigo_postal || "";
+                })
+                .catch(error => {
+                    console.error("Error al obtener los datos del usuario:", error);
+                });
         });
     </script>
-
+    
 </body>
 
 </html>

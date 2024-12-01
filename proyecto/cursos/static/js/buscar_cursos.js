@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': getCookie('csrftoken')
                     },
-                    body: JSON.stringify({ curso_id: courseId, cantidad: quantity })
+                    body: JSON.stringify({ curso_id: courseId, cantidad: 1 })
                 });
 
                 if (response.ok) {

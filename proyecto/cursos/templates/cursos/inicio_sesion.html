@@ -26,15 +26,7 @@
                 <p class="subtitle">Por favor, inicia sesión para continuar</p>
 
                 <!-- Mensajes de error o éxito -->
-                {% if messages %}
-                    <div class="messages">
-                        {% for message in messages %}
-                            <div class="message {% if message.tags == 'error' %}error{% else %}success{% endif %}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                
 
                 <!-- Formulario -->
                 <form method="post">
