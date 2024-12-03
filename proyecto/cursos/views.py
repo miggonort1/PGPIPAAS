@@ -639,7 +639,7 @@ def detalle_pedido(request):
 
 stripe.api_key = settings.STRIPE_API_KEY
 
-YOUR_DOMAIN = 'http://127.0.0.1:8000'
+YOUR_DOMAIN = 'http://localhost:8000'
 
 class CreateCheckoutSessionView(View):
     def post(self, request, *args, **kwargs):  # Cambiar create_checkout_session por post
