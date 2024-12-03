@@ -4,30 +4,29 @@ FROM python:3.12-slim
 # Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /proyecto
 
-# Instalar las dependencias del sistema necesarias para mysqlclient y herramientas de compilación
+# Instalar dependencias del sistema necesarias para MariaDB y herramientas de compilación
 RUN apt-get update && apt-get install -y \
     pkg-config \
     mariadb-server \
-    mariadb-client \
     libmariadb-dev \
     build-essential \
     curl \
     dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
-# Descargar wait-for-it para esperar a que la base de datos esté lista
+# Descargar wait-for-it para esperar a que los servicios estén listos
 ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /usr/local/bin/wait-for-it
 RUN chmod +x /usr/local/bin/wait-for-it
 
 # Copiar los archivos de la aplicación al contenedor
 COPY . /proyecto
 
-# Crear un script SQL para configuraciones iniciales
+# Crear un script SQL para inicialización de la base de datos
 COPY setup.sql /docker-entrypoint-initdb.d/
 
 # Copiar y asignar permisos al script de entrada
 COPY entrypoint.sh /usr/local/bin/
-RUN dos2unix /usr/local/bin/entrypoint.sh  # Convertir el archivo a formato Unix
+RUN dos2unix /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Instalar las dependencias de Python

@@ -11,7 +11,7 @@ DROP DATABASE IF EXISTS test;
 CREATE DATABASE IF NOT EXISTS dbpgpipaas CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 -- Crear el usuario 'pgpipaas_user' con contraseña
-CREATE USER IF NOT EXISTS 'pgpipaas_user'@'localhost' IDENTIFIED BY 'pgpipaas_password';
+CREATE USER IF NOT EXISTS 'pgpipaas_user'@'%' IDENTIFIED BY 'pgpipaas_password';
 
 GRANT ALL PRIVILEGES ON dbpgpipaas.* TO 'pgpipaas_user'@'host.docker.internal' IDENTIFIED BY 'pgpipaas_password';
 FLUSH PRIVILEGES;
@@ -22,7 +22,7 @@ GRANT ALL PRIVILEGES ON dbpgpipaas.* TO 'pgpipaas_user'@'localhost' IDENTIFIED B
 -- Aplicar los cambios de privilegios
 FLUSH PRIVILEGES;
 
-GRANT SELECT ON mysql.* TO 'pgpipaas_user'@'localhost';
+GRANT SELECT ON mysql.* TO 'pgpipaas_user'@'%';
 FLUSH PRIVILEGES;
 
 -- Configurar el modo SQL
