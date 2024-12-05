@@ -48,7 +48,11 @@
                     <i class="fas fa-user"></i><span>Perfil</span>
                 </a>
             {% endif %}
-            
+
+            <a href="{% url 'buscar_cursos' %}" class="profile-link">
+                <i class="fas fa-book"></i><span>Catálogo</span>
+            </a>
+
             <div class="profile-link" id="cart-button">
                 <i class="fas fa-shopping-cart"></i>
                 <span>Carrito</span>
