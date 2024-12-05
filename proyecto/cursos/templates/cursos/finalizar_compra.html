@@ -396,6 +396,13 @@
                     document.getElementById("ciudad-envio").value = user.ciudad || "";
                     document.getElementById("provincia-envio").value = user.provincia || "";
                     document.getElementById("codigo-postal-envio").value = user.codigo_postal || "";
+                    const paymentSelect = document.getElementById("payment-method");
+                    if (user.payment === "CON") {
+                        paymentSelect.value = "cash-on-delivery"; // Contrarreembolso
+                    } else if (user.payment === "CAR") {
+                        paymentSelect.value = "credit-card"; // Tarjeta de crédito
+                    }
+                    console.log(user)
                 })
                 .catch(error => {
                     console.error("Error al obtener los datos del usuario:", error);

@@ -103,6 +103,16 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False) 
 
+    PAYMENT = [
+        ('CON', 'Contrarrembolso'),
+        ('CAR', 'Card'),
+         ]  
+    
+    payment = models.CharField(
+        max_length=3,
+        choices=PAYMENT,
+        default='CAR'
+    )
     objects = UsuarioManager()
 
     USERNAME_FIELD = "email"

@@ -30,6 +30,7 @@ from django.views.generic import TemplateView
 from django.conf import settings
 import stripe
 from django.core.mail import send_mail
+from urllib.parse import urlparse
 
 
 
@@ -107,34 +108,51 @@ def home(request):
 
     return render(request, 'cursos/home.html', context)
     
+
 def inicioSesion(request):
-    messages.get_messages(request).used = True
+    storage = messages.get_messages(request)
+    storage.used = True  
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
 
         user = authenticate(request, email=email, password=password)
         if user is None:
-            # Si 'authenticate' devuelve None, significa que las credenciales no son correctas
             try:
-                # Intentamos obtener al usuario de la base de datos para dar mensajes más específicos
                 usuario = Usuario.objects.get(email=email)
                 if not usuario.is_active:
-                    # Si el usuario está inactivo, agregamos un mensaje
                     messages.error(request, "Tu cuenta está inactiva. No puedes iniciar sesión.")
                 else:
-                    # Si el nombre de usuario existe pero la contraseña es incorrecta
                     messages.error(request, "Contraseña incorrecta.")
             except Usuario.DoesNotExist:
-                # Si el usuario no existe, agregamos un mensaje
                 messages.error(request, "El email no existe.")
         else:
-            # Si la autenticación fue exitosa
             login(request, user)
             messages.success(request, f"¡Bienvenido, {user.nombre_usuario}!")
-            return redirect('home')  # Redirigir al inicio después de iniciar sesión
+
+            # Obtener la URL anterior de HTTP_REFERER
+            previous_url= request.session.get("next")
+            
+            # URL específica a verificar
+            specific_url = 'http://127.0.0.1:8000/finalizar_compra/'
+            
+            # Verificar si la página anterior es la URL específica
+            if previous_url == specific_url:
+                return redirect(specific_url)
+            else:
+                # Redirigir a 'home' como respaldo
+                return redirect('home')
+
+    # Si no es un POST o hay un error, redirige al formulario de inicio de sesión
+    previous_url = request.META.get('HTTP_REFERER', '')
+    if(previous_url=="http://127.0.0.1:8000/finalizar_compra/"):
+        request.session["next"] = "http://127.0.0.1:8000/finalizar_compra/"
+    else: 
+        request.session["next"] =""
+    if(previous_url!="http://127.0.0.1:8000/inicio_sesion/"):
+        messages.get_messages(request).used = True
+    return render(request, 'cursos/inicio_sesion.html') # Redirigir al inicio después de iniciar sesión
     
-    return render(request, 'cursos/inicio_sesion.html')
 
 def registro(request):
     if request.method == 'POST':
@@ -499,7 +517,6 @@ def obtener_o_crear_carrito(request):
 def finalizar_compra(request):
     # Obtener el carrito desde la sesión
     carrito = request.session.get("carrito", {})
-
     # Calcular los totales y estructurar los datos
     cursos = []
     total_precio = 0
@@ -616,6 +633,7 @@ def obtener_datos_usuario(request):
         "ciudad": user.ciudad,
         "provincia": user.provincia,
         "codigo_postal": user.codigo_postal,
+        "payment": user.payment,
     })
 
 
