@@ -91,9 +91,13 @@
                         <p>Fecha de inicio: {{ curso.fecha_inicio }}</p>
                         <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
                         <p>Precio: {{ curso.precio }}€</p>
-                    
-                </a>
-            </div>
+                        </a>
+                        <input type="number" id="cantidad-cursos-{{ curso.id }}" min="1" max="{{ curso.plazas_disponibles }}" value="1">
+                        <button class="btn add-to-cart {% if curso.plazas_disponibles == 0 %}agotado{% endif %}" data-curso-id="{{ curso.id }}" data-curso-nombre="{{ curso.nombre }}" {% if curso.plazas_disponibles == 0 or curso.fecha_inicio|date:"Y-m-d" <= current_date %}disabled{% endif %}>
+                            <i class="fas fa-shopping-cart"></i> 
+                            {% if curso.plazas_disponibles == 0 %}{% else %}Añadir al carrito{% endif %}
+                        </button>
+                    </div>
                 {% empty %}
                     <p>No hay cursos próximos disponibles.</p>
                 {% endfor %}
@@ -123,6 +127,11 @@
                             <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
                             <p>Precio: {{ curso.precio }}€</p>
                         </a>
+                        <input type="number" id="cantidad-cursos-{{ curso.id }}" min="1" max="{{ curso.plazas_disponibles }}" value="1">
+                        <button class="btn add-to-cart {% if curso.plazas_disponibles == 0 %}agotado{% endif %}" data-curso-id="{{ curso.id }}" data-curso-nombre="{{ curso.nombre }}" {% if curso.plazas_disponibles == 0 or curso.fecha_inicio|date:"Y-m-d" <= current_date %}disabled{% endif %}>
+                            <i class="fas fa-shopping-cart"></i> 
+                            {% if curso.plazas_disponibles == 0 %}{% else %}Añadir al carrito{% endif %}
+                        </button>
 
                     </div>
                 {% empty %}
@@ -148,6 +157,11 @@
                             <p>Plazas disponibles: {{ curso.plazas_disponibles }}</p>
                             <p>Precio: {{ curso.precio }}€</p>
                             </a>
+                            <input type="number" id="cantidad-cursos-{{ curso.id }}" min="1" max="{{ curso.plazas_disponibles }}" value="1">
+                        <button class="btn add-to-cart {% if curso.plazas_disponibles == 0 %}agotado{% endif %}" data-curso-id="{{ curso.id }}" data-curso-nombre="{{ curso.nombre }}" {% if curso.plazas_disponibles == 0 or curso.fecha_inicio|date:"Y-m-d" <= current_date %}disabled{% endif %}>
+                            <i class="fas fa-shopping-cart"></i> 
+                            {% if curso.plazas_disponibles == 0 %}{% else %}Añadir al carrito{% endif %}
+                        </button>
                     </div>
                 {% empty %}
                     <p>No hay cursos económicos disponibles.</p>
