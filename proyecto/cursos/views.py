@@ -134,7 +134,7 @@ def inicioSesion(request):
             previous_url= request.session.get("next")
             
             # URL específica a verificar
-            specific_url = 'http://127.0.0.1:8000/finalizar_compra/'
+            specific_url = 'http://localhost:8000/finalizar_compra/'
             
             # Verificar si la página anterior es la URL específica
             if previous_url == specific_url:
@@ -145,11 +145,11 @@ def inicioSesion(request):
 
     # Si no es un POST o hay un error, redirige al formulario de inicio de sesión
     previous_url = request.META.get('HTTP_REFERER', '')
-    if(previous_url=="http://127.0.0.1:8000/finalizar_compra/"):
-        request.session["next"] = "http://127.0.0.1:8000/finalizar_compra/"
+    if(previous_url=="http://localhost:8000/finalizar_compra/"):
+        request.session["next"] = "http://localhost:8000/finalizar_compra/"
     else: 
         request.session["next"] =""
-    if(previous_url!="http://127.0.0.1:8000/inicio_sesion/"):
+    if(previous_url!="http://localhost:8000/inicio_sesion/"):
         messages.get_messages(request).used = True
     return render(request, 'cursos/inicio_sesion.html') # Redirigir al inicio después de iniciar sesión
     
