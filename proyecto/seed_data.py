@@ -275,5 +275,64 @@ usuario3= Usuario.objects.create(
 usuario3.set_password("1234")  # Cifra la contraseña
 usuario3.save()  # Guarda los cambios
 
+# Crear un pedido para usuario1
+pedido1 = Pedido.objects.create(
+    usuario=usuario1,
+    email=usuario1.email,
+    nombre=f"{usuario1.nombre} {usuario1.apellido}",
+    direccion_envio=usuario1.direccion_entrega,
+    ciudad_envio=usuario1.ciudad,
+    provincia_envio=usuario1.provincia,
+    codigo_postal_envio=usuario1.codigo_postal,
+    total=680.00,
+    codigo_seguimiento=str(uuid.uuid4()),
+)
 
+PedidoCurso.objects.create(
+    pedido=pedido1,
+    curso=Curso.objects.get(nombre="Curso de Policía Nacional"),
+    cantidad=1,
+    precio_unitario=300.00,
+    email=usuario1.email,
+    nombre=usuario1.nombre
+)
 
+PedidoCurso.objects.create(
+    pedido=pedido1,
+    curso=Curso.objects.get(nombre="Curso de Bombero"),
+    cantidad=1,
+    precio_unitario=380.00,
+    email=usuario1.email,
+    nombre=usuario1.nombre
+)
+
+# Crear un pedido para usuario2
+pedido2 = Pedido.objects.create(
+    usuario=usuario2,
+    email=usuario2.email,
+    nombre=f"{usuario2.nombre} {usuario2.apellido}",
+    direccion_envio=usuario2.direccion_entrega,
+    ciudad_envio=usuario2.ciudad,
+    provincia_envio=usuario2.provincia,
+    codigo_postal_envio=usuario2.codigo_postal,
+    total=850.00,
+    codigo_seguimiento=str(uuid.uuid4()),
+)
+
+PedidoCurso.objects.create(
+    pedido=pedido2,
+    curso=Curso.objects.get(nombre="Curso de Sanidad Pública"),
+    cantidad=2,
+    precio_unitario=320.00,
+    email=usuario2.email,
+    nombre=usuario2.nombre
+)
+
+PedidoCurso.objects.create(
+    pedido=pedido2,
+    curso=Curso.objects.get(nombre="Curso de Educación Primaria"),
+    cantidad=1,
+    precio_unitario=400.00,
+    email=usuario2.email,
+    nombre=usuario2.nombre
+)
