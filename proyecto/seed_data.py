@@ -315,7 +315,7 @@ pedido2 = Pedido.objects.create(
     ciudad_envio=usuario2.ciudad,
     provincia_envio=usuario2.provincia,
     codigo_postal_envio=usuario2.codigo_postal,
-    total=850.00,
+    total=1040.00,
     codigo_seguimiento=str(uuid.uuid4()),
 )
 
