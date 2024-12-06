@@ -37,9 +37,13 @@ from urllib.parse import urlparse
 def home(request):
     # Obtener todos los cursos
     cursos = Curso.objects.all()
-
+    current_user= request.user
     # Filtros de cursos
     hoy = date.today()
+
+    if not current_user.is_superuser:
+        cursos = cursos.filter(fecha_inicio__gte=hoy)
+       
     cursos_pronto = cursos.filter(fecha_inicio__gte=hoy).order_by('fecha_inicio')
     cursos_pocas_plazas = cursos.filter(plazas_disponibles__gt=0 ,plazas_disponibles__lt=20 ).order_by('plazas_disponibles')
     cursos_baratos = cursos.filter(precio__lt=220).order_by('precio')
@@ -347,6 +351,12 @@ def buscar_cursos(request):
 
     # Obtener todos los cursos
     cursos = Curso.objects.all()
+    current_user= request.user
+      # Filtros de cursos
+    hoy = date.today()
+    if not current_user.is_superuser:
+        cursos = cursos.filter(fecha_inicio__gte=hoy)
+       
 
     # Filtrar por criterios
     if query:
