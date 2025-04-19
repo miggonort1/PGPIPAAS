@@ -24,23 +24,38 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install safety pip-audit
-
-      - name: Run pip-audit (vulnerability scan)
-        run: |
+          python -m pip install --upgrade pip
+          pip install pip-audit safety
           mkdir -p reports
-          pip-audit --format json --output reports/pip_audit_report.json || true
+
+      - name: Run pip-audit (SARIF format)
+        id: pip-audit
+        run: |
+          pip-audit --format sarif --output reports/pip_audit.sarif --verbose
+          echo "SARIF file generated at: $(pwd)/reports/pip_audit.sarif"
+          # Verificar que el archivo existe
+          if [ -f "reports/pip_audit.sarif" ]; then
+            echo "::notice::SARIF file generated successfully"
+          else
+            echo "::error::Failed to generate SARIF file"
+            exit 1
+          fi
 
       - name: Run safety check
         run: |
-          safety check --json --output reports/safety_report.json || true
+          safety check --full-report --output reports/safety_report.txt
 
-      - name: Upload security reports
-        uses: github/codeql-action/upload-sarif@v3  # Actualizado a v3
+      - name: Upload SARIF report
+        uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: reports/pip_audit.sarif  # Asegúrate que es un archivo SARIF válido
+          sarif_file: reports/pip_audit.sarif
           wait-for-processing: true
+
+      - name: Upload safety report as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: safety-report
+          path: reports/safety_report.txt
 
       - name: Create PR for outdated dependencies
         if: github.event_name == 'schedule'
@@ -48,6 +63,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore(deps): update outdated dependencies"
-          title: "Dependency updates"
-          body: "Automated dependency updates from weekly scan"
+          title: "Weekly Dependency Updates"
+          body: "Automated dependency updates from security scan"
           branch: "deps-update-$(date +%s)"
