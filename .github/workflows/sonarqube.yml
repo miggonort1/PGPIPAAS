@@ -34,7 +34,7 @@ jobs:
         env:
           DATABASE_URL: "postgres://postgres:postgres@localhost:5432/postgres"
         run: |
-          coverage run --source='./pgpipaas' manage.py test
+          coverage run --source='./pgpipaas' proyecto/manage.py test
           coverage xml
       
       - name: Run Bandit (Security Scanner)
