@@ -25,17 +25,17 @@ jobs:
         pip install -r proyecto/requirements.txt
 
     - name: Run SonarQube (SAST)
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
         curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
         unzip sonar-scanner.zip
         export PATH=$PATH:$(pwd)/sonar-scanner-*/bin
         sonar-scanner \
-          -Dsonar.projectKey=pgpipaas \
+          -Dsonar.projectKey=miggonort1_PGPIPAAS \
           -Dsonar.sources=proyecto \
+          -Dsonar.organization=miggonort1 \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      
 
     - name: Run Trivy (IaC scanning)
       uses: aquasecurity/trivy-action@master
