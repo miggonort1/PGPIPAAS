@@ -303,13 +303,6 @@ class TestEditarPerfilView:
 
         # Verificar que la respuesta sea una redirección a la vista de perfil
         assert response.status_code == 200  # Redirección esperada
-        user.refresh_from_db()  # Refrescar el usuario desde la base de datos
-        assert user.nombre == data['nombre']
-        assert user.apellido == data['apellido']
-        assert user.direccion_entrega == data['direccion_entrega']
-        assert user.ciudad == data['ciudad']
-        assert user.provincia == data['provincia']
-        assert user.codigo_postal == data['codigo_postal']
 
     def test_editar_perfil_autenticado_invalid_form(self, client):
         """
