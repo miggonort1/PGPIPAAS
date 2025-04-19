@@ -6,12 +6,12 @@ jobs:
     uses: ./.github/workflows/sonarcloud-analysis.yml
     secrets: inherit
 
-  dependency_scan:
+  sca:
     needs: sast
     uses: ./.github/workflows/dependabot-scan.yml
     secrets: inherit
 
   iac-security:
-    needs: dependency_scan
+    needs: sca
     uses: ./.github/workflows/trivy-scan.yml
     secrets: inherit
