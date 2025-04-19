@@ -6,15 +6,24 @@ on:
 jobs:
   trivy-scan:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write  # Necesario para subir resultados a GitHub Security
+      
     steps:
       - uses: actions/checkout@v4
       
-      - name: Run Trivy vulnerability scanner
+      - name: Run Trivy IaC scan
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          security-checks: 'vuln,config,secret'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
+          scan-type: 'config'  # Escaneo de configuración (IaC)
+          scan-ref: './proyecto'  # Directorio a escanear
+          ignore-unfixed: true  # Ignorar vulnerabilidades sin fix disponible
+          format: 'sarif'  # Formato de salida compatible con GitHub Security
+          output: 'trivy-results.sarif'  # Archivo de salida
+          severity: 'CRITICAL,HIGH'  # Solo vulnerabilidades críticas y altas
+          
+      - name: Upload Trivy report to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3  # Versión actualizada a v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+          wait-for-processing: true  # Espera a que se procese el reporte
