@@ -1,0 +1,17 @@
+name: DevSecOps Pipeline
+on: [push, pull_request]
+
+jobs:
+  sast:
+    uses: ./.github/workflows/sonarcloud-analysis.yml
+    secrets: inherit
+
+  sca:
+    needs: sast
+    uses: ./.github/workflows/dependabot-scan.yml
+    secrets: inherit
+
+  iac-security:
+    needs: sca
+    uses: ./.github/workflows/trivy-scan.yml
+    secrets: inherit
