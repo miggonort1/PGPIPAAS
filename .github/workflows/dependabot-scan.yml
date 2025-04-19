@@ -2,14 +2,52 @@ name: Dependency Scan
 
 on:
   workflow_call:
+  schedule:
+    - cron: '0 0 * * 1'  # Ejecutar cada lunes a medianoche
+  workflow_dispatch:
 
 jobs:
-  dependabot:
+  dependency_scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: write
+
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Run Dependabot Scan
-        uses: dependabot/github-actions-scan@v1
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install safety pip-audit
+
+      - name: Run pip-audit (vulnerability scan)
+        run: |
+          mkdir -p reports
+          pip-audit --format json --output reports/pip_audit_report.json || true
+
+      - name: Run safety check
+        run: |
+          safety check --json --output reports/safety_report.json || true
+
+      - name: Upload security reports
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: reports/pip_audit_report.json
+          wait-for-processing: true
+
+      - name: Create PR for outdated dependencies
+        if: github.event_name == 'schedule'
+        uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(deps): update outdated dependencies"
+          title: "Dependency updates"
+          body: "Automated dependency updates from weekly scan"
+          branch: "deps-update-$(date +%s)"
