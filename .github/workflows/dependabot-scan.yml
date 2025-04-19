@@ -1,0 +1,15 @@
+name: Dependency Scan
+
+on:
+  workflow_call:
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Dependabot Scan
+        uses: dependabot/github-actions-scan@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
