@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/proyecto"
+    schedule:
+      interval: "weekly"
+    # Configuración adicional recomendada:
+    open-pull-requests-limit: 5
+    reviewers:
+      - "miggonort1"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(dev-deps)"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]  # Ignora actualizaciones de parches
