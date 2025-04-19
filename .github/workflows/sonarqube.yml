@@ -69,7 +69,8 @@ jobs:
 
       - name: Run migrations
         run: |
-          python proyecto/manage.py migrate
+          python proyecto/manage.py makemigrations --noinput
+          python proyecto/manage.py migrate --noinput
 
       - name: Run tests with coverage
         run: |
