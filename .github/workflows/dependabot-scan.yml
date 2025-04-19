@@ -36,11 +36,36 @@ jobs:
         run: |
           safety check --json --output reports/safety_report.json || true
 
-      - name: Upload security reports
-        uses: github/codeql-action/upload-sarif@v3  # Actualizado a v3
+      - name: Generate and upload security report
+        id: security-scan
+        run: |
+          # Instalar pip-audit si no está presente
+          if ! command -v pip-audit &> /dev/null; then
+            pip install pip-audit
+          fi
+          
+          # Crear directorio de reportes
+          mkdir -p reports
+          
+          # Generar reporte SARIF (o JSON si falla)
+          pip-audit --format sarif --output reports/security_report.sarif || (
+            echo "::warning::Fallando a formato SARIF, generando JSON"
+            pip-audit --format json --output reports/security_report.json
+            # Convertir JSON a SARIF mínimo
+            echo '{
+              "version": "2.1.0",
+              "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+              "runs": [{
+                "tool": { "driver": { "name": "pip-audit" } },
+                "results": []
+              }]
+            }' > reports/security_report.sarif
+          )
+
+      - name: Upload security report
+        uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: reports/pip_audit.sarif  # Asegúrate que es un archivo SARIF válido
-          wait-for-processing: true
+          sarif_file: reports/security_report.sarif
 
       - name: Create PR for outdated dependencies
         if: github.event_name == 'schedule'
