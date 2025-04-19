@@ -45,21 +45,17 @@ jobs:
           mkdir -p reports
           cd ./proyecto && coverage run -m pytest tests/ && coverage xml -o ../reports/coverage.xml
           cd ..
-      
+          
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
         with:
-          projectBaseDir: ./proyecto
+          projectBaseDir: ./proyecto  # Asegúrate que apunte al directorio correcto
           args: >
-            -Dsonar.projectKey=${{ github.repository }}
-            -Dsonar.organization=miggonort1
             -Dsonar.projectBaseDir=./proyecto
             -Dsonar.sources=.
-            -Dsonar.python.bandit.reportPaths=./reports/bandit_report.json
-            -Dsonar.python.pylint.reportPaths=./reports/pylint_report.txt
-            -Dsonar.python.coverage.reportPaths=./reports/coverage.xml
-            -Dsonar.exclusions=**/migrations/**,**/__pycache__/**,**/tests/**
-            -Dsonar.coverage.exclusions=**/tests/**
+            -Dsonar.python.bandit.reportPaths=./bandit_report.json
+            -Dsonar.python.pylint.reportPaths=./pylint_report.txt
+            -Dsonar.python.coverage.reportPaths=./coverage.xml
+            -Dsonar.exclusions=**/migrations/**,**/__pycache__/**
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
