@@ -96,7 +96,7 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
         with:
-          projectBaseDir: ./pgpipaas
+          projectBaseDir: .
           args: >
             -Dsonar.python.bandit.reportPaths=./bandit_report.json
             -Dsonar.python.pylint.reportPaths=./pylint_report.txt
