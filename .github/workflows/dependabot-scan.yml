@@ -37,9 +37,9 @@ jobs:
           safety check --json --output reports/safety_report.json || true
 
       - name: Upload security reports
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3  # Actualizado a v3
         with:
-          sarif_file: reports/pip_audit_report.json
+          sarif_file: reports/pip_audit.sarif  # Asegúrate que es un archivo SARIF válido
           wait-for-processing: true
 
       - name: Create PR for outdated dependencies
