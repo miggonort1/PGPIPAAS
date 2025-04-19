@@ -13,9 +13,10 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: dbpgpipaas
-          MYSQL_USER: root
-          MYSQL_PASSWORD: root
+          MYSQL_USER: pgpipaas_user
+          MYSQL_PASSWORD: pgpipaas_password
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping --silent" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -33,23 +34,44 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-dev default-libmysqlclient-dev build-essential
           python -m pip install --upgrade pip
           pip install -r proyecto/requirements.txt
-          pip install pylint bandit coverage python-dotenv pytest
+          pip install pylint bandit coverage python-dotenv pytest mysqlclient
 
       - name: Load environment variables
         run: |
-          echo "Loading .env file"
-          cp proyecto/.env .env
+          echo "DB_HOST=127.0.0.1" >> $GITHUB_ENV
+          echo "DB_PORT=3306" >> $GITHUB_ENV
+          echo "MYSQL_DATABASE=dbpgpipaas" >> $GITHUB_ENV
+          echo "MYSQL_USER=pgpipaas_user" >> $GITHUB_ENV
+          echo "MYSQL_PASSWORD=pgpipaas_password" >> $GITHUB_ENV
+
+      - name: Configure MySQL permissions
+        run: |
+          mysql -h 127.0.0.1 -u root -proot -e "
+            GRANT ALL PRIVILEGES ON *.* TO 'pgpipaas_user'@'%';
+            FLUSH PRIVILEGES;
+          "
+
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {1..10}; do
+            if mysqladmin ping -h 127.0.0.1 -u pgpipaas_user -ppgpipaas_password --silent; then
+              echo "MySQL is ready!"
+              break
+            else
+              echo "Waiting for MySQL... Attempt $i"
+              sleep 5
+            fi
+          done
+
+      - name: Run migrations
+        run: |
+          python proyecto/manage.py migrate
 
       - name: Run tests with coverage
-        env:
-          ENVIRONMENT: local
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          MYSQL_DATABASE: dbpgpipaas
-          MYSQL_USER: pgpipaas_user
-          MYSQL_PASSWORD: pgpipaas_password
         run: |
           coverage run --source='./proyecto' -m pytest proyecto/cursos/tests.py
           coverage xml
