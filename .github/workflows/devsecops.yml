@@ -2,9 +2,9 @@ name: DevSecOps Pipeline
 
 on:
   push:
-    branches: [ main, devsecops-pipeline ]
+    branches: [ develop, devsecops-pipeline ]
   pull_request:
-    branches: [ main ]
+    branches: [ develop ]
 
 jobs:
   build-and-analyze:
@@ -24,10 +24,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r proyecto/requirements.txt      
 
-    - name: Run Trivy (IaC scanning)
+    - name: Run Trivy (IaC scanning with report output)
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'config'
         scan-ref: './proyecto'
         ignore-unfixed: true
-        format: 'table'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy report to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
