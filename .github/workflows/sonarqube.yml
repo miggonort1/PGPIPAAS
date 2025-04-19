@@ -67,15 +67,18 @@ jobs:
             fi
           done
 
-      - name: Reset database
+      - name: Prepare database
         run: |
+          # Reset database
           mysql -h 127.0.0.1 -u root -proot -e "DROP DATABASE IF EXISTS dbpgpipaas; CREATE DATABASE dbpgpipaas;"
           mysql -h 127.0.0.1 -u root -proot -e "GRANT ALL ON dbpgpipaas.* TO 'pgpipaas_user'@'%';"
-      
-      - name: Run migrations
-        run: |
+          
+          # Apply migrations
           python proyecto/manage.py makemigrations
           python proyecto/manage.py migrate
+          
+          # Verify tables
+          mysql -h 127.0.0.1 -u pgpipaas_user -ppgpipaas_password dbpgpipaas -e "SHOW TABLES;"
 
       - name: Run tests with coverage
         run: |
