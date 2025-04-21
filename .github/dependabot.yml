@@ -1,11 +1,16 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/proyecto" # Location of package manifests
+  - package-ecosystem: "pip"
+    directory: "/proyecto"
     schedule:
       interval: "weekly"
+    # Configuración adicional recomendada:
+    open-pull-requests-limit: 5
+    reviewers:
+      - "miggonort1"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(dev-deps)"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]  # Ignora actualizaciones de parches

@@ -1,0 +1,18 @@
+# bandit.yml
+targets:
+  - proyecto/  # Ajusta a tu carpeta fuente
+
+tests:
+  - B101    # assert usados en producción
+  - B105    # Passwords hardcodeados
+  - B106    # Passwords como argumento
+  - B201    # Flask/Django debug=True
+  - B301    # pickle inseguro
+  - B311    # eval/exec y similares
+
+severity:
+  - high
+  - medium
+
+skips:
+  - B404    # Puedes remover si no usas subprocess

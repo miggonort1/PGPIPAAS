@@ -1,0 +1,33 @@
+name: SonarCloud Analysis
+on:
+  workflow_call:
+
+jobs:
+  analyze:
+    name: Analyze with SonarCloud
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: ./proyecto
+          qualityGateWait: true  # Bloquea el pipeline si el Quality Gate falla
+          extraProperties: |
+            sonar.python.bandit.reportPaths=./reports/bandit_report.json
+            sonar.python.pylint.reportPaths=./reports/pylint_report.json
+            sonar.python.coverage.reportPaths=./reports/coverage.xml
+
+      - name: Upload Reports
+        if: always()  # Sube artefactos aunque falle el job
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: ./reports/

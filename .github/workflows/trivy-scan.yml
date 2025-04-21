@@ -1,0 +1,29 @@
+name: Trivy Security Scan
+
+on:
+  workflow_call:
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Trivy IaC scan
+        uses: aquasecurity/trivy-action@0.28.0  # Usar versión fija recomendada
+        with:
+          scan-type: 'config'
+          scan-ref: './proyecto'
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          
+      - name: Upload Trivy report to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+          wait-for-processing: true

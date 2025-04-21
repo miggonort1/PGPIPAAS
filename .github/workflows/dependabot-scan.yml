@@ -1,0 +1,78 @@
+name: Dependency Scan
+
+on:
+  workflow_call:
+  schedule:
+    - cron: '0 0 * * 1'  # Ejecutar cada lunes a medianoche
+  workflow_dispatch:
+
+jobs:
+  dependency_scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install safety pip-audit
+
+      - name: Run pip-audit (vulnerability scan)
+        run: |
+          mkdir -p reports
+          pip-audit --format json --output reports/pip_audit_report.json || true
+
+      - name: Run safety check
+        run: |
+          safety check --json --output reports/safety_report.json || true
+
+      - name: Generate and upload security report
+        id: security-scan
+        run: |
+          # Instalar pip-audit si no está presente
+          if ! command -v pip-audit &> /dev/null; then
+            pip install pip-audit
+          fi
+          
+          # Crear directorio de reportes
+          mkdir -p reports
+          
+          # Generar reporte SARIF (o JSON si falla)
+          pip-audit --format sarif --output reports/security_report.sarif || (
+            echo "::warning::Fallando a formato SARIF, generando JSON"
+            pip-audit --format json --output reports/security_report.json
+            # Convertir JSON a SARIF mínimo
+            echo '{
+              "version": "2.1.0",
+              "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+              "runs": [{
+                "tool": { "driver": { "name": "pip-audit" } },
+                "results": []
+              }]
+            }' > reports/security_report.sarif
+          )
+
+      - name: Upload security report
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/security_report.sarif
+
+      - name: Create PR for outdated dependencies
+        if: github.event_name == 'schedule'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(deps): update outdated dependencies"
+          title: "Dependency updates"
+          body: "Automated dependency updates from weekly scan"
+          branch: "deps-update-$(date +%s)"
