@@ -73,7 +73,7 @@ jobs:
 
       - name: Actualiza docker-compose.yml para usar la imagen construida
         run: |
-          sed -i 's|build: .|image: pgpipaas_test:latest|' docker-compose.yml
+          sed -i 's|build: .|image: pgpipaas_test:latest|' ./proyecto/docker-compose.yml ./proyecto
 
       - name: Levanta los servicios (Django + MariaDB)
         run: |
