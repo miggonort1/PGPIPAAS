@@ -31,7 +31,7 @@ jobs:
       - name: Upload Trivy report to DefectDojo
         run: |
           curl -X POST "${{ secrets.DEFECTDOJO_URL }}/api/v2/import-scan/" \
-            -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_TOKEN }}" \
+            -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
             -F 'scan_type=SARIF' \
             -F 'minimum_severity=Low' \
             -F 'active=true' \
