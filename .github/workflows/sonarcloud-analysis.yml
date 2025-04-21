@@ -25,6 +25,9 @@ jobs:
             -Dsonar.python.pylint.reportPaths=./reports/pylint_report.json
             -Dsonar.python.coverage.reportPaths=./reports/coverage.xml
 
+      - name: Create reports directory
+        run: mkdir -p ./reports
+
       - name: Upload Reports
         if: always()  # Sube artefactos aunque falle el job
         uses: actions/upload-artifact@v4
