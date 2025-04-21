@@ -1,34 +1,27 @@
 name: Trivy Security Scan
 
 on:
-  pull_request:
-    branches: [ main, develop ]
+  workflow_call:
 
 jobs:
   trivy-scan:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
-      pull-requests: read
-
+      
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Run Trivy IaC scan (diff)
-        uses: aquasecurity/trivy-action@master
+      
+      - name: Run Trivy IaC scan
+        uses: aquasecurity/trivy-action@0.28.0  # Usar versión fija recomendada
         with:
           scan-type: 'config'
-          scan-ref: '.'
-          config-policy: 'terraform,kubernetes' # Ajusta según tus tipos de IaC
+          scan-ref: './proyecto'
           ignore-unfixed: true
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
-          exclude: '**/tests/**,**/examples/**' # Ajusta tus exclusiones
-          diff-from: ${{ github.event.pull_request.base.sha }}
-
+          
       - name: Upload Trivy report to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
