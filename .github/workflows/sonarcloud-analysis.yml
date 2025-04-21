@@ -29,21 +29,28 @@ jobs:
         run: mkdir -p ./reports
 
       - name: Upload Reports
-        if: always()  # Sube artefactos aunque falle el job
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: security-reports
           path: ./reports/
+          if-no-files-found: error
 
       - name: Upload SonarQube report to DefectDojo
+        if: success() && steps.sonarcloud.outcome == 'success'
         run: |
-          curl -X POST "${{ secrets.DEFECTDOJO_URL }}/api/v2/import-scan/" \
-            -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
-            -F 'scan_type=SonarQube Scan' \
-            -F 'minimum_severity=Low' \
-            -F 'active=true' \
-            -F 'verified=false' \
-            -F 'file=@./reports/sonar-report.json' \
-            -F 'engagement=1' \
-            -F "scan_date=$(date +%F)" \
-            -F 'auto_create_context=true'
+          if [ -f "./reports/sonar-report.json" ]; then
+            curl -X POST "${{ secrets.DEFECTDOJO_URL }}/api/v2/import-scan/" \
+              -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
+              -F 'scan_type=SonarQube Scan' \
+              -F 'minimum_severity=Low' \
+              -F 'active=true' \
+              -F 'verified=false' \
+              -F 'file=@./reports/sonar-report.json' \
+              -F 'engagement=1' \
+              -F "scan_date=$(date +%F)" \
+              -F 'auto_create_context=true'
+          else
+            echo "Error: sonar-report.json not found"
+            exit 1
+          fi
