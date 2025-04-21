@@ -27,3 +27,16 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
           wait-for-processing: true
+          
+      - name: Upload Trivy report to DefectDojo
+        run: |
+          curl -X POST "${{ secrets.DEFECTDOJO_URL }}/api/v2/import-scan/" \
+            -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
+            -F 'scan_type=SARIF' \
+            -F 'minimum_severity=Low' \
+            -F 'active=true' \
+            -F 'verified=false' \
+            -F 'file=@trivy-results.sarif' \
+            -F 'engagement=1' \
+            -F "scan_date=$(date +%F)" \
+            -F 'auto_create_context=true'

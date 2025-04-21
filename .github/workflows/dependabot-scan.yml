@@ -76,3 +76,15 @@ jobs:
           title: "Dependency updates"
           body: "Automated dependency updates from weekly scan"
           branch: "deps-update-$(date +%s)"
+
+      - name: Upload pip-audit report to DefectDojo
+        run: |
+          curl -X POST "${{ secrets.DEFECTDOJO_URL }}/api/v2/import-scan/" \
+            -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
+            -F 'scan_type=SARIF' \
+            -F 'file=@reports/security_report.sarif' \
+            -F 'engagement=1' \
+            -F "scan_date=$(date +%F)" \
+            -F 'auto_create_context=true'
+
+
