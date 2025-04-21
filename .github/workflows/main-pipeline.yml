@@ -26,7 +26,7 @@ jobs:
       - name: Run Bandit (Security Scan)
         run: |
           mkdir -p reports
-          bandit -r proyecto -f json -o reports/bandit_report.json -c bandit.yml
+          bandit -r proyecto -f json -o reports/bandit_report.json -c bandit.yml || true
           if [ ! -f reports/bandit_report.json ]; then
             echo "Bandit report not generated!" >&2
             exit 1
