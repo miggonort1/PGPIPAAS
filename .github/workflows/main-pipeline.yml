@@ -56,7 +56,7 @@ jobs:
     uses: ./.github/workflows/dependabot-scan.yml
     secrets: inherit
 
-  # --- Etapa 3: Deploy (Nueva etapa) ---
+  # --- Etapa 3: Deploy (SIMPLE: solo build y docker-compose up) ---
   deploy:
     name: Deploy Application
     needs: [sast, sca]
@@ -64,10 +64,36 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      # Aquí agrega tus pasos de despliegue
-      - name: Simulate Deployment
-        run: echo "Desplegando aplicación..." 
-      # Cambia esto por tu lógica real de despliegue
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image para Django
+        run: docker build -t pgpipaas_test:latest .
+
+      - name: Actualiza docker-compose.yml para usar la imagen construida
+        run: |
+          sed -i 's|build: .|image: pgpipaas_test:latest|' docker-compose.yml
+
+      - name: Levanta los servicios (Django + MariaDB)
+        run: |
+          docker-compose up -d
+
+          # Esperar a MariaDB
+          echo "Esperando a que MariaDB esté disponible..."
+          until docker-compose exec db mariadb -u root -proot -e "SELECT 1" >/dev/null 2>&1; do
+            sleep 3
+          done
+
+          # Migraciones Django y carga de seeds si existen
+          docker-compose exec web python manage.py makemigrations
+          docker-compose exec web python manage.py migrate
+          if docker-compose exec web test -f seed_data.py; then
+            docker-compose exec web python seed_data.py
+          fi
+
+      - name: Muestra contenedores activos
+        run: docker-compose ps
 
   # --- Etapa 4: IaC Security (Trivy) ---
   iac-security:
