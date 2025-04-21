@@ -1,5 +1,4 @@
 name: SonarCloud Analysis
-
 on:
   workflow_call:
 
@@ -7,8 +6,6 @@ jobs:
   analyze:
     name: Analyze with SonarCloud
     runs-on: ubuntu-latest
-    
-    # Añadir timeout para evitar ejecuciones infinitas
     timeout-minutes: 30
     
     steps:
@@ -19,13 +16,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'  # Especifica una versión concreta
+          python-version: '3.10'
       
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install bandit pylint pytest coverage
-          # Instala las dependencias de tu proyecto si existe requirements.txt
           if [ -f "./proyecto/requirements.txt" ]; then
             pip install -r ./proyecto/requirements.txt
           fi
@@ -33,23 +29,33 @@ jobs:
       - name: Run Bandit (Security Scan)
         run: |
           mkdir -p reports
-          bandit -r proyecto -f json -o bandit_report.json -c bandit.yml || true
+          bandit -r proyecto -f json -o reports/bandit_report.json -c bandit.yml || true
       
       - name: Run Pylint (Linter)
         run: |
-          mkdir -p reports
-          pylint ./proyecto --output-format=text > ./reports/pylint_report.txt || true
+          pylint ./proyecto --output-format=json > ./reports/pylint_report.json || true
       
       - name: Run Tests with Coverage
         run: |
-          mkdir -p reports
           cd ./proyecto && coverage run -m pytest tests/ && coverage xml -o ../reports/coverage.xml
           cd ..
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
         with:
-          projectBaseDir: ./proyecto      # Ajusta si tu archivo properties está en otra carpeta
+          projectBaseDir: ./proyecto
+          qualityGateWait: true  # Bloquea el pipeline si el Quality Gate falla
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  
+
+      - name: Upload Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-reports
+          path: ./reports/
+
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: sonar-report.sarif  # Asegúrate de configurar SonarQube para generarlo
+          
