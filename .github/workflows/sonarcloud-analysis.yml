@@ -49,15 +49,7 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
         with:
-          projectBaseDir: ./proyecto
-          args: >
-            -Dsonar.qualitygate.wait=true
-            -Dsonar.projectBaseDir=./proyecto
-            -Dsonar.sources=.
-            -Dsonar.python.bandit.reportPaths=../bandit_report.json
-            -Dsonar.python.pylint.reportPaths=../pylint_report.txt
-            -Dsonar.python.coverage.reportPaths=../coverage.xml
-            -Dsonar.exclusions=**/migrations/**,**/__pycache__/**
+          projectBaseDir: ./proyecto      # Ajusta si tu archivo properties está en otra carpeta
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   
