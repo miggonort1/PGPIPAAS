@@ -24,28 +24,6 @@ jobs:
             -Dsonar.python.bandit.reportPaths=./reports/bandit_report.json
             -Dsonar.python.pylint.reportPaths=./reports/pylint_report.json
             -Dsonar.python.coverage.reportPaths=./reports/coverage.xml
-
-      - name: Create reports directory
-        run: mkdir -p ./reports
-
-      - name: Upload Reports
-        if: always()  # Sube artefactos aunque falle el job
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-reports
-          path: ./reports/
-
-      - name: Descargar findings de SonarCloud
-        run: |
-          mkdir -p reports
-          curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
-            "https://sonarcloud.io/api/issues/search?componentKeys=${{ secrets.SONAR_PROJECT_KEY }}&types=VULNERABILITY&ps=500" \
-            -o reports/sonar-report.json
-      
-      - name: Verificar contenido de reporte
-        run: |
-          echo "Contenido de reporte:"
-          cat reports/sonar-report.json
       
       - name: Subir findings de SonarCloud a DefectDojo
         run: |
