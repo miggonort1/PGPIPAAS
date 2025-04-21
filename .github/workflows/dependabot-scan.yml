@@ -3,7 +3,7 @@ name: Dependency Scan
 on:
   workflow_call:
   schedule:
-    - cron: '*/1 * * * *'  # Ejecutar cada minuto
+    - cron: '0 0 * * 1'  # Ejecutar cada lunes a medianoche
   workflow_dispatch:
 
 jobs:
@@ -86,5 +86,3 @@ jobs:
             -F 'engagement=1' \
             -F "scan_date=$(date +%F)" \
             -F 'auto_create_context=true'
-
-
