@@ -14,16 +14,16 @@ jobs:
           fetch-depth: 0
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: ./proyecto
-          qualityGateWait: true  # Bloquea el pipeline si el Quality Gate falla
-          extraProperties: |
-            sonar.python.bandit.reportPaths=./reports/bandit_report.json
-            sonar.python.pylint.reportPaths=./reports/pylint_report.json
-            sonar.python.coverage.reportPaths=./reports/coverage.xml
+          args: >
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.python.bandit.reportPaths=./reports/bandit_report.json
+            -Dsonar.python.pylint.reportPaths=./reports/pylint_report.json
+            -Dsonar.python.coverage.reportPaths=./reports/coverage.xml
 
       - name: Upload Reports
         if: always()  # Sube artefactos aunque falle el job
@@ -44,4 +44,3 @@ jobs:
             -F 'engagement=1' \
             -F "scan_date=$(date +%F)" \
             -F 'auto_create_context=true'
-
