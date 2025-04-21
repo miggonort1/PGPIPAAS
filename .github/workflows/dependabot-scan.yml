@@ -87,14 +87,4 @@ jobs:
             -F "scan_date=$(date +%F)" \
             -F 'auto_create_context=true'
 
-      - name: Upload Safety report to DefectDojo
-        run: |
-          curl -X POST "${{ secrets.DEFECTDOJO_URL }}/api/v2/import-scan/" \
-            -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
-            -F 'scan_type=Generic Findings Import' \
-            -F 'file=@reports/safety_report.json' \
-            -F 'engagement=1' \
-            -F "scan_date=$(date +%F)" \
-            -F 'auto_create_context=true'
-
 
