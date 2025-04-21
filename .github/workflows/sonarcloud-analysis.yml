@@ -7,7 +7,6 @@ jobs:
     name: Analyze with SonarCloud
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    continue-on-error: true  # Permite que el job continúe aunque Bandit/Pylint fallen
 
     steps:
       - uses: actions/checkout@v4
