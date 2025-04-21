@@ -18,9 +18,10 @@ jobs:
         run: |
           pip install -r ./proyecto/requirements.txt
 
-      - name: Run Unit Tests
+      - name: Run Tests with Coverage
         run: |
           cd ./proyecto && coverage run -m pytest tests/ && coverage xml -o ../reports/coverage.xml
+          cd ..
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
