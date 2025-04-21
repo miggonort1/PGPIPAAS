@@ -42,32 +42,46 @@ jobs:
         with:
           name: coverage-report
           path: ./reports/coverage.xml
-
-  # --- Etapa 2: Análisis de Seguridad (SAST, SCA, IaC) ---
+        
+  # --- Etapa 2: Análisis de Seguridad (SAST y SCA) ---
   sast:
     name: SAST (SonarQube)
-    needs: build  # Depende de la etapa build
+    needs: build
     uses: ./.github/workflows/sonarcloud-analysis.yml
     secrets: inherit
 
   sca:
     name: SCA (Dependabot)
-    needs: build  # Puede ejecutarse en paralelo con SAST
+    needs: build
     uses: ./.github/workflows/dependabot-scan.yml
     secrets: inherit
 
+  # --- Etapa 3: Deploy (Nueva etapa) ---
+  deploy:
+    name: Deploy Application
+    needs: [sast, sca]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      # Aquí agrega tus pasos de despliegue
+      - name: Simulate Deployment
+        run: echo "Desplegando aplicación..." 
+      # Cambia esto por tu lógica real de despliegue
+
+  # --- Etapa 4: IaC Security (Trivy) ---
   iac-security:
     name: IaC Security (Trivy)
-    needs: build  # Depende de build
+    needs: deploy
     uses: ./.github/workflows/trivy-scan.yml
     secrets: inherit
-    
-  # --- Etapa 3: Notificaciones ---
+
+  # --- Etapa 5: Notificaciones ---
   notify:
     name: Notify Results
-    needs: [sast, sca, iac-security]
+    needs: [iac-security]
     runs-on: ubuntu-latest
-    if: always()  # Siempre se ejecuta, incluso si hay fallos
+    if: always()
     steps:
       - name: Slack Notification
         if: failure()
