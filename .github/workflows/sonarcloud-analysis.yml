@@ -25,25 +25,28 @@ jobs:
             -Dsonar.python.pylint.reportPaths=./reports/pylint_report.json
             -Dsonar.python.coverage.reportPaths=./reports/coverage.xml
 
-      # Crear directorio para los reports
       - name: Create reports directory
         run: mkdir -p ./reports
 
-      # Descargar findings de SonarCloud
-      - name: Download SonarCloud findings
+      - name: Upload Reports
+        if: always()  # Sube artefactos aunque falle el job
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: ./reports/
+
+      - name: Descargar findings de SonarCloud
         run: |
+          mkdir -p reports
           curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
             "https://sonarcloud.io/api/issues/search?componentKeys=${{ secrets.SONAR_PROJECT_KEY }}&types=VULNERABILITY&ps=500" \
             -o reports/sonar-report.json
-
-      # Verificar que el archivo existe (opcional, para debug)
-      - name: Verify report file
+      
+      - name: Verificar contenido de reporte
         run: |
-          ls -la reports/
-          echo "File content:"
-          cat reports/sonar-report.json | jq empty
-
-      # Subir findings a DefectDojo
+          echo "Contenido de reporte:"
+          cat reports/sonar-report.json
+      
       - name: Subir findings de SonarCloud a DefectDojo
         run: |
           curl -X POST "${{ secrets.DEFECTDOJO_URL }}/api/v2/import-scan/" \
