@@ -33,7 +33,7 @@ jobs:
       - name: Run Bandit (Security Scan)
         run: |
           mkdir -p reports
-          bandit -r ./proyecto -f json -o ./reports/bandit_report.json || true
+          bandit -r proyecto -f json -o bandit_report.json -c bandit.yml || true
       
       - name: Run Pylint (Linter)
         run: |
@@ -48,8 +48,6 @@ jobs:
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: ./proyecto
           args: >
@@ -60,3 +58,6 @@ jobs:
             -Dsonar.python.pylint.reportPaths=../pylint_report.txt
             -Dsonar.python.coverage.reportPaths=../coverage.xml
             -Dsonar.exclusions=**/migrations/**,**/__pycache__/**
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  
