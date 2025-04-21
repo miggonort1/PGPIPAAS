@@ -55,6 +55,6 @@ jobs:
           path: ./reports/
 
       - name: Upload SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3 # ¡Actualiza a v3!
         with:
-          sarif_file: sonar-report.sarif  # Asegúrate de configurar SonarQube para generarlo
+          sarif_file: sonar-report.sarif
