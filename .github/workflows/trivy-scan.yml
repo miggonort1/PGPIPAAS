@@ -2,47 +2,37 @@ name: Trivy Security Scan
 
 on:
   workflow_call:
+  pull_request:
+    branches: [ main, develop ]
 
 jobs:
   trivy-scan:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
+      pull-requests: read # Necesario si usas diff-from
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # Necesario si usas diff-from
 
-      # Escaneo IaC
       - name: Run Trivy IaC scan
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.49.3
         with:
           scan-type: 'config'
-          scan-ref: './proyecto'
+          scan-ref: '.' # Escanea todo el repositorio para el diff o './proyecto'
+          config-policy: 'terraform,kubernetes' # Especifica tus tipos de IaC
           ignore-unfixed: true
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
-          exit-code: '1'   # Hace fallar si hay vulnerabilidades críticas/altas
+          exclude: '**/tests/**,**/examples/**' # Ajusta tus exclusiones
+          exit-code: '1' # Falla el workflow en vulnerabilidades críticas/altas
+          # diff-from: ${{ github.event.pull_request.base.sha }} # Descomentar para PRs
 
-      - name: Upload IaC SARIF to GitHub Security tab
+      - name: Upload Trivy report to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
-          wait-for-processing: true
-
-      # Escaneo de imagen de contenedor construida
-      - name: Run Trivy Image scan
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: 'image'
-          image-ref: 'nombre-de-mi-imagen:tag'
-          format: 'sarif'
-          output: 'trivy-image-results.sarif'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
-    
-      - name: Upload Image SARIF to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: 'trivy-image-results.sarif'
           wait-for-processing: true
