@@ -20,7 +20,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          cd ./proyecto && pytest tests/unit/ --cov=./ --cov-report=xml:../reports/coverage.xml
+          cd ./proyecto && coverage run -m pytest tests/ && coverage xml -o ../reports/coverage.xml
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
