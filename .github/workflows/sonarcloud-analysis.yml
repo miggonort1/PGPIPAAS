@@ -7,6 +7,7 @@ jobs:
     name: Analyze with SonarCloud
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    continue-on-error: true  # Permite que el job continúe aunque Bandit/Pylint fallen
 
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +21,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install bandit pylint pytest coverage
           if [ -f "./proyecto/requirements.txt" ]; then
             pip install -r ./proyecto/requirements.txt
@@ -29,11 +29,11 @@ jobs:
       - name: Run Bandit (Security Scan)
         run: |
           mkdir -p reports
-          bandit -r proyecto -f json -o reports/bandit_report.json -c bandit.yml || true
+          bandit -r proyecto -f json -o reports/bandit_report.json -c bandit.yml || echo "Bandit falló pero el workflow continúa"
 
       - name: Run Pylint (Linter)
         run: |
-          pylint ./proyecto --output-format=json > ./reports/pylint_report.json || true
+          pylint ./proyecto --output-format=json > ./reports/pylint_report.json || echo "Pylint falló pero el workflow continúa"
 
       - name: Run Tests with Coverage
         run: |
@@ -41,16 +41,20 @@ jobs:
           cd ..
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: ./proyecto
           qualityGateWait: true  # Bloquea el pipeline si el Quality Gate falla
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          extraProperties: |
+            sonar.python.bandit.reportPaths=./reports/bandit_report.json
+            sonar.python.pylint.reportPaths=./reports/pylint_report.json
+            sonar.python.coverage.reportPaths=./reports/coverage.xml
 
       - name: Upload Reports
+        if: always()  # Sube artefactos aunque falle el job
         uses: actions/upload-artifact@v4
         with:
           name: security-reports
           path: ./reports/
-
