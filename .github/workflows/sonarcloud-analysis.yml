@@ -54,7 +54,8 @@ jobs:
           name: security-reports
           path: ./reports/
 
-      - name: Upload SARIF to GitHub Security
-        uses: github/codeql-action/upload-sarif@v3 # ¡Actualiza a v3!
+      - name: Upload Reports
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: sonar-report.sarif
+          name: security-reports
+          path: ./reports/
