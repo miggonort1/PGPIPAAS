@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -16,12 +18,24 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r ./proyecto/requirements.txt
+          pip install bandit pylint pytest coverage
+          if [ -f "./proyecto/requirements.txt" ]; then
+            pip install -r ./proyecto/requirements.txt
+          fi
+
+      - name: Run Bandit (Security Scan)
+        run: |
+          mkdir -p reports
+          bandit -r proyecto -f json -o reports/bandit_report.json -c bandit.yml || echo "Bandit falló pero el workflow continúa"
+
+      - name: Run Pylint (Linter)
+        run: |
+          pylint ./proyecto --output-format=json > ./reports/pylint_report.json || echo "Pylint falló pero el workflow continúa"
 
       - name: Run Tests with Coverage
         run: |
           cd ./proyecto && coverage run -m pytest tests/ && coverage xml -o ../reports/coverage.xml
-          cd ..
+          cd ..      
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
