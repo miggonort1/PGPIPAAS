@@ -26,11 +26,20 @@ jobs:
       - name: Run Bandit (Security Scan)
         run: |
           mkdir -p reports
-          bandit -r proyecto -f json -o reports/bandit_report.json -c bandit.yml || echo "Bandit falló pero el workflow continúa"
-
+          bandit -r proyecto -f json -o reports/bandit_report.json -c bandit.yml
+          if [ ! -f reports/bandit_report.json ]; then
+            echo "Bandit report not generated!" >&2
+            exit 1
+          fi
+      
       - name: Run Pylint (Linter)
         run: |
-          pylint ./proyecto --output-format=json > ./reports/pylint_report.json || echo "Pylint falló pero el workflow continúa"
+          mkdir -p reports
+          pylint ./proyecto --output-format=json > ./reports/pylint_report.json
+          if [ ! -f reports/pylint_report.json ]; then
+            echo "Pylint report not generated!" >&2
+            exit 1
+          fi
 
       - name: Run Tests with Coverage
         run: |
