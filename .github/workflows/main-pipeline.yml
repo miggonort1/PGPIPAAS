@@ -74,9 +74,6 @@ jobs:
       - name: Actualiza docker-compose.yml para usar la imagen construida
         run: |
           sed -i 's|build: .|image: pgpipaas_test:latest|' ./proyecto/docker-compose.yml
-            
-      - name: Muestra contenedores activos
-        run: docker-compose ps
 
   # --- Etapa 4: IaC Security (Trivy) ---
   iac-security:
