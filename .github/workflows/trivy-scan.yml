@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 2 # Necesario si usas diff-from
 
       - name: Run Trivy IaC scan
-        uses: aquasecurity/trivy-action@0.49.3
+        uses: aquasecurity/trivy-action@latest
         with:
           scan-type: 'config'
           scan-ref: '.' # Escanea todo el repositorio para el diff o './proyecto'
