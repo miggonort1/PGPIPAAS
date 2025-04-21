@@ -1,9 +1,5 @@
 name: DevSecOps Pipeline
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
   # --- Etapa 1: Build y Tests Unitarios ---
