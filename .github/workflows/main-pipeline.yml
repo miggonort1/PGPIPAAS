@@ -3,8 +3,7 @@ on: [push, pull_request]
 
 jobs:
 
-# --- Etapa 1: Build y Tests Unitarios ---
-
+  # --- Etapa 1: Build y Tests Unitarios ---
   build:
     name: Build and Unit Tests
     runs-on: ubuntu-latest
@@ -39,19 +38,63 @@ jobs:
           cd ./proyecto && coverage run -m pytest tests/ && coverage xml -o reports/coverage.xml
           cd ..
 
+      - name: Upload Bandit Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: ./proyecto/reports/bandit_report.json
+
+      - name: Upload Pylint Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pylint-report
+          path: ./proyecto/reports/pylint_report.json
+          
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: ./proyecto/reports/coverage.xml
 
-# --- Etapa 2: Análisis de Seguridad (SAST y SCA) ---
-
+  # --- Etapa 2: Análisis de Seguridad (SAST y SCA) ---
   sast:
     name: SAST (SonarQube)
     needs: build
-    uses: ./.github/workflows/sonarcloud-analysis.yml
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Download Bandit Report
+        uses: actions/download-artifact@v4
+        with:
+          name: bandit-report
+          path: ./proyecto/reports/
+
+      - name: Download Pylint Report
+        uses: actions/download-artifact@v4
+        with:
+          name: pylint-report
+          path: ./proyecto/reports/
+
+      - name: Download Coverage Report
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+          path: ./proyecto/reports/
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: ./proyecto
+          args: >
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.python.bandit.reportPaths=./reports/bandit_report.json
+            -Dsonar.python.pylint.reportPaths=./reports/pylint_report.json
+            -Dsonar.python.coverage.reportPaths=./reports/coverage.xml
 
   sca:
     name: SCA (Dependabot)
@@ -59,8 +102,7 @@ jobs:
     uses: ./.github/workflows/dependabot-scan.yml
     secrets: inherit
 
-# --- Etapa 3: Deploy (SIMPLE: solo build y docker-compose up) ---
-
+  # --- Etapa 3: Deploy (SIMPLE: solo build y docker-compose up) ---
   deploy:
     name: Deploy Application
     needs: [sast, sca]
@@ -79,16 +121,14 @@ jobs:
         run: |
           sed -i 's|build: .|image: pgpipaas_test:latest|' ./proyecto/docker-compose.yml
 
-# --- Etapa 4: IaC Security (Trivy) ---
-
+  # --- Etapa 4: IaC Security (Trivy) ---
   iac-security:
     name: IaC Security (Trivy)
     needs: deploy
     uses: ./.github/workflows/trivy-scan.yml
     secrets: inherit
 
-# --- Etapa 5: Notificaciones ---
-
+  # --- Etapa 5: Notificaciones ---
   notify:
     name: Notify Results
     needs: [iac-security]
