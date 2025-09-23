@@ -50,7 +50,6 @@ jobs:
             -Dsonar.qualitygate.wait=true
             -Dsonar.python.bandit.reportPaths=./reports/bandit_report.json
             -Dsonar.python.pylint.reportPaths=./reports/pylint_report.json
-            -Dsonar.python.coverage.reportPaths=./reports/coverage.xml
 
       - name: Descargar findings de SonarCloud
         run: |
