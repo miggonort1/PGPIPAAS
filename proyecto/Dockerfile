@@ -24,7 +24,7 @@ COPY . .
 
 # Instalar las dependencias de Python
 # Usamos una ruta relativa porque el WORKDIR ya es /proyecto
-RUN pip install --no-cache-dir -r requirements.txt \
+RUN pip install --no-cache-dir -r requirements.in \
     && pip install stripe python-decouple
 
 # Crear un script SQL para inicialización de la base de datos
