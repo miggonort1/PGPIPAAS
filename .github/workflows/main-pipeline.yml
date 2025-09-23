@@ -59,11 +59,11 @@ jobs:
 
 # --- Etapa 2: Análisis de Seguridad (SAST y SCA) ---
 
-# sast:
-#   name: SAST (SonarQube)
-#   needs: build
-#   uses: ./.github/workflows/sonarcloud-analysis.yml
-#   secrets: inherit
+  sast:
+    name: SAST (SonarQube)
+    needs: build
+    uses: ./.github/workflows/sonarcloud-analysis.yml
+    secrets: inherit
 
   sca:
     name: SCA (Dependabot)
@@ -75,7 +75,7 @@ jobs:
 
   deploy:
     name: Deploy Application
-    needs: [sca]
+    needs: [sca, sast]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
