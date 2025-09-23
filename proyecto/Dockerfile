@@ -19,7 +19,13 @@ ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.s
 RUN chmod +x /usr/local/bin/wait-for-it
 
 # Copiar los archivos de la aplicación al contenedor
-COPY . /proyecto
+# Esto incluye requirements.txt
+COPY . .
+
+# Instalar las dependencias de Python
+# Usamos una ruta relativa porque el WORKDIR ya es /proyecto
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install stripe python-decouple
 
 # Crear un script SQL para inicialización de la base de datos
 COPY setup.sql /docker-entrypoint-initdb.d/
@@ -28,10 +34,6 @@ COPY setup.sql /docker-entrypoint-initdb.d/
 COPY entrypoint.sh /usr/local/bin/
 RUN dos2unix /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Instalar las dependencias de Python
-RUN pip install --no-cache-dir -r /proyecto/requirements.txt \
-    && pip install stripe python-decouple
 
 # Exponer los puertos necesarios
 EXPOSE 3306 8000
