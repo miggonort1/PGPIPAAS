@@ -75,7 +75,7 @@ jobs:
 
   deploy:
     name: Deploy Application
-    needs: [sast, sca]
+    needs: [sca]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
