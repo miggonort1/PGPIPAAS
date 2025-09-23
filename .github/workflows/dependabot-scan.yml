@@ -29,16 +29,15 @@ jobs:
 
       - name: Update and check for dependency changes
         id: update_and_check_deps
-        # Nos movemos al directorio del proyecto antes de ejecutar pip-compile
         run: |
-          cd /proyecto
-          # pip-compile leerá requirements.in y generará requirements.txt
+          # Use a relative path to navigate to your project directory
+          cd proyecto
+          
           pip-compile --output-file requirements.txt --upgrade
           
-          # Vuelve a la raíz del repositorio para los comandos de Git
+          # Go back to the repository root for Git commands
           cd ..
           
-          # Comprueba si el archivo requirements.txt ha cambiado
           if git diff --quiet ./proyecto/requirements.txt; then
             echo "no_changes=true" >> $GITHUB_OUTPUT
           else
