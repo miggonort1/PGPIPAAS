@@ -1,4 +1,5 @@
 name: Dependency Scan
+
 on:
   workflow_call:
   schedule:
@@ -9,7 +10,7 @@ jobs:
   dependency_scan:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Se necesita permiso para escribir cambios
+      contents: write # Cambiar de `read` a `write` para poder modificar archivos
       security-events: write
       pull-requests: write
 
@@ -24,41 +25,65 @@ jobs:
       - name: Install dependencies and pip-tools
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pip-tools # Instala la herramienta para actualizar
-        working-directory: ./VirtualTrainer/Conexion-Telegram-Local
+          pip install pip-tools safety pip-audit
 
+      - name: Update dependencies
+        id: update_deps
+        run: |
+          # pip-tools compila un nuevo requirements.txt a partir de requirements.in
+          # Si no tienes requirements.in, puedes crearlo manualmente o usar un script
+          # Por ejemplo, puedes usar 'pip freeze > requirements.in' si no lo tienes
+          # y luego 'pip-compile'
+          pip-compile --output-file requirements.txt --upgrade
+          # Comprueba si hay cambios para saber si hay algo que cometer
+          if git diff --exit-code requirements.txt; then
+            echo "no_changes=true" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Check for changes
+        id: git_diff
+        run: |
+          # Esto comprueba si el archivo requirements.txt ha cambiado
+          if git diff --exit-code requirements.txt; then
+            echo "no_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "no_changes=false" >> $GITHUB_OUTPUT
+          fi
+          
       - name: Run pip-audit (vulnerability scan)
         run: |
           mkdir -p reports
           pip-audit --format json --output reports/pip_audit_report.json || true
-        working-directory: ./VirtualTrainer/Conexion-Telegram-Local
-
+          
       - name: Run safety check
         run: |
           safety check --json --output reports/safety_report.json || true
-        working-directory: ./VirtualTrainer/Conexion-Telegram-Local
-      
-      - name: Update dependencies
-        id: update_deps
-        run: |
-          pip-compile --output-file requirements.txt pyproject.toml # O el archivo base que uses
-        working-directory: ./VirtualTrainer/Conexion-Telegram-Local
-        
+
       - name: Generate and upload security report
         id: security-scan
         run: |
-          # ... (rest of your script) ...
-        working-directory: ./VirtualTrainer/Conexion-Telegram-Local
+          # El resto del código para generar el reporte SARIF sigue igual
+          mkdir -p reports
+          pip-audit --format sarif --output reports/security_report.sarif || (
+            echo "::warning::Failed to generate SARIF, generating JSON"
+            pip-audit --format json --output reports/security_report.json
+            echo '{
+              "version": "2.1.0",
+              "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+              "runs": [{
+                "tool": { "driver": { "name": "pip-audit" } },
+                "results": []
+              }]
+            }' > reports/security_report.sarif
+          )
 
       - name: Upload security report
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: reports/security_report.sarif
-        working-directory: ./VirtualTrainer/Conexion-Telegram-Local
-      
+
       - name: Create PR for outdated dependencies
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' && steps.git_diff.outputs.no_changes == 'false'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -66,3 +91,13 @@ jobs:
           title: "Dependency updates"
           body: "Automated dependency updates from weekly scan"
           branch: "deps-update-$(date +%s)"
+
+      - name: Upload pip-audit report to DefectDojo
+        run: |
+          curl -X POST "${{ secrets.DEFECTDOJO_URL }}/api/v2/import-scan/" \
+            -H "Authorization: Token ${{ secrets.DEFECTDOJO_API_KEY }}" \
+            -F 'scan_type=SARIF' \
+            -F 'file=@reports/security_report.sarif' \
+            -F 'engagement=1' \
+            -F "scan_date=$(date +%F)" \
+            -F 'auto_create_context=true'
