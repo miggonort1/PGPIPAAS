@@ -1,16 +1,24 @@
 version: 2
 updates:
+  # Configuración para dependencias de Python
   - package-ecosystem: "pip"
     directory: "/proyecto"
     schedule:
       interval: "weekly"
-    # Configuración adicional recomendada:
+    
+    # Limita el número de PRs abiertos para evitar spam
     open-pull-requests-limit: 5
+    
+    # Asigna revisores para los PRs generados
     reviewers:
-      - "miggonort1"
+      - "Pablito2442"
+      
+    # Configura el prefijo de los mensajes de commit
     commit-message:
       prefix: "chore(deps)"
       prefix-development: "chore(dev-deps)"
+      
+    # Ignora actualizaciones menores para no generar ruido
     ignore:
       - dependency-name: "*"
-        update-types: ["version-update:semver-patch"]  # Ignora actualizaciones de parches
+        update-types: ["version-update:semver-patch"]
