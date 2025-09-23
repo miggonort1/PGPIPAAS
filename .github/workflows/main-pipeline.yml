@@ -2,7 +2,9 @@ name: DevSecOps Pipeline
 on: [push, pull_request]
 
 jobs:
-  # --- Etapa 1: Build y Tests Unitarios ---
+
+# --- Etapa 1: Build y Tests Unitarios ---
+
   build:
     name: Build and Unit Tests
     runs-on: ubuntu-latest
@@ -25,25 +27,26 @@ jobs:
 
       - name: Run Bandit (Security Scan)
         run: |
-          mkdir -p reports
-          bandit -r proyecto -f json -o reports/bandit_report.json -c bandit.yml || echo "Bandit falló pero el workflow continúa"
+          mkdir -p ./proyecto/reports
+          bandit -r ./proyecto -f json -o ./proyecto/reports/bandit_report.json -c bandit.yml || echo "Bandit falló pero el workflow continúa"
 
       - name: Run Pylint (Linter)
         run: |
-          pylint ./proyecto --output-format=json > ./reports/pylint_report.json || echo "Pylint falló pero el workflow continúa"
+          pylint ./proyecto --output-format=json > ./proyecto/reports/pylint_report.json || echo "Pylint falló pero el workflow continúa"
 
       - name: Run Tests with Coverage
         run: |
-          cd ./proyecto && coverage run -m pytest tests/ && coverage xml -o ../reports/coverage.xml
-          cd ..      
+          cd ./proyecto && coverage run -m pytest tests/ && coverage xml -o reports/coverage.xml
+          cd ..
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: ./reports/coverage.xml
-        
-  # --- Etapa 2: Análisis de Seguridad (SAST y SCA) ---
+          path: ./proyecto/reports/coverage.xml
+
+# --- Etapa 2: Análisis de Seguridad (SAST y SCA) ---
+
   sast:
     name: SAST (SonarQube)
     needs: build
@@ -56,7 +59,8 @@ jobs:
     uses: ./.github/workflows/dependabot-scan.yml
     secrets: inherit
 
-  # --- Etapa 3: Deploy (SIMPLE: solo build y docker-compose up) ---
+# --- Etapa 3: Deploy (SIMPLE: solo build y docker-compose up) ---
+
   deploy:
     name: Deploy Application
     needs: [sast, sca]
@@ -75,23 +79,13 @@ jobs:
         run: |
           sed -i 's|build: .|image: pgpipaas_test:latest|' ./proyecto/docker-compose.yml
 
-  # --- Etapa 4: IaC Security (Trivy) ---
+# --- Etapa 4: IaC Security (Trivy) ---
+
   iac-security:
     name: IaC Security (Trivy)
     needs: deploy
     uses: ./.github/workflows/trivy-scan.yml
     secrets: inherit
 
-  # --- Etapa 5: Notificaciones ---
-  notify:
-    name: Notify Results
-    needs: [iac-security]
-    runs-on: ubuntu-latest
-    if: always()
-    steps:
-      - name: Slack Notification
-        if: failure()
-        uses: slackapi/slack-github-action@v1
-        with:
-          channel-id: 'security-alerts'
-          slack-message: 'Pipeline fallido en ${{ github.repository }}. Revisar: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+# --- Etapa 5: Notificaciones ---
+
