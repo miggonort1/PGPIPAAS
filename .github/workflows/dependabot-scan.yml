@@ -25,23 +25,6 @@ jobs:
       - name: Install dependencies and pip-tools
         run: |
           pip install --upgrade pip pip-tools safety pip-audit
-
-      - name: Update and check for dependency changes
-        id: update_and_check_deps
-        run: |
-          # Use a relative path to navigate to your project directory
-          cd proyecto
-          
-          pip-compile --output-file requirements.txt --upgrade
-          
-          # Go back to the repository root for Git commands
-          cd ..
-          
-          if git diff --quiet ./proyecto/requirements.txt; then
-            echo "no_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "no_changes=false" >> $GITHUB_OUTPUT
-          fi
           
       - name: Run pip-audit (vulnerability scan)
         run: |
