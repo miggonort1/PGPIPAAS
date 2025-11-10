@@ -24,8 +24,7 @@ jobs:
 
       - name: Install dependencies and pip-tools
         run: |
-          pip install --upgrade pip
-          pip install pip-tools safety pip-audit
+          pip install --upgrade pip pip-tools safety pip-audit
 
       - name: Update and check for dependency changes
         id: update_and_check_deps
