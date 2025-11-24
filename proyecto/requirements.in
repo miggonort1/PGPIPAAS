@@ -3,5 +3,5 @@ Django==5.2.8
 mysqlclient==2.2.6
 sqlparse==0.5.2
 tzdata==2024.2
-stripe==13.2.0
+stripe==14.0.1
 python-decouple==3.8
